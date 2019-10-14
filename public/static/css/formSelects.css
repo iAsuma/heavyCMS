@@ -1,0 +1,11 @@
+div[xm-select-skin="bigred"] .xm-select-title div.xm-select-label > span{background-color: #F66E6D;border-color: #F66E6D;}
+div[xm-select-skin="bigred"] dl dd.xm-select-this:not(.xm-dis-disabled) i{color: #F66E6D;}
+div[xm-select-skin="bigred"] dl dd.xm-select-this:not(.xm-dis-disabled) i{color: #F66E6D;}
+div[xm-select-skin="bigred"] dl dd:not(.xm-dis-disabled) i{border-color: #F66E6D;}
+div[xm-select-skin="bigred"].xm-form-selected .xm-select, div[xm-select-skin="bigred"].xm-form-selected .xm-select:hover{border-color: #F66E6D !important;}
+
+div[xm-select-skin="bigyellow"] .xm-select-title div.xm-select-label > span{background-color: #FAB436;border-color: #FAB436;}
+div[xm-select-skin="bigyellow"] dl dd.xm-select-this:not(.xm-dis-disabled) i{color: #FAB436;}
+div[xm-select-skin="bigyellow"] dl dd.xm-select-this:not(.xm-dis-disabled) i{color: #FAB436;}
+div[xm-select-skin="bigyellow"] dl dd:not(.xm-dis-disabled) i{border-color: #FAB436;}
+div[xm-select-skin="bigyellow"].xm-form-selected .xm-select, div[xm-select-skin="bigred"].xm-form-selected .xm-select:hover{border-color: #FAB436 !important;}

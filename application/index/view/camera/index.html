@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>编号:{$info['serial_no']}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="__CSS__/bootstrap.min.css" />
+    <link rel="stylesheet" href="__STATIC__/mod/index/camera/css/index.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12" id="imgBox">
+                <div class="imgcontent"><img src="__FILEROOT__{$info['camera_img']}" class="br" alt="图片未上传" onerror="this.src='__STATIC__/mod/index/camera/images/default.png'"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" id="number">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #0080FF;"></span> 编号</div>
+                    <div class="wr5" style="text-align: right">{$info['serial_no']}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" id="number">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #F9C00C;"></span> 品牌</div>
+                    <div class="wr5" style="text-align: right">{$info['brand_name']}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" id="number">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #F9320C;"></span> 型号</div>
+                    <div class="wr5" style="text-align: right">{$info['model_no']}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #7200DA;"></span> 参数</div>
+                    <div class="wr5" style="text-align: right">{$info['parameter']}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #534847;"></span> IP地址</div>
+                    <div class="wr5" style="text-align: right">{$info['ipv4']}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" id="number">
+                <div class="br-bcw">
+                    <div class="w5"><span class="dot" style="background: #56A902;"></span> 安装位置</div>
+                    <div class="wr5" style="text-align: right">{$info['location']}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="__JS__/public/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

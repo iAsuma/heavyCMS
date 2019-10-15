@@ -1,0 +1,171 @@
+{extend name="public/base" /}
+{block name="title"}商品管理{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MOD__/admin/shop/goods.css">
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+<div class="layui-row layui-col-space15">
+  <div class="layui-col-md12">
+    <div class="layui-card">
+      <div class="layui-card-header">添加商品</div>
+      <div class="layui-card-body" pad15>
+        <form class="layui-form" lay-filter="">
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="goods_name" value="" lay-verify="required" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品分类</label>
+            <div class="layui-input-block">
+              <select lay-search name="classification">
+                <option value="">支持搜索</option>
+                {volist name="classify" id="one"}
+                <optgroup label="{$one.name}">
+                  {if $one.child ?? ''}
+                  {volist name="$one.child" id="two"}
+                  <option value="{$two.id}">{$two.name}</option>
+                  {/volist}
+                  {/if}
+                </optgroup>
+                {/volist}
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品介绍</label>
+            <div class="layui-input-block">
+              <input type="text" name="introduction" value="" lay-verify="required" placeholder="请输入简短的介绍" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">配送方式</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="post_type" value="1" title="包邮" checked>
+                <input type="radio" name="post_type" value="2" title="买家承担运费">
+                <input class="layui-input layui-input-number" min="1" max="100" step="1">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品主图</label>
+            <div class="layui-input-block">
+              <button type="button" class="layui-btn layui-btn-asuma" id="editimg" data-type="add">上传主图</button>
+              <!-- <input class="layui-btn layui-btn-asuma" type="file" id="editimg"> -->
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品属性</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-asuma mb20"><i class="layui-icon">&#xe654;</i>添加参数</button>
+                <div id="add-box">
+                    <div class="add-box-item">
+                        <div class="add-box-item-thead">
+                            <input type="text" class="layui-input">
+                            <i class="layui-icon layui-icon-edit"></i>
+                            <i class="layui-icon layui-icon-close td-del"></i>
+                        </div>
+                        <div class="add-box-item-th-box">
+                            <div class="add-box-item-th bp">
+                                <div class="add-box-item-th-item">
+                                    <input type="text">
+                                    <i class="layui-icon layui-icon-edit"></i>
+                                    <i class="layui-icon layui-icon-close"></i>
+                                </div>
+                                <div class="add-box-item-th-item">
+                                    <input type="text">
+                                    <i class="layui-icon layui-icon-edit"></i>
+                                    <i class="layui-icon layui-icon-close"></i>
+                                </div>
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-primary ml20">添加</button>
+                        </div>
+
+                    </div>
+                </div>
+                <table class="layui-table" lay-skin="line">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>用户名</th>
+                      <th>性别</th>
+                      <th>城市</th>
+                      <th>签名</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+              {include file="public/ueditor" name="description"}
+            </div>
+          </div>          
+          
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+            	<input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+              <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:url('updateUserInfo')}">确认修改</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{/block}
+{block name="footjs"}
+<script src="__THIRD__/compressImg/tools.js"></script>
+<script src="__THIRD__/compressImg/pictureHandle.js"></script>
+<script type="text/javascript">
+layui.config({
+  base: '__JS__/layuiext/'
+}).extend({
+  numinput: 'numinput/numinput'
+  ,croppers: 'cropper/croppers'
+}).use(['form', 'numinput', 'croppers'], function() {
+  var form = layui.form
+  ,croppers = layui.croppers
+  ,numinp = layui.numinput;
+
+  numinp.init({ rightBtns: false });
+  
+  croppers.render({
+      elem: '#editimg'
+      ,saveW:150     //保存宽度
+      ,saveH:150
+      ,mark:1/1    //选取比例
+      ,area:'900px'  //弹窗宽度
+      ,url: "upload/uploadImg"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+      ,done: function(url){ //上传完毕回调
+          $("#inputimgurl").val(url);
+          $("#srcimgurl").attr('src',url);
+      }
+  });
+
+  // $('#editimg').pictureHandle(function(e){
+  //   console.log(e)
+  //   if(e.status == false){
+  //       footer_tip(e.tip)
+  //   }else{
+  //       $('#upload_img').parent('li').before(listr(e.src));
+  //       if($('.upload-box').children('li').length > 3){
+  //           $('.upload-box').children('li:last-child').hide();
+  //       }
+  //   }
+  // })
+
+});
+</script>
+{/block}

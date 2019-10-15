@@ -1,0 +1,110 @@
+.add-box-item {
+    display: flex;
+    align-items: center;
+}
+
+.add-box-item-thead {
+    display: flex;
+    padding: 8px;
+    box-sizing: border-box;
+    align-items: center;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid #e6e6e6;
+}
+
+.add-box-item-thead input {
+    width: 80px;
+    border: none;
+    outline: none;
+}
+
+.add-box-item {
+    margin-bottom: 20px;
+}
+
+.add-box-item img {
+    width: 20px;
+    height: 20px;
+}
+
+.add-box-item img,
+.add-box-item i {
+    cursor: pointer;
+}
+
+.add-box-item-th-box {
+    display: flex;
+    align-items: center;
+}
+
+.add-box-item-th {
+    display: flex;
+    margin-left: 20px;
+    box-sizing: border-box;
+    height: 50px;
+    line-height: 55px;
+}
+
+.bp {
+    padding: 8px 0px 2px 10px;
+    border: 1px solid #e6e6e6;
+}
+
+.add-box-item-th-item {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    border: 1px solid #f5f5f5;
+}
+
+.add-th {
+    margin-left: 20px;
+}
+
+.add-box-item-th input {
+    width: 60px;
+    border: none;
+    outline: none;
+    padding-left: 10px;
+}
+
+.table-btn {
+    display: flex;
+    align-items: flex-end;
+}
+
+.table-btn button {
+    height: 20px;
+    width: 40px;
+    font-size: 10px;
+    line-height: 0px;
+    background: #f5f5f5;
+    padding: 0px;
+    color: #333333;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.layui-table-cell {
+    height: 40px;
+    line-height: 40px;
+}
+
+.table-imgbox img {
+    width: 40px;
+    height: 40px;
+}
+
+.ml20 {
+    margin-left: 20px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+.layui-icon-edit,.layui-icon-close{
+    font-size: 22px;
+    color: #928C8C;
+}

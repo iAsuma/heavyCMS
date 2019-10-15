@@ -4,6 +4,7 @@ use think\facade\Request;
 /**
  * 上传封装类，主要为了统一上传路径
  * 修改返回路径为绝对路径
+ * 部分方法依赖 topthink/think-image
  */
 class Upload 
 {
@@ -53,9 +54,12 @@ class Upload
 	}
 
 	/**
-	* base64信息转为图片
-	*/
-	public function base64ToImage($base64Str)
+     * base64信息转为图片
+     * @access public
+     * @param  string      $base64Str  图片base
+     * @param  boolean     $isGetThumbnail 是否同时生成缩略图
+     */
+	public function base64ToImage($base64Str, $isGetThumbnail=false)
 	{
 		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
 
@@ -85,6 +89,63 @@ class Upload
 			return false;
 		}
 
+		if($isGetThumbnail){
+			// coding...
+		}
+
 		return [$full_path, $child_path.$file_name, $file_name];
+	}
+
+	/**
+     * base64信息转为缩略图片
+     * @access public
+     * @param  string      $base64Str  图片base
+     */
+	public function base64ToThumbnailImage($base64Str, $scale=[150, 150], $thumbType = \think\Image::THUMB_CENTER)
+	{
+		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
+
+		if($env_path){
+			$this->file_path = $env_path;
+		}
+
+		if(!is_dir($this->file_path) && !mkdir($this->file_path, 0777, true)){
+			throw new \think\Exception("文件目录没有权限");
+		}
+
+		list($type, $data) = explode(',', $base64Str);
+		$ext = str_replace(['data:image/', ';base64'], '', $type);
+		$ext == 'jpeg' && $ext = 'jpg';
+
+		$child_path = DIRECTORY_SEPARATOR.date('Ymd').DIRECTORY_SEPARATOR;
+		$file_name = md5(microtime(true).rand(1000, 9999)).'.'.$ext;
+
+		if(!file_exists($this->file_path.$child_path)){
+			mkdir($this->file_path.$child_path, 0777, true);	
+		}
+		
+		$full_path = $this->file_path.$child_path.$file_name;
+		$result = file_put_contents($full_path, base64_decode($data));
+
+		if(!$result){
+			return false;
+		}
+
+		$image = \think\Image::open($child_path.$file_name);
+		$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
+		$thumb_path = $this->file_path.$thumb_child_path.$file_name;
+		if($thumbType !== false){
+			$image->thumb($scale[0], $scale[1], $thumbType)->save($thumb_path);
+		}else{
+			$image->thumb($scale[0], $scale[1])->save($thumb_path);
+		}
+
+		if(file_exists($thumb_path)){
+			@unlink($full_path);
+		}else{
+			return false;
+		}
+
+		return [$thumb_path, $thumb_child_path.$file_name, $file_name];
 	}
 }

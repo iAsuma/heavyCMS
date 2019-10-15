@@ -2,9 +2,7 @@
 <link rel="stylesheet" href="__CSS__/ueditor.css" media="all">
 
 <!-- 加载编辑器的容器 -->
-<script id="editorContainer" name="[name]" type="text/plain">
-[content]
-</script>
+<script id="editorContainer" name="[name]" type="text/plain"></script>
 
 <!-- 配置文件 -->
 <script type="text/javascript" src="__THIRD__/ueditor/ueditor.config.js"></script>
@@ -17,6 +15,7 @@
         ,serverUrl: "/admin/ueditor"
         ,maximumWords: 8000
         ,initialFrameHeight:600
+        ,initialFrameWidth:'100%'
         ,toolbars: [[
             'fullscreen', 'source', '|', 'undo', 'redo', '|',
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
@@ -29,5 +28,13 @@
             'horizontal', 'spechars', 'wordimage', '|',
             'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|', 'preview', 'searchreplace', 'drafts'
         ]]
+    });
+    
+    ue.ready(function() {
+        let content = $('#editorContainer').parent().children('#hidden_content').val()
+        if(typeof $('#editorContainer').parent().children('#hidden_content').val() != 'undefined'){
+            //设置编辑器的内容
+            ue.setContent(content);
+        }
     });
 </script>

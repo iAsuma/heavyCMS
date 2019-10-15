@@ -1,0 +1,144 @@
+{extend name="public/base" /}
+{block name="title"}订单详情{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+<div class="layui-card">
+  <div class="layui-card-body">
+    <div class="order-detail-box">
+        <div class="order-detail">
+            <div class="status-dis">
+                <div class="dsflex">
+                    <i class="layui-icon layui-icon-ok-circle order-status-icon-ok"></i><!-- 已完成 -->
+                <!-- <i class="layui-icon layui-icon-log order-status-icon-other"></i> --><!-- 其他状态 -->
+                <span class="top_span">当前订单状态：已完成</span>
+                </div>
+                
+                <!-- <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a> -->
+                <a class="layui-btn layui-btn-primary layui-btn-radius assess">订单已评价</a>
+                <a class="layui-btn layui-btn-primary layui-btn-radius track" >订单追踪</a>
+            </div>
+            <div class="table-lable">
+                基本信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>订单编号</th>
+                    <th>用户账号</th>
+                    <th>支付方式</th>
+                    <th>买家留言</th>
+                    <th>物流单号</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="table-lable">
+                收货人信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>收货人</th>
+                    <th>手机号码</th>
+                    <th>邮政编码</th>
+                    <th>收货地址</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="table-lable">
+                商品信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>价格</th>
+                    <th>规格</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="text-align: right">合计：<span id="total" style="color: red"></span></div>
+            <div class="table-lable">
+                费用信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>商品合计</th>
+                    <th>运费</th>
+                    <th>优惠券</th>
+                    <th>红包</th>
+                    <th>实际支付金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+           <!-- <div class="table-lable">
+                操作信息
+            </div>
+            <table class="layui-table tb" id="operatingInfo">
+                <thead>
+                <tr class="tb-tr">
+                    <th>订单编号</th>
+                    <th>用户账号</th>
+                    <th>支付方式</th>
+                    <th>买家留言</th>
+                    <th>物流单号</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                </tr>
+                </tbody>
+            </table>
+    -->
+        </div>
+
+    </div>
+  </div>
+</div>
+</div>
+{/block}

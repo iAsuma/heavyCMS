@@ -1,0 +1,146 @@
+{extend name="public/base" /}
+{block name="title"}用户管理{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">
+    <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+      <div class="layui-form-item asuma-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">订单编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="order_no" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="orderSearch">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+        </div>
+      </div>
+    </form>
+    
+    <div class="layui-card-body">
+       
+        <table id="order" lay-filter="order"></table>  
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="detail">详情</a>
+  {{# if(d.order_status == 5){}}
+   <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="change">处理</a>
+  {{#}}}
+</script>
+
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use([ 'table','form','upload'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,upload = layui.upload;
+
+
+   var tableIns =  table.render({
+      elem: '#order'
+      ,url: "{:url('detailList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,defaultToolbar: ['filter', 'print']
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {field: 'order_no', title: '订单编号'}
+        ,{field: 'price', title: '订单价格'} 
+        ,{field: 'pay_money', title: '实际支付'} 
+        ,{field: 'pay_type', title: '支付类型',templet:function(d){
+          var pay_type='';
+            switch(d.pay_type){
+            case 1:  pay_type = '微信支付'; break;
+            case 2:  pay_type = '支付宝'; break;
+            case 3:  pay_type = '积分'; break;
+            case 4:  pay_type = '网银'; break;
+            default:;break;
+          }
+          return pay_type;
+        }} 
+        ,{field: 'name', title: '用户姓名'} 
+        ,{field: 'receiver_name', title: '收货人姓名'} 
+        ,{field: 'receiver_phone', title: '收货人电话'} 
+          ,{field: 'order_status', title: '订单状态', templet: function(d){
+          var order_status = ''
+          switch(d.order_status){
+            case 5:  order_status = '退款中'; break;
+            case 6:  order_status = '已退款'; break;
+            default:;break;
+          }
+          return order_status;
+        }}
+        ,{field: 'create_time', title: '创建时间', sort: true}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+   
+    table.on('sort(order)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+
+
+    //监听搜索
+    form.on('submit(orderSearch)', function(data){
+      let field = data.field;
+      //执行重载
+      tableIns.reload({
+        where: field
+        ,page:{curr:1}
+      });
+
+      return false;
+    });
+    
+    table.on('tool(order)', function(obj){
+        switch(obj.event){
+          case 'detail':
+              layer.open({
+                type: 2
+                ,title: obj.data.order_no
+                ,content: "{:url('detail')}?order_no="+obj.data.order_no
+                ,maxmin: true
+                ,area: ['80%', '90%']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+              });
+          break;
+          case 'change':
+              layer.confirm('金额是否已经退回？？', function(index){
+     
+                   $.post("{:url('Order/backMoney')}", {id:obj.data.id}, function(res){
+                      if(res.code == 1){
+                        layer.msg('退货已完成');
+                        table.reload('order'); //重载表格
+                        layer.close(index); //再执行关闭 
+                      }else{
+                        layer.msg(res.result, {icon: 5});
+                      }
+                    },'json');
+
+                }); 
+          break;
+        };
+    });
+
+
+  });
+</script>
+{/block}

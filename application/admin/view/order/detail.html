@@ -11,9 +11,23 @@
         <div class="order-detail">
             <div class="status-dis">
                 <div class="dsflex">
-                    <i class="layui-icon layui-icon-ok-circle order-status-icon-ok"></i><!-- 已完成 -->
-                <!-- <i class="layui-icon layui-icon-log order-status-icon-other"></i> --><!-- 其他状态 -->
-                <span class="top_span">当前订单状态：已完成</span>
+                    {if $order.order_status eq 3}
+                      <i class="layui-icon layui-icon-ok-circle order-status-icon-ok"></i>
+                      {else/}
+                      <i class="layui-icon layui-icon-log order-status-icon-other"></i>
+                    {/if}
+                    <span class="top_span">当前订单状态：
+                    {switch order.order_status}
+                        {case 0}未付款{/case}
+                        {case 1}待发货{/case}
+                        {case 2}待收货{/case}
+                        {case 3}已完成{/case}
+                        {case 4}已取消{/case}
+                        {case 5}退款中{/case}
+                        {case 6}已退款{/case}
+                        {default /}default
+                    {/switch}
+                    </span>
                 </div>
                 
                 <!-- <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a> -->
@@ -35,11 +49,20 @@
                 </thead>
                 <tbody>
                 <tr>
+                    <td>{$info.order_no}</td>
+                    <td>{$user.name}</td>
+                    <td>
+                        {switch order.pay_type}
+                            {case 1}微信支付{/case}
+                            {case 2}支付宝{/case}
+                            {case 3}积分{/case}
+                            {case 4}网银{/case}
+                            {default /}default
+                        {/switch}
+                   
+                    </td>
                     <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{$order.express_code}</td>
                 </tr>
                 </tbody>
             </table>
@@ -51,16 +74,14 @@
                 <tr>
                     <th>收货人</th>
                     <th>手机号码</th>
-                    <th>邮政编码</th>
                     <th>收货地址</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{$order.receiver_name}</td>
+                    <td>{$order.receiver_phone}</td>
+                    <td>{$order.receiver_address}</td>
                 </tr>
                 </tbody>
             </table>
@@ -78,16 +99,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr >
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+                    {volist name="list" id="vo"}
+                        <tr >
+                            <td>{$vo.goods_name}</td>
+                            <td>{$vo.unit_price}</td>
+                            <td></td>
+                            <td>{$vo.goods_num}</td>
+                            <td>{$vo.goods_num * $vo.unit_price}</td>
+                        </tr>
+                    {/volist}
                 </tbody>
             </table>
-            <div style="text-align: right">合计：<span id="total" style="color: red"></span></div>
+            <div style="text-align: right">合计：<span id="total" style="color: red">{$total}</span></div>
             <div class="table-lable">
                 费用信息
             </div>
@@ -96,18 +119,16 @@
                 <tr>
                     <th>商品合计</th>
                     <th>运费</th>
-                    <th>优惠券</th>
-                    <th>红包</th>
+                    <th>订单价格</th>
                     <th>实际支付金额</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr >
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{$total}</td>
+                    <td>{$order.freight}</td>
+                    <td>{$order.price}</td>
+                    <td>{$order.freight+$total}</td>
                 </tr>
                 </tbody>
             </table>

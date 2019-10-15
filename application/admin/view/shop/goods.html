@@ -1,0 +1,155 @@
+{extend name="public/base" /}
+{block name="title"}用户管理{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">
+    <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+      <div class="layui-form-item asuma-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">商品名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="goods_name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="goodsSearch">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+        </div>
+      </div>
+    </form>
+    
+    <div class="layui-card-body">
+       
+        <table id="goods" lay-filter="goods"></table>  
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="statusTpl" data-url="{:url('changeSold')}">
+  <input type="checkbox" name="is_sold" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="optstatus" {{d.is_sold == 1 ? 'checked' : ''}}>
+</script>
+
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use([ 'table','form','upload'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,upload = layui.upload;
+
+
+   var tableIns =  table.render({
+      elem: '#goods'
+      ,url: "{:url('dataList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,defaultToolbar: ['filter', 'print']
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {field: 'goods_name', title: '商品名称'}
+        ,{field: 'name', title: '分类'} 
+          ,{field: 'post_type', title: '邮寄方式', templet: function(d){
+          var post_type = ''
+          switch(d.post_type){
+            case 1:  post_type = '免邮' ;break;
+            case 2:  post_type = '不免邮'; break;
+            case 3:  post_type = '自提'; break;
+            default:;break;
+          }
+          return post_type;
+        }}
+        ,{field: 'freight', title: '运费'} 
+        ,{field:'is_sold', title:'是否上架',templet:'#statusTpl'}
+        ,{field: 'create_time', title: '创建时间', sort: true}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+   
+    table.on('sort(goods)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+
+
+    //监听搜索
+    form.on('submit(goodsSearch)', function(data){
+      let field = data.field;
+      //执行重载
+      tableIns.reload({
+        where: field
+        ,page:{curr:1}
+      });
+
+      return false;
+    });
+    
+    
+      form.on('switch(optstatus)', function(obj){
+      var wish = obj.elem.checked
+      var id = obj.value
+      $.post($('#statusTpl').data('url'),{id:id, is_sold: wish}, function(res){
+        if(res.code != 1){
+          layer.tips(res.result, obj.othis, {tips:1});
+          obj.elem.checked = !wish;
+          form.render('checkbox');
+        }
+      }, 'json')
+    })
+    
+
+    table.on('tool(goods)', function(obj){
+        switch(obj.event){
+          case 'edit':
+              layer.open({
+                type: 2
+                ,title: '编辑用户'
+                ,content: "{:url('goodsEdit')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['60%', '70%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
+          case 'del':
+              layer.confirm('确定删除？？', function(index){
+     
+                   $.post("{:url('Shop/del')}", {id:obj.data.id}, function(res){
+                      if(res.code == 1){
+                        layer.msg('删除成功');
+                        table.reload('goods'); //重载表格
+                        layer.close(index); //再执行关闭 
+                      }else{
+                        layer.msg(res.result, {icon: 5});
+                      }
+                    },'json');
+
+                }); 
+          break;
+        };
+    });
+
+
+  });
+</script>
+{/block}

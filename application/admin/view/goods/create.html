@@ -7,10 +7,10 @@
 <div class="layui-fluid">
 <div class="layui-row layui-col-space15">
   <div class="layui-col-md12">
-    <div class="layui-card">
+    <div class="layui-card" style="width: 1200px">
       <div class="layui-card-header">添加商品</div>
       <div class="layui-card-body" pad15>
-        <form class="layui-form" lay-filter="">
+        <form class="layui-form">
           <div class="layui-form-item">
             <label class="layui-form-label">商品名称</label>
             <div class="layui-input-block">
@@ -20,7 +20,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">商品分类</label>
             <div class="layui-input-block">
-              <select lay-search name="classification">
+              <select name="classification" lay-verify="required" lay-search>
                 <option value="">支持搜索</option>
                 {volist name="classify" id="one"}
                 <optgroup label="{$one.name}">
@@ -40,14 +40,6 @@
               <input type="text" name="introduction" value="" lay-verify="required" placeholder="请输入简短的介绍" class="layui-input">
             </div>
           </div>
-          <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label">配送方式</label>
-            <div class="layui-input-inline">
-                <input type="radio" name="post_type" value="1" title="包邮" checked>
-                <input type="radio" name="post_type" value="2" title="买家承担运费">
-                <input class="layui-input layui-input-number" min="1" max="100" step="1">
-            </div>
-          </div>
           <div class="layui-form-item">
             <label class="layui-form-label">商品主图</label>
             <div class="layui-input-block">
@@ -57,51 +49,51 @@
           </div>
           <div class="layui-form-item">
             <label class="layui-form-label">商品属性</label>
-            <div class="layui-input-block">
-                <button type="button" class="layui-btn layui-btn-asuma mb20"><i class="layui-icon">&#xe654;</i>添加参数</button>
+            <div class="layui-input-block" style="width: 90%">
+                <button type="button" class="layui-btn layui-btn-asuma mb20" id="addBigParam"><i class="layui-icon layui-icon-add-1"></i>添加参数</button>
                 <div id="add-box">
                     <div class="add-box-item">
                         <div class="add-box-item-thead">
                             <input type="text" class="layui-input">
                             <i class="layui-icon layui-icon-edit"></i>
-                            <i class="layui-icon layui-icon-close td-del"></i>
+                            <i class="layui-icon layui-icon-close delBig"></i>
                         </div>
-                        <div class="add-box-item-th-box">
-                            <div class="add-box-item-th bp">
+                        <div class="add-box-item-th-box" style="width:90%;">
+                            <div class="add-box-item-th bp" >
                                 <div class="add-box-item-th-item">
                                     <input type="text">
-                                    <i class="layui-icon layui-icon-edit"></i>
-                                    <i class="layui-icon layui-icon-close"></i>
-                                </div>
-                                <div class="add-box-item-th-item">
-                                    <input type="text">
-                                    <i class="layui-icon layui-icon-edit"></i>
-                                    <i class="layui-icon layui-icon-close"></i>
+                                    <i class="layui-icon layui-icon-edit doneParam"></i>
+                                    <i class="layui-icon layui-icon-close delParam"></i>
                                 </div>
                             </div>
-                            <button type="button" class="layui-btn layui-btn-primary ml20">添加</button>
+                            <button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>
                         </div>
-
                     </div>
                 </div>
-                <table class="layui-table" lay-skin="line">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>用户名</th>
-                      <th>性别</th>
-                      <th>城市</th>
-                      <th>签名</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tbody>
-                </table>
+                <div class="table-box">
+                  <table class="layui-table" lay-skin="line">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>性别</th>
+                        <th>城市</th>
+                        <th>签名</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                      <td>大师傅</td>
+                      <td>士大夫</td>
+                      <td>发电公司</td>
+                      <td>界人士</td>
+                      <td>发多少 </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+                <div class="layui-form-mid layui-word-aux">点击页面任意空白处完成添加</div>
             </div>
           </div>
           <div class="layui-form-item">
@@ -111,11 +103,23 @@
             </div>
           </div>          
           
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">配送方式</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="post_type" value="1" title="包邮" lay-filter="freightswt" checked >
+                <input type="radio" name="post_type" value="2" title="买家承担运费" lay-filter="freightswt">
+                <span class="layui-input-inline freight-line">
+                  <input class="layui-input freight-inp" name="freight" lay-verify="poInt">
+                  <span>元</span>
+                </span>
+            </div>
+          </div>
+
           <div class="layui-form-item">
             <div class="layui-input-block">
             	<input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
-              <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:url('updateUserInfo')}">确认修改</button>
-              <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
+              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:url('save')}">确认</button>
+              <button type="reset" class="layui-btn layui-btn-primary">取消</button>
             </div>
           </div>
         </form>
@@ -129,17 +133,71 @@
 <script src="__THIRD__/compressImg/tools.js"></script>
 <script src="__THIRD__/compressImg/pictureHandle.js"></script>
 <script type="text/javascript">
+  function bigParamHtml(){
+    var len = $('.add-box-item').length
+    if(len >= 5){
+      layer.msg('最多只能添加5个参数')
+      return false;
+    }
+
+    var _html = '<div class="add-box-item">'
+                    +'<div class="add-box-item-thead">'
+                        +'<input type="text" class="layui-input">'
+                        +'<i class="layui-icon layui-icon-edit"></i>'
+                        +'<i class="layui-icon layui-icon-close delBig"></i>'
+                    +'</div>'
+                    +'<div class="add-box-item-th-box">'
+                        +'<div class="add-box-item-th bp">'
+                            +'<div class="add-box-item-th-item">'
+                                +'<input type="text">'
+                                +'<i class="layui-icon layui-icon-edit doneParam"></i>'
+                                +'<i class="layui-icon layui-icon-close delParam"></i>'
+                            +'</div>'
+                        +'</div>'
+                        +'<button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>'
+                    +'</div>'
+                +'</div>';
+    console.log(_html)
+    $('#add-box').append(_html);
+  }
+
+  function lteParamHtml(){
+    var _html = '<div class="add-box-item-th-item">'
+                  +'<input type="text">'
+                  +'<i class="layui-icon layui-icon-edit doneParam"></i>'
+                  +'<i class="layui-icon layui-icon-close delParam"></i>'
+               +'</div>';
+    $('.add-box-item-th').append(_html);
+  }
+
+  function tableHtml(data){
+    var tablePre = '<table class="layui-table" lay-skin="line">'
+                    +'<thead>'
+                      +'<tr>';
+    var thead    =     '';
+    var tableMid =     '</tr>'
+                    +'</thead>'
+                    +'<tbody>'
+                      +'<tr>';
+    var tbody    =     '';
+    var tableEnd =     '/tr';
+                    +'</tbody>'
+                  +'</table>';
+
+
+
+    return tablePre + thead + tableMid + tbody + tableEnd;
+  }
+</script>
+<script type="text/javascript">
 layui.config({
   base: '__JS__/layuiext/'
 }).extend({
   numinput: 'numinput/numinput'
   ,croppers: 'cropper/croppers'
-}).use(['form', 'numinput', 'croppers'], function() {
+}).use(['form', 'croppers'], function() {
   var form = layui.form
-  ,croppers = layui.croppers
-  ,numinp = layui.numinput;
-
-  numinp.init({ rightBtns: false });
+  ,croppers = layui.croppers;
   
   croppers.render({
       elem: '#editimg'
@@ -165,6 +223,70 @@ layui.config({
   //       }
   //   }
   // })
+
+  /*** 属性操作区域方法 ***/
+
+  $('#addBigParam').on('click', function(){
+      bigParamHtml();
+  })
+
+  $(document).on('click', '.delBig', function(){
+    var _this = $(this)
+    var len = $('.add-box-item').length
+
+    if(len <= 1){
+      layer.msg('至少保留1个参数')
+      return false;
+    }
+
+    _this.parents('.add-box-item').remove()
+  })
+
+  $(document).on('click', '.addLteParam', function(){
+      lteParamHtml();
+  })
+
+  /***********************/
+
+  form.verify({
+    poInt: function(value ,item){
+      console.log(value)
+      console.log($('input[name=post_type]:checked').val())
+      if($('input[name=post_type]:checked').val() == 2){
+        if(value == '' || value == null){
+          return '运费不能为空';
+        }
+        if(!(/^[1-9]+\d*$/.test(value))){
+          return '运费只能为整数';
+        }
+      }
+    }
+  })
+
+  form.on('radio(freightswt)', function(data){
+    console.log(data)
+    if(data.value == 2){
+      $('.freight-line').show();
+    }else{
+      $('input[name=freight]').val('');
+      $('.freight-line').hide();
+    }
+  })
+
+  form.on('submit(save)', function(data){
+    var field = data.field; //获取提交的字段
+    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+
+    //提交 Ajax 成功后，关闭当前弹层并重载表格
+    $.post($(data.elem).data('url'), data.field, function(res){
+      if(res.code == 1){
+        parent.layui.table.reload('udzan-rule'); //重载表格
+        parent.layer.close(index); //再执行关闭 
+      }else{
+        layer.msg(res.result, {icon: 5});
+      }
+    },'json');
+  });
 
 });
 </script>

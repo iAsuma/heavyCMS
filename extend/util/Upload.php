@@ -121,7 +121,7 @@ class Upload
 		$file_name = md5(microtime(true).rand(1000, 9999)).'.'.$ext;
 
 		if(!file_exists($this->file_path.$child_path)){
-			mkdir($this->file_path.$child_path, 0777, true);	
+			@mkdir($this->file_path.$child_path, 0777, true);
 		}
 		
 		$full_path = $this->file_path.$child_path.$file_name;
@@ -133,6 +133,11 @@ class Upload
 
 		$image = \think\Image::open($full_path);
 		$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
+
+		if(!file_exists($this->file_path.$thumb_child_path)){
+			@mkdir($this->file_path.$thumb_child_path, 0777, true);
+		}
+
 		$thumb_path = $this->file_path.$thumb_child_path.$file_name;
 		if($thumbType !== false){
 			$image->thumb($scale[0], $scale[1], $thumbType)->save($thumb_path);

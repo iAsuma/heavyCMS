@@ -1,6 +1,5 @@
 .add-box-item {
     display: flex;
-    align-items: center;
 }
 
 .add-box-item-thead {
@@ -20,6 +19,9 @@
 }
 
 .add-box-item {
+    margin-bottom: 10px;
+}
+.add-box-item:last-child{
     margin-bottom: 20px;
 }
 
@@ -39,15 +41,15 @@
 }
 
 .add-box-item-th {
-    display: flex;
     margin-left: 20px;
     box-sizing: border-box;
-    height: 50px;
-    line-height: 55px;
+    min-height: 50px;
+    max-width: 774px;
 }
 
 .bp {
-    padding: 8px 0px 2px 10px;
+    padding: 8px;
+    padding-bottom: 0px;
     border: 1px solid #e6e6e6;
 }
 
@@ -56,6 +58,9 @@
     align-items: center;
     margin-right: 10px;
     border: 1px solid #f5f5f5;
+    float: left;
+    margin-bottom: 8px;
+    height: 30px;
 }
 
 .add-th {
@@ -107,4 +112,20 @@
 .layui-icon-edit,.layui-icon-close{
     font-size: 22px;
     color: #928C8C;
+}
+
+.add-box-item-th div:last-child{
+    margin-right: 0px;
+}
+.table-box{
+    min-height: 200px;
+    padding: 5px;
+    border: 1px solid #e6e6e6;
+}
+.freight-line{
+    display: none;
+    float: right !important;
+}
+.freight-inp{
+    display: inline-block;width: 60px;
 }

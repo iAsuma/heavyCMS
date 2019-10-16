@@ -1,35 +1,28 @@
 {extend name="public/base" /}
-{block name="title"}商品列表{/block}
+{block name="title"}轮播图{/block}
+{block name="css"}
+<style type="text/css">
+    .layui-table-cell{
+      text-align:center;
+      height: auto;
+      white-space: normal;
+    }
+.imgs{width: 200px;height: 40px}
+</style>
+{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
     <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
       <div class="layui-form-item asuma-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">商品名称</label>
+            <label class="layui-form-label">标题</label>
             <div class="layui-input-block">
-                <input type="text" name="goods_name" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-         <div class="layui-inline">
-            <label class="layui-form-label">分类名称</label>
-            <div class="layui-input-block">
-                <select name="class_id" >
-                  <option value="">请选择</option>
-                  {volist name="info" id="vo"}
-                    <option value="{$vo.id}">{$vo.name}</option>
-                  {/volist}
-                </select>
+                <input type="text" name="title" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
-        <label class="layui-form-label">是否上架</label>
-        <div class="layui-input-block">
-            <input type="checkbox"  name="is_sold" checked="" lay-skin="switch" lay-text="是|否" value="1">
-        </div>
-    </div>
-        <div class="layui-inline">
-            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="goodsSearch">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="bannerSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
         </div>
@@ -37,8 +30,11 @@
     </form>
     
     <div class="layui-card-body">
-       
-        <table id="goods" lay-filter="goods"></table>  
+        <div class="layui-tab-content">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
+        </div>
+   
+        <table id="banner" lay-filter="banner"></table>  
     </div>
   </div>
 </div>
@@ -64,8 +60,8 @@
 
 
    var tableIns =  table.render({
-      elem: '#goods'
-      ,url: "{:url('dataList')}" //数据接口
+      elem: '#banner'
+      ,url: "{:url('bannerList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -76,26 +72,14 @@
         }
       }
       ,cols: [[ //表头
-        {field: 'goods_name', title: '商品名称'}
-        ,{field: 'name', title: '分类'} 
-          ,{field: 'post_type', title: '邮寄方式', templet: function(d){
-          var post_type = ''
-          switch(d.post_type){
-            case 1:  post_type = '免邮' ;break;
-            case 2:  post_type = '不免邮'; break;
-            case 3:  post_type = '自提'; break;
-            default:;break;
-          }
-          return post_type;
-        }}
-        ,{field: 'freight', title: '运费'} 
-        ,{field:'is_sold', title:'是否上架',templet:'#statusTpl'}
-        ,{field: 'create_time', title: '创建时间', sort: true}
+        {field: 'title', title: '标题'}
+        ,{field: 'img', title: '图片',templet:'<div><img class="imgs" src="__FILEROOT__{{ d.img }}"></div>'}
+        ,{field: 'landing_url', title: '链接'}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });
    
-    table.on('sort(goods)',function(obj){
+    table.on('sort(banner)',function(obj){
       if(tableIns.config.page.count <= tableIns.config.page.limit){
         $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
       }
@@ -103,9 +87,8 @@
 
 
     //监听搜索
-    form.on('submit(goodsSearch)', function(data){
+    form.on('submit(bannerSearch)', function(data){
       let field = data.field;
-      console.log(field);
       //执行重载
       tableIns.reload({
         where: field
@@ -115,8 +98,22 @@
       return false;
     });
     
+    $('#add').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '添加轮播图'
+          ,content: "{:url('banneradd')}"
+          ,maxmin: true
+          ,area: ['35%', '50%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
     
-      form.on('switch(optstatus)', function(obj){
+    form.on('switch(optstatus)', function(obj){
       var wish = obj.elem.checked
       var id = obj.value
       $.post($('#statusTpl').data('url'),{id:id, is_sold: wish}, function(res){
@@ -129,13 +126,13 @@
     })
     
 
-    table.on('tool(goods)', function(obj){
+    table.on('tool(banner)', function(obj){
         switch(obj.event){
           case 'edit':
               layer.open({
                 type: 2
                 ,title: '编辑用户'
-                ,content: "{:url('goodsEdit')}?id="+obj.data.id
+                ,content: "{:url('bannerEdit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['60%', '70%']
                 ,btn: ['确定', '取消']
@@ -151,10 +148,10 @@
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('Shop/del')}", {id:obj.data.id}, function(res){
+                   $.post("{:url('Shop/bannerDel')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
-                        table.reload('goods'); //重载表格
+                        table.reload('banner'); //重载表格
                         layer.close(index); //再执行关闭 
                       }else{
                         layer.msg(res.result, {icon: 5});

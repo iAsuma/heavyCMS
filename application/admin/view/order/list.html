@@ -1,5 +1,5 @@
 {extend name="public/base" /}
-{block name="title"}用户管理{/block}
+{block name="title"}订单列表{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
@@ -116,7 +116,7 @@
           }
           return order_status;
         }}
-        ,{field: 'create_time', title: '创建时间', sort: true}
+        ,{field: 'create_time', title: '订单生成时间', sort: true}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });

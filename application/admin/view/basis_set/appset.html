@@ -1,0 +1,135 @@
+{extend name="public/base" /}
+{block name="title"}轮播图{/block}
+{block name="css"}
+<style type="text/css">
+    .layui-table-cell{
+      text-align:center;
+      height: auto;
+      white-space: normal;
+    }
+.imgs{width: 200px;height: 40px}
+</style>
+{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">   
+    <div class="layui-card-body">
+        <div class="layui-tab-content">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
+        </div>
+   
+        <table id="appset" lay-filter="appset"></table>  
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use([ 'table','form','upload'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,upload = layui.upload;
+
+
+   var tableIns =  table.render({
+      elem: '#appset'
+      ,url: "{:url('dataList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,defaultToolbar: ['filter', 'print']
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {field: 'app_name', title: '应用名称'}
+        ,{field: 'app_id', title: 'appId'}
+        ,{field: 'app_secret', title: 'appSecret'}
+        ,{field: 'app_token', title: 'appToken'}
+        ,{field: 'mch_id', title: 'mchId'}
+        ,{field: 'partnerkey', title: 'partnerKey'}
+         ,{field: 'type', title: '应用类型',templet:function(d){
+          var type='';
+            switch(d.type){
+            case 1:  type = '公众号'; break;
+            // case 2:  type = '小程序'; break;
+            default:;break;
+          }
+          return type;
+        }}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+   
+    table.on('sort(appset)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+    
+    $('#add').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '添加基础配置'
+          ,content: "{:url('add')}"
+          ,maxmin: true
+          ,area: ['40%', '80%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
+    
+    table.on('tool(appset)', function(obj){
+        switch(obj.event){
+          case 'edit':
+              layer.open({
+                type: 2
+                ,title: '编辑基础配置'
+                ,content: "{:url('edit')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['40%', '80%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
+          case 'del':
+              layer.confirm('确定删除？？', function(index){
+     
+                   $.post("{:url('BasisSet/del')}", {id:obj.data.id}, function(res){
+                      if(res.code == 1){
+                        layer.msg('删除成功');
+                        table.reload('appset'); //重载表格
+                        layer.close(index); //再执行关闭 
+                      }else{
+                        layer.msg(res.result, {icon: 5});
+                      }
+                    },'json');
+
+                }); 
+          break;
+        };
+    });
+
+
+  });
+</script>
+{/block}

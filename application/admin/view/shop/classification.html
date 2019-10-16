@@ -2,6 +2,12 @@
 {block name="title"}商品分类{/block}
 {block name="css"}
 <style type="text/css">
+    .layui-table-cell{
+      text-align:center;
+      height: auto;
+      white-space: normal;
+    }
+.imgs{width: 30px;height: 30px}
 .menu-search{width: auto !important;margin-right: 0 !important;margin-left: 30px;}
 .menu-search .layui-form-checkbox[lay-skin="primary"]{margin-top: 0;}
 </style>
@@ -74,6 +80,7 @@
           }
           return pid;
         }}
+      ,{field: 'main_img', title: '图片',templet:'<div><img class="imgs" src="__FILEROOT__{{ d.main_img }}"></div>'}
       ,{title: '操作', toolbar: '#optTpl'}
       ]]
     });

@@ -1,0 +1,80 @@
+{extend name="public/original" /}
+{block name="content"}
+<div class="layui-form" lay-filter="filter-form-auth" id="form-auth" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">应用名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="app_name" value=""  autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">appId</label>
+        <div class="layui-input-block">
+            <input type="text" name="app_id" value=""  autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">appSecret</label>
+        <div class="layui-input-block">
+            <input type="text" name="app_secret" value=""  autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">appToken</label>
+        <div class="layui-input-block">
+            <input type="text" name="app_token" value=""  autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">应用类型</label>
+        <div class="layui-input-block">
+          <select name="type">
+            <option value="1">公众号</option>
+            <!-- <option value="2">小程序</option> -->
+          </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">mch_id</label>
+        <div class="layui-input-block">
+            <input type="text" name="mch_id" value=""  autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+          <label class="layui-form-label">partnerkey</label>
+          <div class="layui-input-block">
+             <input type="text" name="partnerkey" value=""  autocomplete="off" class="layui-input" >
+          </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+        <input type="button" lay-submit lay-filter="submit" id="submit" value="确认">
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+  layui.use(['form','upload'], function(){
+    var form = layui.form;
+
+    //监听提交
+    form.on('submit(submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+ 
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      $.post("{:url('addApp')}", data.field, function(res){
+        if(res.code == 1){
+          parent.layer.msg('添加成功');
+          parent.layui.table.reload('appset'); //重载表格
+          parent.layer.close(index); //再执行关闭 
+        }else{
+          layer.msg(res.result, {icon: 5});
+        }
+      },'json');
+    });
+    
+  })
+</script>
+{/block}

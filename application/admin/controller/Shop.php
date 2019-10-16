@@ -6,7 +6,7 @@ use think\Request;
 use Db;
 use think\facade\Hook;
 /**
-* 用户管理
+* 微商城
 * @author zhaoyun  
 */
 class Shop extends Base
@@ -75,7 +75,7 @@ class Shop extends Base
     public function classList()
     {
         // 查询所有规则，用以排序子父级关系，并存入缓存(tag:auth_rule)
-        $rules = Db::name('shop_classification')->field('id,name,pid')->select();       
+        $rules = Db::name('shop_classification')->field('id,name,pid,main_img')->select();       
         $tree = new \util\Tree($rules);
         $modsTree = $tree->table();
         $page = $get['page'] ?? 1;
@@ -94,12 +94,13 @@ class Shop extends Base
     public function addClass(Request $request)
     {
         if(checkFormToken($request->post())){
-            $image = $request->post('image');
-            $r = app('upload')->base64ToThumbnailImage($image, [100, 100]);
-            dump($r);die;
+    
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+      
             try {
                 $data = [
                     'name' => $request->post('name'),
+                    'main_img' => $image[1],
                     'pid' => 0,
                 ];
 
@@ -133,9 +134,11 @@ class Shop extends Base
         try {
             $post = $request->post();
             !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+      
             $data = [
                     'name' => $request->post('name'),
+                    'main_img' => $image[1]
             ];
 
             $result = Db::table('shop_classification')->where('id', (int)$post['id'])->update($data);
@@ -162,10 +165,12 @@ class Shop extends Base
     public function secondClass(Request $request)
     {
         if(checkFormToken($request->post())){
-  
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+      
             try {
                 $data = [
                     'name' => $request->post('name'),
+                    'main_img' => $image[1],
                     'pid' => $request->post('id')
                 ];
 
@@ -199,7 +204,7 @@ class Shop extends Base
         }
 
     }
-
+    // 商品上/下架
     public function changeSold()
     {
         $id = (int)$this->request->post('id');
@@ -222,19 +227,121 @@ class Shop extends Base
     }
 
 
-    public function imgUpload()
+   /**
+     * 轮播图
+     * @author zhaoyun  
+     */
+    public function banner()
     {
-        $file=\request()->file("file");
-        $info = $file->move('./uploads');
-        if($info){
+        return $this->fetch();
+    }
 
-            $path ="/uploads/".str_replace('\\','/',$info->getSaveName());
-            // 成功上传后 返回上传信息
-            return json(array('state'=>1,'msg'=>'上传成功','path'=>$path));
-        }else{
-            // 上传失败返回错误信息
-            return json(array('state'=>0,'msg'=>'上传失败'));
+    public function bannerList()
+    {   
+
+        $get = $this->request->get();
+        $page = $get['page'] ?? 1;
+        $limit = $get['limit'] ?? 10;
+        
+        $where = [
+            ['title', 'LIKE', $get['title'] ?? '']
+        ];
+ 
+        $formWhere = $this->parseWhere($where);
+        $countQuery = Db::table('shop_banner')->where($formWhere);
+        $query = Db::table('shop_banner')->field('id,title,img,landing_url')->where($formWhere)->page($page, $limit)->order('id', 'desc');
+        $count = $countQuery->count();
+        $data = $query->select();
+        return table_json($data, $count);
+    }
+
+     public function bannerAdd()
+    {
+        return $this->fetch();
+    }
+
+    public function addBanner(Request $request)
+    {
+        if(checkFormToken($request->post())){
+    
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 400]);
+      
+            try {
+                $data = [
+                    'title' => $request->post('title'),
+                    'landing_url' => $request->post('landing_url'),
+                    'img' => $image[1]
+                ];
+
+                $result = Db::table('shop_banner') -> insert($data);
+                !$result && exit(res_json_native(-3, '添加失败'));
+                Hook::listen('admin_log', ['首页管理', '添加了banner']);
+
+                destroyFormToken($request->post());
+                return res_json(1);
+            } catch (\Exception $e) {
+                return res_json(-100,$e->getMessage());
+            }
         }
+
+        return res_json(-2, '请勿重复提交');
+    }
+
+    public function bannerEdit()
+    {
+        $id = (int)$this->request->get('id');
+        $id && $info = Db::table('shop_banner')->where(['id' => $id])->find();
+        isset($info) && $this->assign('info', $info);
+        return $this->fetch();
+    }
+
+
+    public function editBanner(Request $request)
+    {
+        try {
+            $post = $request->post();
+            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+      
+            $data = [
+                    'title' => $request->post('title'),
+                    'landing_url' => $request->post('landing_url'),
+                    'img' => $image[1]
+            ];
+
+            $result = Db::table('shop_banner')->where('id', (int)$post['id'])->update($data);
+            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+            Hook::listen('admin_log', ['首页管理', '修改了banner']);
+
+            destroyFormToken($post);
+            return res_json(1);
+        } catch (\Exception $e) {
+            return res_json(-100, $e->getMessage());
+        }
+        
+    }
+
+    public function bannerDel(Request $request)
+    {
+        
+        $id = $request->post('id');
+        if (Db::table('shop_banner') ->where('id', '=', $id) -> delete()) { 
+            Hook::listen('admin_log', ['首页管理', '删除了轮播图']);
+            return res_json(1); 
+        } else {
+            return res_json(-1);
+        }
+      
+    }
+
+    /**
+     * 推荐位
+     * @author zhaoyun  
+     */
+    public function recommended()
+    {
+       
+        return $this->fetch();
     }
 
 }

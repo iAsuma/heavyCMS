@@ -29,9 +29,11 @@
                     {/switch}
                     </span>
                 </div>
-                
-                <!-- <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a> -->
+                {if $setcontent.stars}
                 <a class="layui-btn layui-btn-primary layui-btn-radius assess">订单已评价</a>
+                {else/}
+                <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a>
+                {/if}
                 <a class="layui-btn layui-btn-primary layui-btn-radius track" >订单追踪</a>
             </div>
             <div class="table-lable">
@@ -162,4 +164,38 @@
   </div>
 </div>
 </div>
+{/block}
+{block name="footjs"}
+<script>
+  layui.use(['form'], function(){
+    var form = layui.form;
+    var id="{$order.id}";
+    $('.assess').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '订单评价'
+          ,content: "{:url('assess')}?id="+id
+          ,maxmin: true
+          ,area: ['50%', '60%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
+
+    $('.track').on('click', function () {
+        
+         layer.open({
+          type: 2
+          ,title: '订单追踪'
+          ,content: "{:url('track')}?id="+id
+          ,maxmin: true
+          ,area: ['35%', '70%']
+        });
+    });
+    
+  })
+</script> 
 {/block}

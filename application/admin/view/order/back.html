@@ -1,5 +1,4 @@
 {extend name="public/base" /}
-{block name="title"}用户管理{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
@@ -11,7 +10,28 @@
                 <input type="text" name="order_no" autocomplete="off" class="layui-input">
             </div>
         </div>
-
+        <div class="layui-inline">
+          <label class="layui-form-label">支付类型</label>
+          <div class="layui-input-block">
+              <select name="pay_type">
+                <option value="">请选择类型</option>
+                <option value="1">微信支付</option>
+                <option value="2">支付宝</option>
+                <option value="3">积分</option>
+                <option value="4">网银</option>
+              </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">订单状态</label>
+          <div class="layui-input-block">
+              <select name="order_status">
+                <option value="">请选择状态</option>
+                <option value="5">退款中</option>
+                <option value="6">已退款</option>
+              </select>
+          </div>
+        </div>
         <div class="layui-inline">
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="orderSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -84,7 +104,7 @@
           }
           return order_status;
         }}
-        ,{field: 'create_time', title: '创建时间', sort: true}
+        ,{field: 'create_time', title: '订单生成时间', sort: true}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });

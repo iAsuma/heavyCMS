@@ -30,12 +30,18 @@ class Goods extends Base
             //     exit(res_json_str(-1, $validate->getError()));
             // }
 
+			$attrsArr = json_decode($request->post('goods_attributes'), true);
+			$attr = [];
+			foreach ($attributesArr as $k => $v) {
+				$attr[] = [$k, $v];
+			}
+
             Db::startTrans();
             try {
                 $data = [
                     'goods_name' => $request->post('goods_name'),
                     'classification_id' => $request->post('classification'),
-                    'goods_sku_attributes' => '',
+                    'goods_sku_attributes' => json_encode($attr, JSON_UNESCAPED_UNICODE),
                     'introduction' => $request->post('introduction'),
                     'create_time' => time(),
                     'is_sold' => '',

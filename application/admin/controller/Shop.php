@@ -264,7 +264,7 @@ class Shop extends Base
     {
         if(checkFormToken($request->post())){
     
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 400]);
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
       
             try {
                 $data = [

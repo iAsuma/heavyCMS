@@ -54,15 +54,13 @@
                 <div id="add-box">
                     <div class="add-box-item">
                         <div class="add-box-item-thead">
-                            <input type="text" class="layui-input">
-                            <i class="layui-icon layui-icon-edit"></i>
+                            <input type="text" class="layui-input big_input">
                             <i class="layui-icon layui-icon-close delBig"></i>
                         </div>
                         <div class="add-box-item-th-box" style="width:90%;">
                             <div class="add-box-item-th bp" >
                                 <div class="add-box-item-th-item">
-                                    <input type="text">
-                                    <i class="layui-icon layui-icon-edit doneParam"></i>
+                                    <input type="text" class="attr_input">
                                     <i class="layui-icon layui-icon-close delParam"></i>
                                 </div>
                             </div>
@@ -71,28 +69,9 @@
                     </div>
                 </div>
                 <div class="table-box">
-                  <table class="layui-table" lay-skin="line">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>用户名</th>
-                        <th>性别</th>
-                        <th>城市</th>
-                        <th>签名</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                      <td>大师傅</td>
-                      <td>士大夫</td>
-                      <td>发电公司</td>
-                      <td>界人士</td>
-                      <td>发多少 </td>
-                      </tr>
-                    </tbody>
-                  </table>
 
                 </div>
+                <input type="hidden" name="goods_attributes" value="">
                 <div class="layui-form-mid layui-word-aux">点击页面任意空白处完成添加</div>
             </div>
           </div>
@@ -142,32 +121,61 @@
 
     var _html = '<div class="add-box-item">'
                     +'<div class="add-box-item-thead">'
-                        +'<input type="text" class="layui-input">'
-                        +'<i class="layui-icon layui-icon-edit"></i>'
+                        +'<input type="text" class="layui-input big_input">'
                         +'<i class="layui-icon layui-icon-close delBig"></i>'
                     +'</div>'
                     +'<div class="add-box-item-th-box">'
                         +'<div class="add-box-item-th bp">'
                             +'<div class="add-box-item-th-item">'
-                                +'<input type="text">'
-                                +'<i class="layui-icon layui-icon-edit doneParam"></i>'
+                                +'<input type="text" class="attr_input">'
                                 +'<i class="layui-icon layui-icon-close delParam"></i>'
                             +'</div>'
                         +'</div>'
                         +'<button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>'
                     +'</div>'
                 +'</div>';
-    console.log(_html)
+    
     $('#add-box').append(_html);
   }
 
-  function lteParamHtml(){
+  function lteParamHtml(obj){
+    var itemBox = obj.parent('.add-box-item-th-box').children('.add-box-item-th');
+    var len = itemBox.children('.add-box-item-th-item').length
+    
+    if(len >= 8){
+      layer.msg('最多只能添加8个属性')
+      return false;
+    }
+
     var _html = '<div class="add-box-item-th-item">'
-                  +'<input type="text">'
-                  +'<i class="layui-icon layui-icon-edit doneParam"></i>'
+                  +'<input type="text" class="attr_input">'
                   +'<i class="layui-icon layui-icon-close delParam"></i>'
                +'</div>';
-    $('.add-box-item-th').append(_html);
+
+    itemBox.append(_html);
+  }
+
+  function paramJson(){
+    var father = $('.add-box-item')
+    var json_data = {};
+    for (var i = 0; i < father.length; i++) {
+      var key = father.eq(i).children('.add-box-item-thead').children('input').val().trim();
+      if(key == '') {
+        continue;
+      }
+      json_data[key] = [];
+
+      let children = father.eq(i).children('.add-box-item-th-box').children('.add-box-item-th').children('.add-box-item-th-item')
+      children.each(function(i,v){
+        let value = $(v).children('input').val().trim();
+        if(value == ''){
+          return true;
+        }
+        json_data[key].push(value)
+      })
+    }
+    $('input[name=goods_attributes]').val(JSON.stringify(json_data))
+    return json_data;
   }
 
   function tableHtml(data){
@@ -180,14 +188,54 @@
                     +'<tbody>'
                       +'<tr>';
     var tbody    =     '';
-    var tableEnd =     '/tr';
+    var tableEnd =     '</tr>';
                     +'</tbody>'
                   +'</table>';
 
+    var preData = []
+    $.each(data, function(i, v){
+      thead += '<th>'+i+'</th>'
+      preData.push(v)
+    })
+    thead += '<th>展示图</th><th>库存</th><th>价格</th>'
 
+    var madingData = calcDescartes(preData);
+    
+    if(madingData[0] instanceof Array){
+      $.each(madingData, function(i, v){
+        tbody += '<tr>';
+        for (var i = 0; i < v.length; i++) {
+          tbody += '<td>'+v[i]+'</td>';
+        }
+        tbody += '<td></td><td></td><td></td></tr>';
+      })
+    }else{
+        for (var i = 0; i < madingData.length; i++) {
+          tbody += '<tr><td>'+madingData[i]+'</td><td></td><td></td><td></td></tr>';
+        }
+    }
 
     return tablePre + thead + tableMid + tbody + tableEnd;
   }
+
+/*
+* 笛卡尔积算法
+*/
+function calcDescartes (array) {
+    if (array.length < 2) return array[0] || [];
+    return [].reduce.call(array, function (col, set) {
+        var res = [];
+        col.forEach(function (c) {
+            set.forEach(function (s) {
+                var t = [].concat(Array.isArray(c) ? c : [c]);
+                t.push(s);
+                res.push(t);
+            })
+        });
+        return res;
+    });
+}
+
 </script>
 <script type="text/javascript">
 layui.config({
@@ -198,7 +246,7 @@ layui.config({
 }).use(['form', 'croppers'], function() {
   var form = layui.form
   ,croppers = layui.croppers;
-  
+
   croppers.render({
       elem: '#editimg'
       ,saveW:150     //保存宽度
@@ -227,6 +275,33 @@ layui.config({
   /*** 属性操作区域方法 ***/
 
   $('#addBigParam').on('click', function(){
+      var f_obj = $('.add-box-item').find('.add-box-item-thead')
+      var f_return = false;
+      $.each(f_obj, function(i, v){
+        if($(v).children('input').val() == ''){
+          f_return = true;
+          return false;
+        }
+      })
+      if(f_return == true){
+        layer.msg('请先完善已有的参数')
+        return false;
+      }
+
+      var c_obj = $('.add-box-item').find('.add-box-item-th-item')
+      var c_return = false;
+      $.each(c_obj, function(i, v){
+        if($(v).children('input').val() == ''){
+          c_return = true;
+          return false;
+        }
+      })
+
+      if(c_return == true){
+        layer.msg('请先完善已有的参数的属性')
+        return false;
+      }
+
       bigParamHtml();
   })
 
@@ -240,18 +315,90 @@ layui.config({
     }
 
     _this.parents('.add-box-item').remove()
+
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  $(document).on('blur', '.big_input', function(){
+    
+    if($(this).val() == '' || $(this).val() == null){
+      return false;
+    }
+
+    var obj = $(this).parents('.add-box-item').find('.add-box-item-th')
+    let child_value = obj.children('.add-box-item-th-item').eq(0).children('input').val()
+
+    if(child_value == '' || child_value == null){
+      return false;
+    }
+
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
   })
 
   $(document).on('click', '.addLteParam', function(){
-      lteParamHtml();
+      var _this = $(this)
+      var f_value = _this.parents('.add-box-item').children('.add-box-item-thead').find('input').val()
+      if(f_value == '' || f_value == null){
+        layer.msg('请先完善当前的参数名称')
+        return false;
+      }
+
+      // var childObj = $(this).parent('.add-box-item-th-box').find('.add-box-item-th-item')
+      // var isReturn = false;
+      // $.each(childObj, function(i, v){
+      //   if($(v).find('input').val() == '' || $(v).find('input').val() == null){
+      //     isReturn = true;
+      //     return false;
+      //   }
+      // })
+
+      // if(isReturn == true){
+      //   layer.msg('请先完善前面的属性');
+      //   return false;
+      // } 
+
+      lteParamHtml(_this);
+  })
+
+  $(document).on('click', '.delParam', function(){
+    var _this = $(this)
+    var len = _this.parents('.add-box-item-th').children('.add-box-item-th-item').length
+    
+    if(len <= 1){
+      layer.msg('当前参数至少保留1个属性');
+      return false;
+    }
+    _this.parent('.add-box-item-th-item').remove()
+
+    let json_data = paramJson();
+
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  $(document).on('blur', '.attr_input', function(){
+    if($(this).val() == '' || $(this).val() == null){
+      return false;
+    }
+    let f_value = $(this).parents('.add-box-item').children('.add-box-item-thead').children('input').val();
+    
+    if(f_value == '' || f_value == null){
+      return false;
+    }
+
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
   })
 
   /***********************/
 
   form.verify({
     poInt: function(value ,item){
-      console.log(value)
-      console.log($('input[name=post_type]:checked').val())
       if($('input[name=post_type]:checked').val() == 2){
         if(value == '' || value == null){
           return '运费不能为空';

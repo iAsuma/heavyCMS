@@ -12,15 +12,15 @@
         <label class="layui-form-label">分类级别</label>
         <div class="layui-input-block">
           {if $info.pid eq 0}
-          <input type="text" value="一级分类"  autocomplete="off" class="layui-input" disabled="disabled">
+          <input type="text" value="一级"  autocomplete="off" class="layui-input" disabled="disabled">
           {else/}
-          <input type="text" value="二级分类"  autocomplete="off" class="layui-input" disabled="disabled">
+          <input type="text" value="二级"  autocomplete="off" class="layui-input" disabled="disabled">
           {/if}
         </div>
     </div>
     {if $info.pid neq 0}
        <div class="layui-form-item">
-          <label class="layui-form-label">所属一级分类</label>
+          <label class="layui-form-label">所属一级</label>
           <div class="layui-input-block">
              <input type="text" value="{$pidname.name}"  autocomplete="off" class="layui-input" disabled="disabled">
            

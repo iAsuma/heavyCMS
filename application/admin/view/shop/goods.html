@@ -11,7 +11,23 @@
                 <input type="text" name="goods_name" autocomplete="off" class="layui-input">
             </div>
         </div>
-
+         <div class="layui-inline">
+            <label class="layui-form-label">分类名称</label>
+            <div class="layui-input-block">
+                <select name="class_id" >
+                  <option value="">请选择</option>
+                  {volist name="info" id="vo"}
+                    <option value="{$vo.id}">{$vo.name}</option>
+                  {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+        <label class="layui-form-label">是否上架</label>
+        <div class="layui-input-block">
+            <input type="checkbox"  name="is_sold" checked="" lay-skin="switch" lay-text="是|否" value="1">
+        </div>
+    </div>
         <div class="layui-inline">
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="goodsSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -89,6 +105,7 @@
     //监听搜索
     form.on('submit(goodsSearch)', function(data){
       let field = data.field;
+      console.log(field);
       //执行重载
       tableIns.reload({
         where: field

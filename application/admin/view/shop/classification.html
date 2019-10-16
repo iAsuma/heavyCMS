@@ -103,7 +103,7 @@
           ,title: '添加分类'
           ,content: "{:url('classadd')}"
           ,maxmin: true
-          ,area: ['25%', '30%']
+          ,area: ['35%', '60%']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var submit = layero.find('iframe').contents().find("#submit");
@@ -120,7 +120,7 @@
                 ,title: '编辑分类'
                 ,content: "{:url('classedit')}?id="+obj.data.id
                 ,maxmin: true
-                ,area: ['35%', '30%']
+                ,area: ['35%', '60%']
                 ,btn: ['确定', '取消']
                 ,success: function (layero, index) {
                    layero.find('input[name=id]').val(obj.data.id)

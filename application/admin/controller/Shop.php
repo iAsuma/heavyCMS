@@ -18,6 +18,8 @@ class Shop extends Base
      */
     public function goods()
     {
+        $info = Db::table('shop_classification')->field('id,name')->where('pid','>',0)->order('pid','asc')->select();
+        isset($info) && $this->assign('info', $info);
         return $this->fetch();
     }
 
@@ -31,15 +33,16 @@ class Shop extends Base
         $where = [
              ['shop_goods.status', '<>', '-1']
             ,['shop_goods.goods_name', 'LIKE', $get['goods_name'] ?? '']
+            ,['shop_goods.classification_id', '=', $get['class_id'] ?? '']
+            ,['shop_goods.is_sold', '=', $get['is_sold'] ?? '']
         ];
  
         $formWhere = $this->parseWhere($where);
-
         $countQuery = Db::table('shop_goods')->where($formWhere);
+
         $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.post_type,g.freight,c.name,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
         $count = $countQuery->count();
         $data = $query->select();
- 
         return table_json($data, $count);
     }
 
@@ -91,7 +94,9 @@ class Shop extends Base
     public function addClass(Request $request)
     {
         if(checkFormToken($request->post())){
-  
+            $image = $request->post('image');
+            $r = app('upload')->base64ToThumbnailImage($image, [100, 100]);
+            dump($r);die;
             try {
                 $data = [
                     'name' => $request->post('name'),
@@ -216,5 +221,20 @@ class Shop extends Base
         return json(['code' => 1, 'result' => '成功']);
     }
 
+
+    public function imgUpload()
+    {
+        $file=\request()->file("file");
+        $info = $file->move('./uploads');
+        if($info){
+
+            $path ="/uploads/".str_replace('\\','/',$info->getSaveName());
+            // 成功上传后 返回上传信息
+            return json(array('state'=>1,'msg'=>'上传成功','path'=>$path));
+        }else{
+            // 上传失败返回错误信息
+            return json(array('state'=>0,'msg'=>'上传失败'));
+        }
+    }
 
 }

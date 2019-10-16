@@ -30,7 +30,9 @@ class Order extends Base
         
         $where = [
              ['shop_order.status', '<>', '-1']
-            ,['shop_order.order_no', 'LIKE', $get['goods_name'] ?? '']
+            ,['shop_order.order_no', '=', $get['order_no'] ?? '']
+            ,['shop_order.order_status', '=', $get['order_status'] ?? '']
+            ,['shop_order.pay_type', '=', $get['pay_type'] ?? '']
         ];
  
         $formWhere = $this->parseWhere($where);
@@ -75,6 +77,18 @@ class Order extends Base
     {
         $order_no = (int)$this->request->get('order_no');
         $order_no && $list = Db::table('shop_order_detail')->where(['order_no' => $order_no])->select();
+        $str = '';
+        foreach ($list as $k => $v) {
+            $data = Db::table('shop_goods_sku')->field('sku')->where(['id' => $v['goods_sku_id']])->find();
+            $arr = json_decode($data['sku'],true);
+            foreach ($arr as $key => $val) {
+                $str .= $val['title'].'：'.$val['attr'].'；';
+            }
+            
+            $list[$k]['sku'] = $str;
+            $str=''; 
+        }
+
         isset($list) && $this->assign('list', $list);
         $total = 0;
         foreach ($list as $k => $v) {

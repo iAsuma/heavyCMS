@@ -11,7 +11,33 @@
                 <input type="text" name="order_no" autocomplete="off" class="layui-input">
             </div>
         </div>
-
+        <div class="layui-inline">
+          <label class="layui-form-label">支付类型</label>
+          <div class="layui-input-block">
+              <select name="pay_type">
+                <option value="">请选择类型</option>
+                <option value="1">微信支付</option>
+                <option value="2">支付宝</option>
+                <option value="3">积分</option>
+                <option value="4">网银</option>
+              </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">订单状态</label>
+          <div class="layui-input-block">
+              <select name="order_status">
+                <option value="">请选择状态</option>
+                <option value="1">待发货</option>
+                <option value="2">待收货</option>
+                <option value="3">已完成</option>
+                <option value="4">已取消</option>
+                <option value="5">退款中</option>
+                <option value="6">已退款</option>
+                <option value="0">未付款</option>
+              </select>
+          </div>
+        </div>
         <div class="layui-inline">
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="orderSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>个人中心</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="./layui/css/layui.css" />
+    <link rel="stylesheet" href="./css/admin.css" />
+</head>
+
+<body> 
+<div class="admin-editpwd admin-add-team order-assess" style="padding: 64px 46px 54px 46px;" >
+    <div id="rate"></div>
+    <div class="receiver_assess">dadddddddddddddddddddddddddddddddd</div>
+    <div class="layui-form-item layui-form-text">
+        <label class="search-wrap-label" name="reply">商家回复</label>
+        <div class=" form-textarea">
+            <textarea placeholder="请输入回复内容，最多不能超过200字" class="layui-textarea" ></textarea>
+        </div>
+    </div>
+    <div class="btn_box">
+        <button class="layui-btn admin-btn" id="sub" type="submit" style="background: #4da1ff">确定</button>
+        <button class="layui-btn admin-btn" id="close"  style="background: #fff;color: #555;border: 1px solid #4da1ff">取消</button>
+    </div>
+
+</div>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script type="text/javascript" src="./layui/layui.js"></script>
+<script>
+$(function () {
+    var no = window.localStorage.getItem("order_no");
+    layui.config({
+        base: "js/"
+    }).use(['rate', 'layer',], function () {
+        var rate = layui.rate;
+        layer = parent.layer === undefined ? layui.layer : parent.layer,
+            //回填数据
+            $.post("http://localhost:8080/shop/categories",{no:no},function (data) {
+
+                //渲染评分
+                rate.render({
+                    elem: '#rate',
+                    value:4,
+                    half:true,
+                    readonly:true,
+                    setText:function (value) {
+                        var arrs = {
+                            '1': '极差'
+                            ,'2': '差'
+                            ,'3': '中等'
+                            ,'4': '好'
+                            ,'5': '极好'
+                        };
+                        this.span.text(arrs[value] || ( value + "星"));
+                    }
+                });
+            })
+
+        //“确定” 按钮
+        $("#sub").click(function () {
+            var val =  $(".layui-textarea").text();
+            $.post("http://localhost:8080/shop/",{content:val}, function (data) {
+                console.log(data);
+
+                /* if (data == true) {
+                     layer.msg("回复成功")
+                     var index = parent.layer.getFrameIndex(window.name);
+                     parent.layer.close(index);
+                 } else {
+                     layer.msg("网络繁忙，请重试")
+                 }*/
+            })
+        })
+        //取消按钮
+        $("#close").click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    })
+})
+
+</script>
+</body>
+
+</html>

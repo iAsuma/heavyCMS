@@ -131,7 +131,7 @@ class Upload
 			return false;
 		}
 
-		$image = \think\Image::open($child_path.$file_name);
+		$image = \think\Image::open($full_path);
 		$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
 		$thumb_path = $this->file_path.$thumb_child_path.$file_name;
 		if($thumbType !== false){

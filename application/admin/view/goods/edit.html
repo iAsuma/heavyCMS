@@ -8,13 +8,13 @@
 <div class="layui-row layui-col-space15">
   <div class="layui-col-md12">
     <div class="layui-card">
-      <div class="layui-card-header">添加商品</div>
+      <div class="layui-card-header">编辑商品</div>
       <div class="layui-card-body" pad15>
         <form class="layui-form">
           <div class="layui-form-item">
             <label class="layui-form-label">商品名称</label>
             <div class="layui-input-block">
-              <input type="text" name="goods_name" value="" lay-verify="required" class="layui-input">
+              <input type="text" name="goods_name" value="{$goods.goods_name}" lay-verify="required" class="layui-input">
             </div>
           </div>
           <div class="layui-form-item">
@@ -37,7 +37,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">商品介绍</label>
             <div class="layui-input-block">
-              <input type="text" name="introduction" value="" lay-verify="required" placeholder="请输入简短的介绍" class="layui-input">
+              <input type="text" name="introduction" value="{$goods.introduction}" lay-verify="required" placeholder="请输入简短的介绍" class="layui-input">
             </div>
           </div>
           <div class="layui-form-item">
@@ -83,16 +83,17 @@
             <label class="layui-form-label">描述</label>
             <div class="layui-input-block">
               {include file="public/ueditor" name="description"}
+              <input type="hidden" id="hidden_content" value="{$goods.description}">
             </div>
           </div>          
           
           <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">配送方式</label>
             <div class="layui-input-inline">
-                <input type="radio" name="post_type" value="1" title="包邮" lay-filter="freightswt" checked >
-                <input type="radio" name="post_type" value="2" title="买家承担运费" lay-filter="freightswt">
-                <span class="layui-input-inline freight-line">
-                  <input class="layui-input freight-inp" name="freight" lay-verify="poInt">
+                <input type="radio" name="post_type" value="1" title="包邮" lay-filter="freightswt" {eq name="$goods.post_type" value="1" }checked{/eq} >
+                <input type="radio" name="post_type" value="2" title="买家承担运费" lay-filter="freightswt" {eq name="$goods.post_type" value="2" }checked{/eq}>
+                <span class="layui-input-inline freight-line" {eq name="$goods.post_type" value="2" }style="display:block;"{/eq}>
+                  <input class="layui-input freight-inp" name="freight" lay-verify="poInt" value="{$goods.freight}">
                   <span>元</span>
                 </span>
             </div>
@@ -101,7 +102,7 @@
           <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">是否上架</label>
             <div class="layui-input-inline">
-                <input type="checkbox" name="is_sold" lay-skin="switch" lay-text="是|否" value="1">
+                <input type="checkbox" name="is_sold" lay-skin="switch" lay-text="是|否" value="1" {if $goods.is_sold}checked{/if}>
             </div>
           </div>
 
@@ -727,7 +728,7 @@ layui.config({
     if(data.value == 2){
       $('.freight-line').show();
     }else{
-      $('input[name=freight]').val('');
+      // $('input[name=freight]').val('');
       $('.freight-line').hide();
     }
   })

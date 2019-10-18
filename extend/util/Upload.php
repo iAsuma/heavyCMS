@@ -5,6 +5,7 @@ use think\facade\Request;
  * 上传封装类，主要为了统一上传路径
  * 修改返回路径为绝对路径
  * 部分方法依赖 topthink/think-image
+ * @author li shuaiqiu(asuma)
  */
 class Upload 
 {
@@ -51,6 +52,78 @@ class Upload
 		$info && $info->savePath = DIRECTORY_SEPARATOR.$info->getSaveName();
 
 		return $info;
+	}
+
+	/**
+     * 上传并裁剪图片，同时生成压缩图片
+     * @access public
+     * @param  string|bool      $autoname   生成文件名
+     * @param  boolean          $replace 同名文件是否覆盖
+     * @param  bool             $autoAppendExt     自动补充扩展名
+     * @return false|File       false-失败 否则返回File实例
+     */
+	public function action($file, $scale=[600, 600], $isGetThumbnail=false, $autoname = true)
+	{
+		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
+
+		if($env_path){
+			$this->file_path = $env_path.DIRECTORY_SEPARATOR.'/temp';
+		}
+
+		//上传原始文件
+		$info = $file->rule(function($file) use($autoname){
+			// $save_path =  date('Ymd') . DIRECTORY_SEPARATOR;
+			$save_path = '';
+
+			if(true === $autoname){
+				// md5 生成文件名
+				$save_path .= md5(microtime(true).rand(1000, 9999));
+			}elseif (false === $autoname || '' === $autoname){
+				// 保留原文件名
+				$save_path .= $file->getInfo('name');
+			}else{
+				// 自定义文件名
+				$save_path .= (string)htmlspecialchars($autoname);
+			}
+
+			return $save_path;
+		})->move($this->file_path, true, true, true);
+
+		if($info){
+			$needPath = date('Ymd') . DIRECTORY_SEPARATOR;
+			if(!file_exists($env_path.DIRECTORY_SEPARATOR.$needPath)){
+				@mkdir($env_path.DIRECTORY_SEPARATOR.$needPath, 0777, true);
+			}
+
+			$savePath = DIRECTORY_SEPARATOR.$needPath.$info->getFilename();
+			$savename = $info->getSaveName();
+			$full_path = $this->file_path.DIRECTORY_SEPARATOR.$savename;
+
+			$image = \think\Image::open($full_path);
+
+			//裁剪图片
+			$crop_path = $env_path.$savePath;
+			$image->thumb($scale[0], $scale[1])->save($crop_path);
+			
+			$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.DIRECTORY_SEPARATOR.$needPath;
+			if(!file_exists($env_path.$thumb_child_path)){
+				@mkdir($env_path.$thumb_child_path, 0777, true);
+			}
+
+			$thumb_path = $env_path.$thumb_child_path.$savename;
+			$image->thumb(100, 100, \think\Image::THUMB_CENTER)->save($thumb_path);
+
+			if(file_exists($crop_path) && file_exists($thumb_path)){
+				unset($info);
+				@unlink($full_path);
+				return [$savePath, $thumb_child_path.$savename];
+			}else{
+				return false;
+			}
+
+		}
+
+		return false;
 	}
 
 	/**

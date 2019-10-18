@@ -1,0 +1,127 @@
+{extend name="public/base" /}
+{block name="title"}推荐位{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">   
+    <div class="layui-card-body">
+        <div class="layui-tab-content">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
+        </div>
+   
+        <table id="reco" lay-filter="reco"></table>  
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="detail">详情</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use([ 'table','form'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+
+   var tableIns =  table.render({
+      elem: '#reco'
+      ,url: "{:url('recoList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,defaultToolbar: ['filter', 'print']
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {field: 'name', title: '标题'}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+   
+    table.on('sort(reco)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+    
+    $('#add').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '添加'
+          ,content: "{:url('recoadd')}"
+          ,maxmin: true
+          ,area: ['25%', '20%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
+    
+    table.on('tool(reco)', function(obj){
+        switch(obj.event){
+          case 'edit':
+              layer.open({
+                type: 2
+                ,title: '编辑'
+                ,content: "{:url('recoEdit')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['25%', '20%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
+          case 'detail':
+              layer.open({
+                type: 2
+                ,title: '详情'
+                ,content: "{:url('detail')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['90%', '90%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   // layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
+          case 'del':
+              layer.confirm('确定删除？？', function(index){
+     
+                   $.post("{:url('Shop/recoDel')}", {id:obj.data.id}, function(res){
+                      if(res.code == 1){
+                        layer.msg('删除成功');
+                        table.reload('reco'); //重载表格
+                        layer.close(index); //再执行关闭 
+                      }else{
+                        layer.msg(res.result, {icon: 5});
+                      }
+                    },'json');
+
+                }); 
+          break;
+        };
+    });
+
+
+  });
+</script>
+{/block}

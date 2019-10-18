@@ -1,0 +1,85 @@
+{extend name="public/base" /}
+{block name="title"}推荐位{/block}
+{block name="css"}
+ <link rel="stylesheet" href="__THIRD__/layuiadmin/style/template.css" media="all">
+{/block}
+{block name="content"}
+  <div class="layui-fluid layadmin-cmdlist-fluid">
+  <div class="layui-row layui-col-space30">
+  {volist name="info" id="vo"}
+    <div class="layui-col-md2 layui-col-sm4">
+        <div class="cmdlist-container">
+            <a href="javascript:;">
+              <img width="200" height="200" src="__FILEROOT__{$vo.sku_img}">
+            </a>
+            <a href="javascript:;">
+              <div class="cmdlist-text">
+                <p class="info">{$vo.goods_name}</p>
+                <div class="price">
+                    <b>￥{$vo.price}</b>
+                    <p>
+                      ¥
+                      <del>{$vo.market_price}</del>
+                    </p>
+                    <span class="flow del" data-id="{$vo.id}">
+                       <i class="layui-icon" ></i>
+                    </span>
+                </div>
+              </div>
+            </a>
+        </div>
+    </div>
+  {/volist}
+    <div class="layui-col-md2 layui-col-sm4">
+        <div class="cmdlist-container add" style="width: 100%;height: 309px;line-height: 309px">
+         <div style="text-align:center"><i class="layui-icon layui-icon-add-1" style="font-size: 40px"></i></div>
+            
+        </div>
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+ layui.use(['form'], function(){
+    var form = layui.form;
+    var recoid = "{$reco_id}"; 
+    var cos;
+    $('.add').on('click', function () {
+       cos = layer.open({
+          type: 2
+          ,title: '添加'
+          ,content: "{:url('Shop/recogoods')}?rid="+recoid
+          ,maxmin: true
+          ,area: ['95%', '95%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
+
+    $(".del").click(function () {
+        var gid=$(this).attr("data-id");  
+                 
+         layer.confirm('确定删除？？', function(index){
+             $.post("{:url('Shop/detaildel')}", {gid:gid,rid:recoid}, function(res){
+                if(res.code == 1){
+                  layer.msg('删除成功');
+                  layer.close(index); //再执行关闭 
+                  location.reload(); //重载表格
+                }else{
+                  layer.msg(res.result, {icon: 5});
+                }
+              },'json');
+
+          }); 
+
+    })
+ 
+
+ })
+</script>
+{/block}
+

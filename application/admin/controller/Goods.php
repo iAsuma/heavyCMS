@@ -23,10 +23,24 @@ class Goods extends Base
 	public function save(Request $request)
 	{
 		if(checkFormToken($request->post())){
-            // $validate = new \app\admin\validate\Register;
-            // if(!$validate->scene('register')->check($request->post())){
-            //     exit(res_json_str(-1, $validate->getError()));
-            // }
+            $validate = \think\Validate::make([
+                'goods_name' => 'require|max:150',
+                'goods_attributes' => 'require',
+                'introduction' => 'max:200',
+                'goods_imgs' => 'require',
+                'description' => 'max:8000'
+            ],[
+                'title.require'=> '请填写商品名称',
+                'title.max'    => '商品名称最多不能超过150个字符',
+                'goods_attributes.require' => '请完善商品属性',
+                'introduction.max' => '商品介绍最多不能超过200个字符',
+                'goods_imgs.require' => '请上传商品图片',
+                'description.max' => '商品描述最多不能超过8000个字符',
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
 
             Db::startTrans();
             try {
@@ -65,7 +79,7 @@ class Goods extends Base
 						'is_sold' => 1,
 						'price' => $skus_detail[$k]['price'],
 						'market_price' => $skus_detail[$k]['marketPrice'],
-						'sku_img' => $skus_detail[$k]['img'],
+						'sku_img' => $skus_detail[$k]['img'] ?? '',
 						'stocks' => $skus_detail[$k]['stock'],
 						'status' => 1,
 						'create_time' => $now_time
@@ -84,6 +98,7 @@ class Goods extends Base
                 destroyFormToken($request->post());
                 return res_json(1);
             } catch (\Exception $e) {
+            	dump($e->getMessage());
                 Db::rollback();
                 return res_json(-5, '系统错误');
             }
@@ -165,6 +180,7 @@ class Goods extends Base
 			'status' => 1
 		];
 		$id && $info = Db::table('shop_goods')->where($where)->find();
+		$info['goodsImgArr'] = explode(',', $info['goods_imgs']);
 
 		$this->assign('classify', $classify);
 		$this->assign('goods', $info ?? []);

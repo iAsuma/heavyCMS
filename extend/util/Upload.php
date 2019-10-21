@@ -172,7 +172,7 @@ class Upload
 	/**
      * base64信息转为缩略图片
      * @access public
-     * @param  string      $base64Str  图片base
+     * @param  string      $base64Str 图片base
      */
 	public function base64ToThumbnailImage($base64Str, $scale=[150, 150], $thumbType = \think\Image::THUMB_CENTER)
 	{

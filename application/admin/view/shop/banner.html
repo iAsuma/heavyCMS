@@ -2,12 +2,9 @@
 {block name="title"}轮播图{/block}
 {block name="css"}
 <style type="text/css">
-    .layui-table-cell{
-      text-align:center;
-      height: auto;
-      white-space: normal;
-    }
-.imgs{width: auto;height: 40px}
+thead .layui-table-cell{height:40px;line-height:40px;}
+tbody .layui-table-cell{height:50px;line-height:50px;}
+tbody .layui-table-cell img{width: auto;height: 50px}
 </style>
 {/block}
 {block name="content"}
@@ -58,14 +55,12 @@
     ,table = layui.table
     ,upload = layui.upload;
 
-
    var tableIns =  table.render({
       elem: '#banner'
       ,url: "{:url('bannerList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
-      ,defaultToolbar: ['filter', 'print']
       ,done:function (res, curr, count) {
         if(count <= this.limit){
           $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
@@ -73,7 +68,9 @@
       }
       ,cols: [[ //表头
         {field: 'title', title: '标题'}
-        ,{field: 'img', title: '图片',templet:'<div><img class="imgs" src="__FILEROOT__{{ d.img }}"></div>'}
+        ,{field: 'img', title: '图片', templet: function(d){
+          return '<img src="__FILEROOT__'+d.img+'"';
+        }}
         ,{field: 'landing_url', title: '链接'}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
@@ -131,7 +128,7 @@
           case 'edit':
               layer.open({
                 type: 2
-                ,title: '编辑用户'
+                ,title: '编辑轮播图'
                 ,content: "{:url('bannerEdit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['60%', '70%']

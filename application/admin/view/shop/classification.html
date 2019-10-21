@@ -2,16 +2,9 @@
 {block name="title"}商品分类{/block}
 {block name="css"}
 <style type="text/css">
-    .layui-table-cell{
-      text-align:center;
-      height: auto;
-      white-space: normal;
-    }
-.imgs{width: 30px;height: 30px}
-.menu-search{width: auto !important;margin-right: 0 !important;margin-left: 30px;}
-.menu-search .layui-form-checkbox[lay-skin="primary"]{margin-top: 0;}
+tbody .layui-table-cell{height:32px;line-height:32px;}
+tbody .layui-table-cell img{width: auto;height: 32px}
 </style>
-<link rel="stylesheet" type="text/css" href="__JS__/layuiext/iconFonts/css/font-awesome.min.css">
 {/block}
 {block name="content"}
 <div class="layui-fluid">
@@ -28,7 +21,6 @@
 </div>
 {/block}
 {block name="footjs"}
-
 <script type="text/html" id="optTpl">
   <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
   {{# if(d.pid == 0){}}
@@ -40,12 +32,10 @@
 <script>
   layui.config({
     base: '__JS__/layuiext/' //静态资源所在路径
-  }).use([ 'table','form','upload'], function(){
+  }).use([ 'table','form'], function(){
     var $ = layui.$
     ,form = layui.form
-    ,table = layui.table
-    ,upload = layui.upload;
-
+    ,table = layui.table;
 
    var tableIns =  table.render({
       elem: '#classify'
@@ -53,14 +43,13 @@
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
-      ,defaultToolbar: ['filter', 'print']
       ,done:function (res, curr, count) {
         if(count <= this.limit){
           $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
         }
       }
        ,cols: [[ //表头
-      {field: 'name', title: '分类名称', minWidth : '140', templet: function(d){
+      {field: 'name', title: '分类名称', templet: function(d){
         var str = '';
         switch(d.level){
           case 1: 
@@ -80,7 +69,9 @@
           }
           return pid;
         }}
-      ,{field: 'main_img', title: '图片',templet:'<div><img class="imgs" src="__FILEROOT__{{ d.main_img }}"></div>'}
+      ,{field: 'main_img', title: '图片',templet: function(d){
+        return '<img src="__FILEROOT__'+d.main_img +'">'
+      }}
       ,{title: '操作', toolbar: '#optTpl'}
       ]]
     });
@@ -102,7 +93,6 @@
         }
       }, 'json')
     })
-
 
     $('#add').on('click', function () {
          layer.open({
@@ -127,7 +117,7 @@
                 ,title: '编辑分类'
                 ,content: "{:url('classedit')}?id="+obj.data.id
                 ,maxmin: true
-                ,area: ['35%', '60%']
+                ,area: ['35%', '50%']
                 ,btn: ['确定', '取消']
                 ,success: function (layero, index) {
                    layero.find('input[name=id]').val(obj.data.id)
@@ -144,7 +134,7 @@
                 ,title: "新增二级分类"
                 ,content: "{:url('classSecond')}?pid="+obj.data.id
                 ,maxmin: true
-                ,area: ['35%', '40%']
+                ,area: ['35%', '50%']
                 ,btn: ['确定', '取消']
                 ,success: function (layero, index) {
                    layero.find('input[name=id]').val(obj.data.id)

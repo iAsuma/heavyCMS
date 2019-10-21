@@ -61,29 +61,30 @@ class Shop extends Base
       
     }
 
-
      /**
      * 商品分类
      * @author zhaoyun  
      */
     public function classification()
     {
-       
         return $this->fetch();
     }
 
     public function classList()
     {
-        // 查询所有规则，用以排序子父级关系，并存入缓存(tag:auth_rule)
-        $rules = Db::name('shop_classification')->field('id,name,pid,main_img')->select();       
-        $tree = new \util\Tree($rules);
-        $modsTree = $tree->table();
+        $get = $this->request->get();
+
+        $classifications = Db::name('shop_classification')->field('id,name,pid,main_img')->select();
+
+        $class = new \util\Tree($classifications);
+        $classTree = $class->table();
+
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
 
-        $list = array_slice($modsTree, ($page-1)*$limit, $limit);
-      
-        return table_json($list, count($modsTree));
+        $list = array_slice($classTree, ($page-1)*$limit, $limit);
+        
+        return table_json($list, count($classTree));
     }
 
     public function classAdd()
@@ -94,13 +95,9 @@ class Shop extends Base
     public function addClass(Request $request)
     {
         if(checkFormToken($request->post())){
-    
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
-      
             try {
                 $data = [
                     'name' => $request->post('name'),
-                    'main_img' => $image[1],
                     'pid' => 0,
                 ];
 
@@ -134,12 +131,12 @@ class Shop extends Base
         try {
             $post = $request->post();
             !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
       
             $data = [
-                    'name' => $request->post('name'),
-                    'main_img' => $image[1]
+                'name' => $request->post('name')
             ];
+
+            $post['pid'] && $data['main_img'] = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
 
             $result = Db::table('shop_classification')->where('id', (int)$post['id'])->update($data);
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
@@ -340,7 +337,6 @@ class Shop extends Base
      */
     public function recommended()
     {
-       
         return $this->fetch();
     }
 

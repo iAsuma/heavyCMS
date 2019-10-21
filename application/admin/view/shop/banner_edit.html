@@ -1,7 +1,7 @@
 {extend name="public/original" /}
 {block name="content"}
 <div class="layui-form" lay-filter="filter-form-auth" id="form-auth" style="padding: 20px 30px 0 0;">
-     <!--图片预览地址-->
+     
     <div class="layui-form-item">
         <label class="layui-form-label">图片</label>
         <img style="width: auto;height: 150px;border: none;" id="img" {notempty name="$info.img"}src="__FILEROOT__{$info.img}"{/notempty}>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="layui-form-item">
-          <label class="layui-form-label">url地址</label>
+          <label class="layui-form-label">着陆页地址</label>
           <div class="layui-input-block">
              <input type="text" name="landing_url" value="{$info.landing_url}"  autocomplete="off" class="layui-input" >
            

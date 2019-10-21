@@ -1,5 +1,11 @@
 {extend name="public/base" /}
 {block name="title"}商品列表{/block}
+{block name="css"}
+<style type="text/css">
+tbody .layui-table-cell{height:32px;line-height:32px;}
+tbody .layui-table-cell img{width: auto;height: 32px}
+</style>
+{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
@@ -25,7 +31,11 @@
         <div class="layui-inline">
         <label class="layui-form-label">是否上架</label>
         <div class="layui-input-block">
-            <input type="checkbox"  name="is_sold" checked="" lay-skin="switch" lay-text="是|否" value="1">
+            <select name="is_sold">
+              <option value="">所有</option>
+              <option value="1">是</option>
+              <option value="0">否</option>
+            </select>
         </div>
     </div>
         <div class="layui-inline">
@@ -70,7 +80,6 @@
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
-      ,defaultToolbar: ['filter', 'print']
       ,done:function (res, curr, count) {
         if(count <= this.limit){
           $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
@@ -101,7 +110,6 @@
         $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
       }
     })
-
 
     //监听搜索
     form.on('submit(goodsSearch)', function(data){

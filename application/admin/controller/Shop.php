@@ -130,8 +130,8 @@ class Shop extends Base
     {
         try {
             $post = $request->post();
+
             !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-      
             $data = [
                 'name' => $request->post('name')
             ];
@@ -298,7 +298,7 @@ class Shop extends Base
         try {
             $post = $request->post();
             !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
       
             $data = [
                     'title' => $request->post('title'),
@@ -326,7 +326,7 @@ class Shop extends Base
             Hook::listen('admin_log', ['首页管理', '删除了轮播图']);
             return res_json(1); 
         } else {
-            return res_json(-1);
+            return res_json(-1,'删除失败');
         }
       
     }
@@ -459,7 +459,7 @@ class Shop extends Base
         
         $where = [
              ['shop_goods.status', '<>', '-1']
-             ,['shop_goods.is_sold', '=', '1']
+            ,['shop_goods.is_sold', '=', '1']
             ,['shop_goods.goods_name', 'LIKE', $get['goods_name'] ?? '']
             ,['shop_goods.classification_id', '=', $get['class_id'] ?? '']
         ];
@@ -468,17 +468,30 @@ class Shop extends Base
         $countQuery = Db::table('shop_goods')->where($formWhere);
 
         $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.post_type,g.freight,c.name,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
+
         $count = $countQuery->count();
         $data = $query->select();
+        $rid = $get['rid'];
+
+        foreach ($data as $k => $v) {
+            $res = Db::table('shop_reco_goods')->where(['goods_id'=>$v['id'],'rec_id'=>$rid])->find();
+            if($res){
+                $data[$k]['fin'] = 1;
+            }else{
+                $data[$k]['fin'] = 2; 
+            }
+           
+        }
         return table_json($data, $count);
     }
 
     public function addrecogoods(Request $request)
     {
         
-        $data['goods_id'] = $request->post('gid');
-        $data['rec_id']  = $request->post('rid');
-        if (Db::table('shop_reco_goods') ->insert($data)) { 
+        $gid =  $data['goods_id'] = $request->post('gid');
+        $rid = $data['rec_id']  = $request->post('rid');
+        $res = Db::table('shop_reco_goods')->where(['goods_id'=>$gid,'rec_id'=>$rid])->find();
+        if (!$res && Db::table('shop_reco_goods') ->insert($data)) { 
             Hook::listen('admin_log', ['首页管理', '添加了推荐位的商品']);
             return res_json(1); 
         } else {

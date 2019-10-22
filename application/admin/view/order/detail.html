@@ -4,8 +4,9 @@
 <link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
 {/block}
 {block name="content"}
-<div class="layui-fluid">
-<div class="layui-card">
+<a href="javascript:printHTML('pr')" target="_self">打印</a>
+<div class="layui-fluid" >
+<div class="layui-card" id="pr" >
   <div class="layui-card-body">
     <div class="order-detail-box">
         <div class="order-detail">
@@ -164,6 +165,8 @@
   </div>
 </div>
 </div>
+
+
 {/block}
 {block name="footjs"}
 <script>
@@ -198,4 +201,13 @@
     
   })
 </script> 
+
+<script>
+    function printHTML(page)
+    { 
+     window.document.body.innerHTML=document.getElementById("pr").innerHTML;
+     window.print(); 
+    } 
+</script>
+
 {/block}

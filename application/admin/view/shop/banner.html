@@ -49,7 +49,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
 <script>
   layui.config({
     base: '__JS__/layuiext/' //静态资源所在路径
-  }).use([ 'table','form','upload'], function(){
+  }).use([ 'table','form'], function(){
     var $ = layui.$
     ,form = layui.form
     ,table = layui.table
@@ -81,7 +81,6 @@ tbody .layui-table-cell img{width: auto;height: 50px}
         $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
       }
     })
-
 
     //监听搜索
     form.on('submit(bannerSearch)', function(data){

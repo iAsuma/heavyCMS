@@ -1,13 +1,9 @@
 {extend name="public/base" /}
-{block name="title"}轮播图{/block}
+{block name="title"}应用配置{/block}
 {block name="css"}
 <style type="text/css">
-    .layui-table-cell{
-      text-align:center;
-      height: auto;
-      white-space: normal;
-    }
-.imgs{width: 200px;height: 40px}
+    .layui-table-cell{text-align:center;height: auto; white-space: normal;}
+    .imgs{width: 200px;height: 40px}
 </style>
 {/block}
 {block name="content"}
@@ -17,7 +13,6 @@
         <div class="layui-tab-content">
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
         </div>
-   
         <table id="appset" lay-filter="appset"></table>  
     </div>
   </div>
@@ -32,11 +27,9 @@
 <script>
   layui.config({
     base: '__JS__/layuiext/' //静态资源所在路径
-  }).use([ 'table','form','upload'], function(){
+  }).use([ 'table'], function(){
     var $ = layui.$
-    ,form = layui.form
-    ,table = layui.table
-    ,upload = layui.upload;
+    ,table = layui.table;
 
 
    var tableIns =  table.render({
@@ -120,7 +113,7 @@
                         table.reload('appset'); //重载表格
                         layer.close(index); //再执行关闭 
                       }else{
-                        layer.msg(res.result, {icon: 5});
+                        layer.msg('删除失败', {icon: 5});
                       }
                     },'json');
 

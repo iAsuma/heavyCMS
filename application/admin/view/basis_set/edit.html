@@ -4,31 +4,31 @@
       <div class="layui-form-item">
         <label class="layui-form-label">应用名称</label>
         <div class="layui-input-block">
-            <input type="text" name="app_name" value="{$info.app_name}"  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_name" lay-verify="required" value="{$info.app_name}"  autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Id</label>
         <div class="layui-input-block">
-            <input type="text" name="app_id" value="{$info.app_id}"  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_id" lay-verify="required" value="{$info.app_id}"  autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Secret</label>
         <div class="layui-input-block">
-            <input type="text" name="app_secret" value="{$info.app_secret}"  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_secret" lay-verify="required" value="{$info.app_secret}"  autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Token</label>
         <div class="layui-input-block">
-            <input type="text" name="app_token" value="{$info.app_token}"  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_token" lay-verify="required" value="{$info.app_token}"  autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">应用类型</label>
         <div class="layui-input-block">
-          <select name="type">
+          <select name="type" lay-verify="required" >
             <option value="1">公众号</option>
             <!-- <option value="2">小程序</option> -->
           </select>
@@ -46,6 +46,7 @@
              <input type="text" name="partnerkey" value="{$info.partnerkey}"  autocomplete="off" class="layui-input" >
           </div>
     </div>
+
     <div class="layui-form-item layui-hide">
         <input type="hidden" name="id" value="{$info.id}">
         <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
@@ -55,7 +56,7 @@
 {/block}
 {block name="footjs"}
 <script>
- layui.use(['form','upload'], function(){
+ layui.use(['form'], function(){
     var form = layui.form;
 
     form.on('submit(submit)', function(data){

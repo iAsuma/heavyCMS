@@ -39,22 +39,24 @@
 {/block}
 {block name="footjs"}
 <script type="text/html" id="optTpl">
-  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="add">添加</a>
+  {{# if (d.fin == 1) { }}  
+     <a class="layui-btn layui-btn-xs layui-btn-disabled">已添加</a>
+  {{# } else { }}  
+     <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="add">添加</a>
+  {{# } }}  
 </script>
 
 <script>
   layui.config({
     base: '__JS__/layuiext/' //静态资源所在路径
-  }).use([ 'table','form','upload'], function(){
+  }).use([ 'table','form'], function(){
     var $ = layui.$
     ,form = layui.form
-    ,table = layui.table
-    ,upload = layui.upload;
+    ,table = layui.table;
 
-
-   var tableIns =  table.render({
+    var tableIns =  table.render({
       elem: '#goods'
-      ,url: "{:url('recogoodsList')}" //数据接口
+      ,url: "{:url('recogoodsList')}?rid="+"{$rid}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -108,12 +110,13 @@
         switch(obj.event){
           case 'add':   
              $.post("{:url('Shop/addrecogoods')}", {gid:obj.data.id,rid:"{$rid}"}, function(res){
-                if(res.code == 1){
+                if(res==1){
                   layer.msg('添加成功');
                   window.parent.location.reload();//再执行关闭 
                   
                 }else{
-                  layer.msg(res.result, {icon: 5});
+                  layer.msg('添加失败', {icon: 5});
+                   window.parent.location.reload();//再执行关闭 
                 }
               },'json');
           break;

@@ -5,7 +5,7 @@
         <label class="layui-form-label">图片</label>
         <img style="width: auto;height: 150px;border: none;" id="img">
         
-        <input type="hidden" name="image"  class="layui-input" style="position: absolute;left: 0;top: 0;" readOnly>
+        <input type="hidden" name="image" lay-verify="required"  class="layui-input" style="position: absolute;left: 0;top: 0;" readOnly>
        
     </div>
       
@@ -17,7 +17,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">标题</label>
         <div class="layui-input-block">
-            <input type="text" name="title" value=""  autocomplete="off" placeholder="请输入分类名称" class="layui-input">
+            <input type="text" name="title" value="" lay-verify="required"  autocomplete="off" placeholder="请输入分类名称" class="layui-input">
         </div>
     </div>
 

@@ -4,31 +4,31 @@
     <div class="layui-form-item">
         <label class="layui-form-label">应用名称</label>
         <div class="layui-input-block">
-            <input type="text" name="app_name" value=""  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_name" value=""  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Id</label>
         <div class="layui-input-block">
-            <input type="text" name="app_id" value=""  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_id" value=""  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Secret</label>
         <div class="layui-input-block">
-            <input type="text" name="app_secret" value=""  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_secret" value=""  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">App Token</label>
         <div class="layui-input-block">
-            <input type="text" name="app_token" value=""  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="app_token" value=""  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">应用类型</label>
         <div class="layui-input-block">
-          <select name="type">
+          <select name="type" lay-verify="required" >
             <option value="1">公众号</option>
             <!-- <option value="2">小程序</option> -->
           </select>
@@ -37,13 +37,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">mch_id</label>
         <div class="layui-input-block">
-            <input type="text" name="mch_id" value=""  autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="mch_id" value="" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
           <label class="layui-form-label">partner_key</label>
           <div class="layui-input-block">
-             <input type="text" name="partnerkey" value=""  autocomplete="off" class="layui-input" >
+             <input type="text" name="partnerkey" value="" autocomplete="off" class="layui-input" >
           </div>
     </div>
 
@@ -55,7 +55,7 @@
 {/block}
 {block name="footjs"}
 <script>
-  layui.use(['form','upload'], function(){
+  layui.use(['form'], function(){
     var form = layui.form;
 
     //监听提交

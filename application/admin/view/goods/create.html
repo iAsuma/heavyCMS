@@ -51,7 +51,7 @@
           </div>
           <div class="layui-form-item">
             <label class="layui-form-label">商品属性</label>
-            <div class="layui-input-block" style="width: 90%">
+            <div class="layui-input-block">
                 <button type="button" class="layui-btn layui-btn-asuma mb20" id="addBigParam"><i class="layui-icon layui-icon-add-1"></i>添加参数</button>
                 <div id="add-box">
                     <div class="add-box-item">
@@ -59,7 +59,7 @@
                             <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善属性项">
                             <i class="layui-icon layui-icon-close delBig"></i>
                         </div>
-                        <div class="add-box-item-th-box" style="width:90%;">
+                        <div class="add-box-item-th-box">
                             <div class="add-box-item-th bp" >
                                 <div class="add-box-item-th-item">
                                     <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善属性项">
@@ -212,6 +212,7 @@
 
     var needTd = '<td class="up-img">'
                   +'<img src="[imgurl]" alt="">'
+                  +'<input type="hidden" value="[imgurl]" lay-verify="required" lay-reqText="请完善属性项的图片">'
                   +'<button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>'
                 +'</td>'
                 +'<td>'
@@ -225,8 +226,9 @@
                 +'</td>';
     var madingData = calcDescartes(preData);
     var initVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : ''
-    
+    var goodSkus = $('input[name=goods_skus]').val()
     var skus = []
+
     if(madingData[0] instanceof Array){
       $.each(madingData, function(i, v){
         tbody += '<tr>';
@@ -236,17 +238,22 @@
           skus[i].push({'title': attrKeys[j], 'attr': v[j]})
         }
 
+        var sku_arr_str = JSON.stringify(skus[i])
+        if(goodSkus.indexOf(sku_arr_str) == -1){
+          initVal.splice(i, 0, null)
+        }
+
         var eachNeed = needTd;
         if(initVal != '' && typeof initVal[i] != 'undefined' && initVal[i] != null){
           eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
           eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
           eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
-          eachNeed = eachNeed.replace('[imgurl]', initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
         }else{
           eachNeed = eachNeed.replace('[stock]', '')
           eachNeed = eachNeed.replace('[market]', '')
           eachNeed = eachNeed.replace('[price]', '')
-          eachNeed = eachNeed.replace('[imgurl]', '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
         }
 
         tbody += eachNeed+'</tr>';
@@ -258,12 +265,12 @@
             eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
             eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
             eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
-            eachNeed = eachNeed.replace('[imgurl]', initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
           }else{
             eachNeed = eachNeed.replace('[stock]', '')
             eachNeed = eachNeed.replace('[market]', '')
             eachNeed = eachNeed.replace('[price]', '')
-            eachNeed = eachNeed.replace('[imgurl]', '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
           }
           tbody += '<tr><td>'+madingData[i]+'</td>'+eachNeed+'</tr>';
           skus.push([{'title': attrKeys[0], 'attr': madingData[i]}])
@@ -470,6 +477,7 @@ layui.config({
         var idx = $(this).data('idx')
         var obj = $('.table-box').children('table').children('tbody').find('tr:eq('+idx+')')
         obj.find('.up-img').children('img').attr('src', '__FILEROOT__/thumb'+imgs)
+        obj.find('.up-img').children('input').val(imgs)
 
         if(typeof skusVal[idx] == 'undefined'){
           skusVal[idx] = {}
@@ -549,27 +557,27 @@ layui.config({
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
+  var oldBig;
   $(document).on('blur', '.big_input', function(){
-    
-    if($(this).val().trim() == '' || $(this).val().trim() == null){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldBig){
       return false;
     }
 
     var obj = $(this).parents('.add-box-item').find('.add-box-item-th')
     let child_value = obj.children('.add-box-item-th-item').eq(0).children('input').val()
 
+    oldBig = $(this).val().trim();
+
     if(child_value == '' || child_value == null){
       return false;
     }
-
+    
     //table 渲染
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
   $(document).on('click', '.addLteParam', function(){
@@ -600,26 +608,34 @@ layui.config({
   $(document).on('click', '.delParam', function(){
     var _this = $(this)
     var len = _this.parents('.add-box-item-th').children('.add-box-item-th-item').length
-    
-    if(len <= 1){
+    var f_len = $('.add-box-item').length
+
+    if(len <= 1 && f_len <= 1){
       layer.msg('当前参数至少保留1个属性');
       return false;
     }
-    _this.parent('.add-box-item-th-item').remove()
+
+    if(len <= 1 && f_len > 1){
+      _this.parents('.add-box-item').remove()
+    }else{
+      _this.parent('.add-box-item-th-item').remove()
+    }
 
     //table 渲染
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
+  var oldLte;
   $(document).on('blur', '.attr_input', function(){
-    if($(this).val().trim() == '' || $(this).val().trim() == null){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldLte){
       return false;
     }
+
+    oldLte = $(this).val().trim()
+
     let f_value = $(this).parents('.add-box-item').children('.add-box-item-thead').children('input').val();
-    
     if(f_value == '' || f_value == null){
       return false;
     }
@@ -628,7 +644,6 @@ layui.config({
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
   var skusVal = [];

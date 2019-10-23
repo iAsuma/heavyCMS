@@ -59,31 +59,70 @@
           </div>
           <div class="layui-form-item">
             <label class="layui-form-label">商品属性</label>
-            <div class="layui-input-block" style="width: 90%">
-                <button type="button" class="layui-btn layui-btn-asuma mb20" id="addBigParam"><i class="layui-icon layui-icon-add-1"></i>添加参数</button>
+            <div class="layui-input-block">
+                 <!--<button type="button" class="layui-btn layui-btn-asuma mb20" id="addBigParam"><i class="layui-icon layui-icon-add-1"></i>添加参数</button> -->
                 <div id="add-box">
+                  {foreach $goods.goods_attrs as $i}
                     <div class="add-box-item">
                         <div class="add-box-item-thead">
-                            <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善属性项">
-                            <i class="layui-icon layui-icon-close delBig"></i>
+                            <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善属性项" value="{$i[0]}">
+                            <!-- <i class="layui-icon layui-icon-close delBig"></i> -->
                         </div>
-                        <div class="add-box-item-th-box" style="width:90%;">
+                        <div class="add-box-item-th-box">
                             <div class="add-box-item-th bp" >
+                                {foreach $i[1] as $j}
                                 <div class="add-box-item-th-item">
-                                    <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善属性项">
+                                    <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善属性项" value="{$j}">
                                     <i class="layui-icon layui-icon-close delParam"></i>
                                 </div>
+                                {/foreach}
                             </div>
                             <button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>
                         </div>
                     </div>
+                  {/foreach}
                 </div>
                 <div class="table-box">
-
+                  <table class="layui-table" lay-skin="line">
+                    <thead>
+                      <tr>
+                      {foreach $goods.goods_attrs as $v}
+                      <th>{$v[0]}</th>
+                      {/foreach}
+                      <th>展示图</th>
+                      <th>库存</th>
+                      <th>市场价</th>
+                      <th>售卖价格</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foreach $skus as $k=>$v}
+                      <tr>
+                        {volist name="$skus_arr[$k]" id="vv"}
+                        <td>{$vv.attr}</td>
+                        {/volist}
+                        <td class="up-img">
+                          <img src="__FILEROOT__/thumb{$v.sku_img}">
+                          <input type="hidden" value="{$v.sku_img}" lay-verify="required" lay-reqText="请完善属性项的图片">
+                          <button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input stockIpt" value="{$v.stocks}" lay-verify="required" lay-reqtext="请完善属性项的库存">
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input marketIpt" value="{$v.market_price}" lay-verify="required" lay-reqtext="请完善属性项的市场价">
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input priceIpt" value="{$v.price}" lay-verify="required" lay-reqtext="请完善属性项的售卖价">
+                        </td>
+                      </tr>
+                      {/foreach}
+                    </tbody>
+                  </table>
                 </div>
-                <input type="hidden" name="goods_attributes" value="">
-                <input type="hidden" name="goods_skus" value="">
-                <input type="hidden" name="skus_val" value="">
+                <input type="hidden" name="goods_attributes" value="{$goods.attrs_str}">
+                <input type="hidden" name="goods_skus" value="{$goods.skus_str}">
+                <input type="hidden" name="skus_val" value="{$goods.skus_val}">
                 <div class="layui-form-mid layui-word-aux">点击页面任意空白处完成添加或修改，否则保存将不会生效</div>
             </div>
           </div>
@@ -117,7 +156,8 @@
           <div class="layui-form-item">
             <div class="layui-input-block">
               <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
-              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:url('save')}">确认</button>
+              <input type="hidden" name="gid" value="{$goods.id}">
+              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:url('modify')}">确认</button>
               <button type="reset" class="layui-btn layui-btn-primary">取消</button>
             </div>
           </div>
@@ -221,6 +261,7 @@
 
     var needTd = '<td class="up-img">'
                   +'<img src="[imgurl]" alt="">'
+                  +'<input type="hidden" value="[imgurl]" lay-verify="required" lay-reqText="请完善属性项的图片">'
                   +'<button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>'
                 +'</td>'
                 +'<td>'
@@ -234,8 +275,9 @@
                 +'</td>';
     var madingData = calcDescartes(preData);
     var initVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : ''
-    
+    var goodSkus = $('input[name=goods_skus]').val()
     var skus = []
+
     if(madingData[0] instanceof Array){
       $.each(madingData, function(i, v){
         tbody += '<tr>';
@@ -245,17 +287,22 @@
           skus[i].push({'title': attrKeys[j], 'attr': v[j]})
         }
 
+        var sku_arr_str = JSON.stringify(skus[i])
+        if(goodSkus.indexOf(sku_arr_str) == -1){
+          initVal.splice(i, 0, null)
+        }
+        
         var eachNeed = needTd;
         if(initVal != '' && typeof initVal[i] != 'undefined' && initVal[i] != null){
           eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
           eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
           eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
-          eachNeed = eachNeed.replace('[imgurl]', initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
         }else{
           eachNeed = eachNeed.replace('[stock]', '')
           eachNeed = eachNeed.replace('[market]', '')
           eachNeed = eachNeed.replace('[price]', '')
-          eachNeed = eachNeed.replace('[imgurl]', '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
         }
 
         tbody += eachNeed+'</tr>';
@@ -267,12 +314,12 @@
             eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
             eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
             eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
-            eachNeed = eachNeed.replace('[imgurl]', initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
           }else{
-            eachNeed = eachNeed.replace('[stock]', '')
-            eachNeed = eachNeed.replace('[market]', '')
-            eachNeed = eachNeed.replace('[price]', '')
-            eachNeed = eachNeed.replace('[imgurl]', '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
           }
           tbody += '<tr><td>'+madingData[i]+'</td>'+eachNeed+'</tr>';
           skus.push([{'title': attrKeys[0], 'attr': madingData[i]}])
@@ -479,6 +526,7 @@ layui.config({
         var idx = $(this).data('idx')
         var obj = $('.table-box').children('table').children('tbody').find('tr:eq('+idx+')')
         obj.find('.up-img').children('img').attr('src', '__FILEROOT__/thumb'+imgs)
+        obj.find('.up-img').children('input').val(imgs)
 
         if(typeof skusVal[idx] == 'undefined'){
           skusVal[idx] = {}
@@ -512,37 +560,6 @@ layui.config({
 
   /*** 属性操作区域方法 ***/
 
-  $('#addBigParam').on('click', function(){
-      var f_obj = $('.add-box-item').find('.add-box-item-thead')
-      var f_return = false;
-      $.each(f_obj, function(i, v){
-        if($(v).children('input').val() == ''){
-          f_return = true;
-          return false;
-        }
-      })
-      if(f_return == true){
-        layer.msg('请先完善已有的参数')
-        return false;
-      }
-
-      var c_obj = $('.add-box-item').find('.add-box-item-th-item')
-      var c_return = false;
-      $.each(c_obj, function(i, v){
-        if($(v).children('input').val() == ''){
-          c_return = true;
-          return false;
-        }
-      })
-
-      if(c_return == true){
-        layer.msg('请先完善已有的参数的属性')
-        return false;
-      }
-
-      bigParamHtml();
-  })
-
   $(document).on('click', '.delBig', function(){
     var _this = $(this)
     var len = $('.add-box-item').length
@@ -558,27 +575,27 @@ layui.config({
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
+  var oldBig;
   $(document).on('blur', '.big_input', function(){
-    
-    if($(this).val().trim() == '' || $(this).val().trim() == null){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldBig){
       return false;
     }
 
     var obj = $(this).parents('.add-box-item').find('.add-box-item-th')
     let child_value = obj.children('.add-box-item-th-item').eq(0).children('input').val()
 
+    oldBig = $(this).val().trim();
+
     if(child_value == '' || child_value == null){
       return false;
     }
-
+    
     //table 渲染
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
   $(document).on('click', '.addLteParam', function(){
@@ -588,20 +605,6 @@ layui.config({
         layer.msg('请先完善当前的参数名称')
         return false;
       }
-
-      // var childObj = $(this).parent('.add-box-item-th-box').find('.add-box-item-th-item')
-      // var isReturn = false;
-      // $.each(childObj, function(i, v){
-      //   if($(v).find('input').val() == '' || $(v).find('input').val() == null){
-      //     isReturn = true;
-      //     return false;
-      //   }
-      // })
-
-      // if(isReturn == true){
-      //   layer.msg('请先完善前面的属性');
-      //   return false;
-      // } 
 
       lteParamHtml(_this);
   })
@@ -614,33 +617,35 @@ layui.config({
       layer.msg('当前参数至少保留1个属性');
       return false;
     }
+
     _this.parent('.add-box-item-th-item').remove()
 
     //table 渲染
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
+  var oldLte;
   $(document).on('blur', '.attr_input', function(){
-    if($(this).val().trim() == '' || $(this).val().trim() == null){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldLte){
       return false;
     }
+
+    oldLte = $(this).val().trim()
+
     let f_value = $(this).parents('.add-box-item').children('.add-box-item-thead').children('input').val();
-    
     if(f_value == '' || f_value == null){
       return false;
     }
-
+    
     //table 渲染
     let json_data = paramJson();
     let _table = tableHtml(json_data);
     $('.table-box').html(_table)
-    // layuiUpload(upload)
   })
 
-  var skusVal = [];
+  var skusVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : [];
 
   $(document).on('click', '.upload-btn', function(){
     var selectImgs = $(this).siblings('img').attr('src').replace('__FILEROOT__/thumb', '')
@@ -787,8 +792,8 @@ layui.config({
     //提交 Ajax 成功后，关闭当前弹层并重载表格
     $.post($(data.elem).data('url'), data.field, function(res){
       if(res.code == 1){
-        layer.msg('添加成功', {icon: 6}, function(){
-          window.location.reload()
+        layer.msg('修改成功', {icon: 6}, function(){
+          window.history.back(-1);
         })
       }else{
         layer.msg(res.result, {icon: 5});

@@ -12,16 +12,22 @@
             </div>
         </div>
          <div class="layui-inline">
-            <label class="layui-form-label">分类名称</label>
+            <label class="layui-form-label">商品分类</label>
             <div class="layui-input-block">
-                <select name="class_id" >
-                  <option value="">请选择</option>
-                  {volist name="info" id="vo"}
-                    <option value="{$vo.id}">{$vo.name}</option>
+              <select name="class_id" lay-search lay-verify="required" lay-reqText="请选择分类">
+                <option value="">支持搜索</option>
+                {volist name="classify" id="one"}
+                <optgroup label="{$one.name}">
+                  {if $one.child ?? ''}
+                  {volist name="$one.child" id="two"}
+                  <option value="{$two.id}">{$two.name}</option>
                   {/volist}
-                </select>
+                  {/if}
+                </optgroup>
+                {/volist}
+              </select>
             </div>
-        </div>
+          </div>
         <div class="layui-inline">
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="goodsSearch">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -68,7 +74,10 @@
       }
       ,cols: [[ //表头
         {field: 'goods_name', title: '商品名称'}
-        ,{field: 'name', title: '分类'} 
+        ,{field: 'imgs', title: '图片', templet: function(d){
+          return '<img src="__FILEROOT__'+d.imgs+'"';
+        }}
+        ,{field: 'classfy', title: '所属分类'}  
           ,{field: 'post_type', title: '邮寄方式', templet: function(d){
           var post_type = ''
           switch(d.post_type){

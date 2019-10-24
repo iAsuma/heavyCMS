@@ -1,16 +1,25 @@
-{extend name="public/base" /}
-{block name="title"}订单详情{/block}
-{block name="css"}
-<link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
-{/block}
-{block name="content"}
-<a href="javascript:printHTML('pr')" target="_self">打印</a>
-<div class="layui-fluid" >
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>订单详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="__THIRD__/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="__THIRD__/layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="__CSS__/default.css" media="all">
+  <link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
+  
+</head>
+<body>
+
 <div class="layui-card" id="pr" >
   <div class="layui-card-body">
     <div class="order-detail-box">
         <div class="order-detail">
             <div class="status-dis">
+                
                 <div class="dsflex">
                     {if $order.order_status eq 3}
                       <i class="layui-icon layui-icon-ok-circle order-status-icon-ok"></i>
@@ -23,7 +32,7 @@
                         {case 1}待发货{/case}
                         {case 2}待收货{/case}
                         {case 3}已完成{/case}
-                        {case 4}已取消{/case}
+                        {case 4}已取消{/case} 
                         {case 5}退款中{/case}
                         {case 6}已退款{/case}
                         {default /}default
@@ -36,7 +45,11 @@
                 <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a>
                 {/if}
                 <a class="layui-btn layui-btn-primary layui-btn-radius track" >订单追踪</a>
+                {if $order.order_status eq 1}
+                <a class="layui-btn layui-btn-primary layui-btn-radius print" onclick=preview(1)>打印</a>
+                {/if}
             </div>
+            <!--startprint1-->
             <div class="table-lable">
                 基本信息
             </div>
@@ -135,40 +148,32 @@
                 </tr>
                 </tbody>
             </table>
-           <!-- <div class="table-lable">
-                操作信息
-            </div>
-            <table class="layui-table tb" id="operatingInfo">
-                <thead>
-                <tr class="tb-tr">
-                    <th>订单编号</th>
-                    <th>用户账号</th>
-                    <th>支付方式</th>
-                    <th>买家留言</th>
-                    <th>物流单号</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr >
-                    <td ></td>
-                    <td ></td>
-                    <td ></td>
-                    <td ></td>
-                    <td ></td>
-                </tr>
-                </tbody>
-            </table>
-    -->
+            <!--endprint1-->
         </div>
-
     </div>
   </div>
 </div>
-</div>
 
-
-{/block}
-{block name="footjs"}
+<script>
+    function preview(oper){
+        if (oper < 10){
+            bdhtml=window.document.body.innerHTML;//获取当前页的html代码
+            sprnstr="<!--startprint"+oper+"-->";//设置打印开始区域
+            eprnstr="<!--endprint"+oper+"-->";//设置打印结束区域
+            prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+18); //从开始代码向后取html
+            prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));//从结束代码向前取html
+            window.document.body.innerHTML=prnhtml;
+            window.print();
+            window.document.body.innerHTML=bdhtml;
+        } else {
+            window.print();
+        }
+    }
+</script>
+</body>
+<script type="text/javascript" src="__JS__/public/jquery.min.js"></script>
+<script type="text/javascript" src="__JS__/public/ajax-rediect.js"></script>
+<script src="__THIRD__/layuiadmin/layui/layui.js"></script>
 <script>
   layui.use(['form'], function(){
     var form = layui.form;
@@ -202,12 +207,5 @@
   })
 </script> 
 
-<script>
-    function printHTML(page)
-    { 
-     window.document.body.innerHTML=document.getElementById("pr").innerHTML;
-     window.print(); 
-    } 
-</script>
 
-{/block}
+</html>

@@ -6,6 +6,7 @@
 .not_assess{border:1px solid #3a88fd;color: #3a88fd;float: right;}
 .assess{border:1px solid #ffa55d;color:#ffa55d;float: right;}
 .track{border:1px solid #3a88fd;color: #3a88fd;float: right;margin-right: 20px;}
+.print{border:1px solid #3a88fd;color: #3a88fd;float: right;margin-right: 10px;}
 .dsflex{display: flex;align-items: center;}
 
 /*订单列表--订单详情*/

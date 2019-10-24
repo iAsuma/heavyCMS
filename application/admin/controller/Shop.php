@@ -18,8 +18,12 @@ class Shop extends Base
      */
     public function goods()
     {
-        $info = Db::table('shop_classification')->field('id,name')->where('pid','>',0)->order('pid','asc')->select();
-        isset($info) && $this->assign('info', $info);
+        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+
+        $tree = new \util\Tree($classifyArr);
+        $classify = $tree->leaf();
+        
+        $this->assign('classify', $classify);
         return $this->fetch();
     }
 
@@ -40,9 +44,16 @@ class Shop extends Base
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_goods')->where($formWhere);
 
-        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.post_type,g.freight,c.name,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
+        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
         $count = $countQuery->count();
         $data = $query->select();
+        foreach ($data as $k => $val) {
+            $arr = explode(',',$val['goods_imgs']);
+            $data[$k]['imgs'] = $arr[0];
+            $pid = Db::table('shop_classification')->where('id','=',$val['pid'])->find();
+            $data[$k]['classfy'] = $pid['name'].' || '.$val['name'];
+        }
+     
         return table_json($data, $count);
     }
 
@@ -246,7 +257,7 @@ class Shop extends Base
  
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_banner')->where($formWhere);
-        $query = Db::table('shop_banner')->field('id,title,img,landing_url')->where($formWhere)->page($page, $limit)->order('id', 'desc');
+        $query = Db::table('shop_banner')->field('id,title,img,landing_url')->where($formWhere)->page($page, $limit)->order('id', 'asc');
         $count = $countQuery->count();
         $data = $query->select();
         return table_json($data, $count);
@@ -348,7 +359,7 @@ class Shop extends Base
         $limit = $get['limit'] ?? 10;       
 
         $count = Db::table('shop_reco_place')->count();
-        $data = Db::table('shop_reco_place')->page($page, $limit)->order('id', 'desc')->select();
+        $data = Db::table('shop_reco_place')->page($page, $limit)->order('id', 'asc')->select();
 
         return table_json($data, $count);
     }
@@ -363,7 +374,7 @@ class Shop extends Base
         if(checkFormToken($request->post())){
            try {
                 $data = [
-                    'title' => $request->post('title')
+                    'name' => $request->post('name')
                 ];
 
                 $result = Db::table('shop_reco_place') -> insert($data);
@@ -395,7 +406,7 @@ class Shop extends Base
             $post = $request->post();
             !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
             $data = [
-                    'title' => $request->post('title')
+                    'name' => $request->post('name')
             ];
 
             $result = Db::table('shop_reco_place')->where('id', (int)$post['id'])->update($data);
@@ -422,6 +433,8 @@ class Shop extends Base
         }
         $str = rtrim($str,',');
         $info = Db::table('shop_goods g')->field('g.id,g.goods_name,s.sku_img,s.price,s.market_price,s.goods_id')->leftJoin("(select min(price) price,market_price,goods_id,sku_img from shop_goods_sku GROUP BY goods_id) s",'s.goods_id=g.id')->where('g.id','in',$str)->select();
+        $count = count($info);
+        $this->assign('count', $count);
         isset($info) && $this->assign('info', $info);
         return $this->fetch();
     }
@@ -445,8 +458,14 @@ class Shop extends Base
     {    
         $rid = (int)$this->request->get('rid');
         $this->assign('rid', $rid);
-        $info = Db::table('shop_classification')->field('id,name')->where('pid','>',0)->order('pid','asc')->select();
-        isset($info) && $this->assign('info', $info);
+
+        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+
+        $tree = new \util\Tree($classifyArr);
+        $classify = $tree->leaf();
+        
+        $this->assign('classify', $classify);
+
         return $this->fetch();
     }
 
@@ -467,7 +486,7 @@ class Shop extends Base
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_goods')->where($formWhere);
 
-        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.post_type,g.freight,c.name,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
+        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
 
         $count = $countQuery->count();
         $data = $query->select();
@@ -480,8 +499,14 @@ class Shop extends Base
             }else{
                 $data[$k]['fin'] = 2; 
             }
+
+            $arr = explode(',',$v['goods_imgs']);
+            $data[$k]['imgs'] = $arr[0];
+            $pid = Db::table('shop_classification')->where('id','=',$v['pid'])->find();
+            $data[$k]['classfy'] = $pid['name'].' || '.$v['name'];
            
         }
+
         return table_json($data, $count);
     }
 
@@ -490,6 +515,7 @@ class Shop extends Base
         
         $gid =  $data['goods_id'] = $request->post('gid');
         $rid = $data['rec_id']  = $request->post('rid');
+        $data['create_time'] = date('Y-m-d H:i:s');
         $res = Db::table('shop_reco_goods')->where(['goods_id'=>$gid,'rec_id'=>$rid])->find();
         if (!$res && Db::table('shop_reco_goods') ->insert($data)) { 
             Hook::listen('admin_log', ['首页管理', '添加了推荐位的商品']);
@@ -498,6 +524,53 @@ class Shop extends Base
             return res_json(-1);
         }
       
+    }
+
+    public function sold()
+    {
+        $gid = (int)$this->request->get('id');
+
+        $list = Db::table('shop_goods_sku')->where(['goods_id'=>$gid])->select();
+        $str = '';
+        foreach ($list as $k => $v) {
+            $arr = json_decode($v['sku'],true);
+            foreach ($arr as $key => $val) {
+                $str .= $val['title'].'：'.$val['attr'].'；';
+            }
+            
+            $list[$k]['skus'] = $str;
+            $str=''; 
+        }
+        $this->assign('data', $list);
+        return $this->fetch();
+    }
+
+    public function addsold()
+    {
+        $post = $this->request->post();
+
+        $Arr1 = $post['idlist'];
+        $Arr2 = $post['soldlist'];
+        $Arr3 = $post['market_price'];
+        $Arr4 = $post['pricelist'];
+
+        foreach ($Arr1 as $k => $r) {
+            $res[] = [$Arr1[$k],$Arr2[$k],$Arr3[$k],$Arr4[$k]];
+        }
+
+        foreach ($res as $k => $v) {
+          
+            $data['stocks']=$v[1];
+            $data['market_price']=$v[2];
+            $data['price']=$v[3];
+            $re = Db::table('shop_goods_sku')->where(['id'=>$v[0]])->update($data);
+        }
+        if($re){
+            return res_json(1); 
+        }else{
+            return res_json(-1); 
+        }
+        
     }
 
 

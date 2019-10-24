@@ -17,17 +17,25 @@ tbody .layui-table-cell img{width: auto;height: 32px}
                 <input type="text" name="goods_name" autocomplete="off" class="layui-input">
             </div>
         </div>
+
          <div class="layui-inline">
-            <label class="layui-form-label">分类名称</label>
+            <label class="layui-form-label">商品分类</label>
             <div class="layui-input-block">
-                <select name="class_id" >
-                  <option value="">请选择</option>
-                  {volist name="info" id="vo"}
-                    <option value="{$vo.id}">{$vo.name}</option>
+              <select name="class_id" lay-search lay-verify="required" lay-reqText="请选择分类">
+                <option value="">支持搜索</option>
+                {volist name="classify" id="one"}
+                <optgroup label="{$one.name}">
+                  {if $one.child ?? ''}
+                  {volist name="$one.child" id="two"}
+                  <option value="{$two.id}">{$two.name}</option>
                   {/volist}
-                </select>
+                  {/if}
+                </optgroup>
+                {/volist}
+              </select>
             </div>
-        </div>
+          </div>
+
         <div class="layui-inline">
         <label class="layui-form-label">是否上架</label>
         <div class="layui-input-block">
@@ -87,7 +95,10 @@ tbody .layui-table-cell img{width: auto;height: 32px}
       }
       ,cols: [[ //表头
         {field: 'goods_name', title: '商品名称'}
-        ,{field: 'name', title: '分类'} 
+        ,{field: 'imgs', title: '图片', templet: function(d){
+          return '<img src="__FILEROOT__'+d.imgs+'"';
+        }}
+        ,{field: 'classfy', title: '所属分类'} 
           ,{field: 'post_type', title: '邮寄方式', templet: function(d){
           var post_type = ''
           switch(d.post_type){
@@ -140,7 +151,23 @@ tbody .layui-table-cell img{width: auto;height: 32px}
 
     table.on('tool(goods)', function(obj){
         switch(obj.event){
-    
+            case 'change':
+              layer.open({
+                type: 2
+                ,title: '编辑上架'
+                ,content: "{:url('sold')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['80%', '90%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
           case 'del':
               layer.confirm('确定删除？？', function(index){
      

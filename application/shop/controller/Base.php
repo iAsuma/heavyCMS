@@ -1,29 +1,15 @@
 <?php
-namespace app\index\controller;
+namespace app\shop\controller;
 use think\Controller;
 
 class Base extends Controller
 {
+	protected $wx_openid = "";
+
 	protected function initialize()
 	{
-
-	}
-
-	/**
-	*	返回请求结果状态
-	*/
-	public function res_json($code='101', $result='')
-	{
-		$data = ['code' => $code, 'result' => $result];
-		return $this->json($data);
-	}
-
-	/**
-	*	返回json字符串数据
-	*/
-	public function json($data)
-	{
-		return json()->data($data)->getContent();
+		$this->userPhone = "";
+		$this->wx_openid = "";
 	}
 
 	/**

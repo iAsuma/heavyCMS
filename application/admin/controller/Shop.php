@@ -11,7 +11,6 @@ use think\facade\Hook;
 */
 class Shop extends Base
 {
-
     /**
      * 用户列表
      * @author zhaoyun  
@@ -29,7 +28,6 @@ class Shop extends Base
 
     public function dataList()
     {   
-
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;

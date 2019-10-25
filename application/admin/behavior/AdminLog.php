@@ -6,6 +6,7 @@ use think\Exception;
 use think\facade\Log as ThinkLog;
 /**
  * 记录权限行为日志
+ * @author asuma(lishuaiqiu) <sqiu_li@163.com>
  */
 class AdminLog 
 {	

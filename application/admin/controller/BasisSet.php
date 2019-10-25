@@ -8,7 +8,6 @@ use think\facade\Hook;
 
 class BasisSet extends Base
 {
-
 	/**
      * 轮播图
      * @author zhaoyun  
@@ -26,7 +25,7 @@ class BasisSet extends Base
         $limit = $get['limit'] ?? 10;
  
         $count = Db::table('application_config')->count();
-        $data = Db::table('application_config')->page($page, $limit)->order('id', 'desc')->select();
+        $data = Db::table('application_config')->page($page, $limit)->cache('appset', 0, 'developer')->order('id', 'desc')->select();
         return table_json($data, $count);
     }
 
@@ -91,7 +90,9 @@ class BasisSet extends Base
 
             $result = Db::table('application_config')->where('id', (int)$post['id'])->update($data);
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+
             Hook::listen('admin_log', ['基础设置', '修改了应用配置']);
+            \think\facade\Cache::clear('developer');  //清除配置缓存，让列表实时生效
 
             destroyFormToken($post);
             return res_json(1);
@@ -103,7 +104,6 @@ class BasisSet extends Base
 
     public function del(Request $request)
     {
-        
         $id = $request->post('id');
         if (Db::table('application_config') ->where('id', '=', $id) -> delete()) { 
             Hook::listen('admin_log', ['基础设置', '删除了应用配置']);
@@ -111,7 +111,6 @@ class BasisSet extends Base
         } else {
             return res_json(-1);
         }
-      
     }
 
 }

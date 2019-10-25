@@ -54,7 +54,7 @@ class Order extends Base
         return $this->fetch();
     }
 
-     public function detailList()
+    public function detailList()
     {   
 
         $get = $this->request->get();

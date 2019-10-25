@@ -5,6 +5,7 @@ use think\Request;
 use think\facade\Hook;
 /**
  * 商品创建与编辑
+ * asuma(li shuaiqiu)
  */
 class Goods extends Base
 {
@@ -98,7 +99,6 @@ class Goods extends Base
                 destroyFormToken($request->post());
                 return res_json(1);
             } catch (\Exception $e) {
-            	dump($e->getMessage());
                 Db::rollback();
                 return res_json(-5, '系统错误');
             }
@@ -218,7 +218,6 @@ class Goods extends Base
 
 	public function modify(Request $request)
 	{
-		// dump($request->post());die;
 		if(checkFormToken($request->post())){
             $validate = \think\Validate::make([
                 'goods_name' => 'require|max:150',
@@ -314,7 +313,6 @@ class Goods extends Base
                 destroyFormToken($request->post());
                 return res_json(1);
             } catch (\Exception $e) {
-            	dump($e->getMessage());
                 Db::rollback();
                 return res_json(-5, '系统错误');
             }

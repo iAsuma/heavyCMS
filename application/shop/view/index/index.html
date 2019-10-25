@@ -1,0 +1,84 @@
+{extend name="public/base" /}
+{block name="title"}商城首页{/block}
+{block name="content"}
+<div id="app">
+    <div class="home-swiper-box">
+        <van-swipe :autoplay="3000" indicator-color="white">
+            {volist name="$banner" id="vo"}
+            <van-swipe-item>
+                {if $vo.landing_url}
+                <a href="{$vo.landing_url}"><img src="__FILEROOT__{$vo.img}" class="swiperimg" /></a>
+                {else/}
+                <img src="__FILEROOT__{$vo.img}" class="swiperimg" />
+                {/if}
+            </van-swipe-item>
+            {/volist}
+        </van-swipe>
+    </div>
+    <div class="home-content">
+        <div class="home-content-xianshi">
+        	<!-- 抢购 -->
+            <!-- <div class="home-content-xianshi-title">
+                <img src="__MOD__/shop/images/xianshi.png" alt="" class="home-content-xianshi-title-left">
+                <div class="home-content-xianshi-title-right">
+                    <img src="__MOD__/shop/images/jishi.png" alt="">
+                    <span class="fs10 mr10">倒计时</span>
+                    <van-count-down :time="time">
+                        <template v-slot="timeData">
+                              <span class="item">{{ timeData.hours }}</span>
+                              <span class="maohao">:</span>
+                              <span class="item">{{ timeData.minutes }}</span>
+                              <span class="maohao">:</span>
+                              <span class="item">{{ timeData.seconds }}</span>
+                            </template>
+                    </van-count-down>
+                </div>
+            </div>
+            <div class="home-content-xianshi-content">
+                <div class="home-content-xianshi-content-item" v-for="(item,index) in qianggouList">
+                    <img src="./uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs12 cl33 over">撒大大十大十大算法</div>
+                    <div class="fs0"><span class="fs10 clog">￥<span class="fs12 fwb">18</span></span> <del class="clad fs10 ml5">￥<del>18</del></del>
+                    </div>
+                </div>
+            </div> -->
+
+            <!--今日推荐  -->
+            {foreach $reco as $k=>$vo}
+            <div class="home-content-tuijian-title ">
+                {$k}
+            </div>
+            <div class="home-content-tuijian-content fs0">
+                {volist name="$vo" id="vv"}
+                <div class="home-content-xianshi-content-item">
+                <a href="{:url('shop/Goods/detail', ['id' => $vv.goods_id])}">
+                    <img src="__FILEROOT__/thumb{$vv.sku_img}" alt="">
+                    <div class="fs12 cl33 over">{$vv.goods_name}</div>
+                    <div class="fs0"><span class="fs10 clog">￥<span class="fs12 fwb">{$vv.price}</span></span> <del class="clad fs10 ml5">￥<del>{$vv.market_price}</del></del>
+                    </div>
+                </a>
+                </div>
+                {/volist}
+            </div>
+            {/foreach}
+        </div>
+    </div>
+
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="footjs"}
+<script>
+// 在 #app 标签下渲染一个按钮组件
+new Vue({
+    el: '#app',
+    data: {
+        SwiperImg: [],
+        // time: 30 * 60 * 60 * 1000,
+    },
+    methods:{
+
+    }
+});
+</script>
+{/block}

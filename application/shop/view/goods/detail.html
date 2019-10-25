@@ -1,0 +1,179 @@
+{extend name="public/base" /}
+{block name="title"}商城首页{/block}
+{block name="content"}
+<div id="homeDetail">
+    <div class="div-top">
+        <div class="home-detail-swiper-box">
+            <van-swipe :autoplay="3000" indicator-color="white" @change="onChange">
+                <van-swipe-item v-for="(item,index) in SwiperImg" :key="index">
+                    <img :src="item" class="swiperimg" />
+                </van-swipe-item>
+                <div class="custom-indicator" slot="indicator">
+                    {{ current + 1 }}/4
+                </div>
+            </van-swipe>
+        </div>
+        <div class="home-detail-mid fs0">
+            <div><span class="fs14 clog">￥<span class="fs20 fwb">158.00</span> </span> <del class="fs12 clad ml10">￥<del>335</del></del>
+            </div>
+            <div class="fs12 cl6e over mt10">真丝枕套+ 蚕丝枕芯 上市品牌直供</div>
+            <div class="fs14 cl33 over2 mt10 home-detail-goods-detail">太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯 真丝枕套+蚕丝枕芯</div>
+            <div class="home-detail-goods-send fs12 cl6e"><span>快递：<span>免运费</span></span>
+                <span>月销：<span>69</span>笔</span>
+                <span>运费：<span>包邮</span></span>
+            </div>
+        </div>
+        <div class="home-detail-chose fs12">
+            <div class="home-detail-chose-left">选择</div>
+            <div class="home-detail-chose-mid">
+                <input type="text" placeholder="请选择" readonly @click="shuxing = true" v-model="shuxing_list[shuxing_index]">
+            </div>
+            <div class="home-detail-chose-right">
+                <img src="./images/right.png" alt="">
+            </div>
+        </div>
+        <!-- 商品详情 -->
+        <div class="mt10">
+            <van-tabs v-model="active" line-width="36" color="#4588F3" title-active-color="#4588F3">
+                <van-tab title="商品详情">内容 1</van-tab>
+                <van-tab title="商品评价">
+                    <div class="home-detail-box">
+                        <div class="home-detail-box-top fs0">
+                            <div class="home-detail-box-top-left">
+                                <img src="./images/touxiang.jpg" alt="">
+                                <div class="dsfx ml10">
+                                    <span class="fs12 cl33">*****xxx</span>
+                                    <van-rate v-model="readonly_star" readonly size="6" gutter="2" /><span class="fs10 clb4 ml10"><span>5</span>分</span>
+                                </div>
+                            </div>
+                            <div class="fs12 cl6e">2019-12-10</div>
+                        </div>
+                        <!-- 评价内容 -->
+                        <div class="fs0 tl home-detail-pinajiacontent">
+                            <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价</div>
+                            <div class="home-detail-image-content tl">
+                                <img src="./images/touxiang.jpg" alt="">
+                                <img src="./images/touxiang.jpg" alt="">
+                                <img src="./images/touxiang.jpg" alt="">
+                                <img src="./images/touxiang.jpg" alt="">
+                            </div>
+                            <div class="home-detail-shangjiahuifu">
+                                <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb">商家回复</div>
+                                <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10">
+                                    这个时刻，想用一句最恰当的话表达我的感谢与祝福变得如此的不容易。无须太多言语，一切尽在不言中，感谢亲的赞美。我们相信用心去做的事情总是会得到认可与支持的。祝您购物愉快
+                                </div>
+                            </div>
+                            <div class="home-detail-zhuijia fs0">
+                                <div class="fs14 fwb">购买<span>3</span>天后追评</div>
+                                <div class="cl33 fs12 mt20">天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评</div>
+                            </div>
+                        </div>
+                    </div>
+                </van-tab>
+            </van-tabs>
+        </div>
+        <div class="icontop">
+            <van-icon name="upgrade" />
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="home-detail-bot">
+        <div class="home-detail-bot-left">
+            <div class="dffccb">
+                <img src="__MOD__/shop/images/home.png" alt="">
+                <span class="fs10 cl33">首页</span>
+            </div>
+            <div class="dffccb ">
+                <img src="__MOD__/shop/images/collect.png" alt="">
+                <span class="fs10 cl33">收藏</span>
+            </div>
+            <div class="dffccb ">
+                <img src="__MOD__/shop/images/shop.png" alt="">
+                <span class="fs10 cl33">购物车</span>
+            </div>
+
+        </div>
+
+        <div class="home-detail-bot-btnone">
+            加入购物车
+        </div>
+        <div class="home-detail-bot-btntwo">
+            立即购买
+        </div>
+    </div>
+
+
+    <!-- 选择商品属性 -->
+    <van-popup v-model="shuxing" round position="bottom" :style="{ height: '60%' }">
+        <div class="home-detail-pop-box">
+            <div class="home-detail-pop-box-top">
+                <img src="./images/touxiang.jpg" alt="">
+                <div class="home-detail-pop-box-info">
+                    <div class="home-detail-pop-box-info-des over2">百草味 每日坚果炒货 笑口 板栗 即食香糯</div>
+                    <div class="fs10 clog">￥<span class="fs14 fwb">58.00</span></div>
+                    <div class="fs12 cl6e">库存<span>500</span>件</div>
+                    <div class="fs12 cl33">已选：{{shuxing_list[shuxing_index]}}</div>
+                </div>
+            </div>
+            <div class="home-detail-pop-box-mid">
+                <div class="fs14 cl33">属性</div>
+                <div class="mt15 fs0">
+                    <div v-for="(sx,index) in shuxing_list" class="home-detail-shuxing-btn" :class="{'btn-active':index===shuxing_index}" @click="shuxingclick(index)">{{sx}}</div>
+                </div>
+            </div>
+            <img src="./images/close.png" alt="" class="home-detail-close-btn" @click="shuxing = false">
+        </div>
+        <div class="huowubtn" @click="sub()">确定</div>
+    </van-popup>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+new Vue({
+    el: '#homeDetail',
+    data: {
+        SwiperImg: [
+            "https://m.360buyimg.com/mobilecms/s750x366_jfs/t1/39343/4/1551/48272/5cbd71f4E329401dc/579b33f530a1402d.jpg!cr_1125x549_0_72!q70.jpg.dpg ",
+            "https://m.360buyimg.com/mobilecms/s750x366_jfs/t1/34869/14/3703/113972/5cb953c1E4294d8ea/b73c538710f5c462.jpg!cr_1125x549_0_72!q70.jpg.dpg ",
+            "https://m.360buyimg.com/mobilecms/s750x366_jfs/t1/39343/4/1551/48272/5cbd71f4E329401dc/579b33f530a1402d.jpg!cr_1125x549_0_72!q70.jpg.dpg ",
+            "https://m.360buyimg.com/mobilecms/s750x366_jfs/t1/34729/14/3948/120618/5cbeee07Efbe17ec5/d57ddd4fbbbc09e0.jpg!cr_1125x549_0_72!q70.jpg.dpg ",
+            "https://m.360buyimg.com/mobilecms/s750x366_jfs/t1/34423/17/5378/97852/5cbecd7bE73730c2f/76e5359d8fb3a1e1.jpg!cr_1125x549_0_72!q70.jpg.dpg "
+        ],
+        current: 0,
+        active: 0,
+        /*商品详情和商品评价之间选中*/
+        readonly_star: 5, //评分的星星
+        shuxing: false, //属性框显示
+        shuxing_list: ["一袋装打赏0", "一袋装打赏1", "一袋装打赏2", "一袋装打赏3", "一袋装打赏4", "一袋装打赏5"],
+        shuxing_index: 0,
+    },
+    computed: {
+        /*需那种属性索引*/
+        yixuanze() {
+            this.shuxing_list[this.shuxing_index]
+        }
+    },
+    methods: {
+        onChange(index) {
+            this.current = index;
+        },
+        shuxingclick(index) {
+            this.shuxing_index = index;
+            this.yixuanze = this.shuxing_list[index]
+        },
+        sub() {
+            /*ajax*/
+            axios.get('', {
+                params: ""
+            }).then(resp => {
+                console.log(resp.data)
+            }).catch(resp => {
+                console.log('请求失败');
+            });
+            this.shuxing = false;
+        }
+    }
+});
+</script>
+{/block}

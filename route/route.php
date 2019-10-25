@@ -11,8 +11,6 @@
 
 Route::get('redirect', 'index/redirectLast'); //记住的跳转地址
 
-Route::get('code/:code','Camera/index');
-
 Route::group('admin', function(){
 	Route::group(['method' => 'get'],[
 		'/' => 'admin/index/index'
@@ -20,3 +18,6 @@ Route::group('admin', function(){
 	Route::rule('ueditor' , 'admin/index/ueditor');
 	Route::rule('layuiUpload', 'admin/index/layuiUpload');
 });
+
+Route::get('shop/', 'shop/Index/index');
+Route::get('shop/g/:id', 'shop/Goods/detail');

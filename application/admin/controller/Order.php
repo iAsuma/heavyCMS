@@ -169,6 +169,17 @@ class Order extends Base
     public function recomment(Request $request)
     {
         if(checkFormToken($request->post())){
+             $validate = \think\Validate::make([
+                'recomment' => 'require|min:2',
+            ],[
+                'recomment.require'=> '请填写回复内容',
+                'recomment.min'    => '分类名称最少不能少于2个字符'
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
+
             try {
                 $data = [
                     'content' => $request->post('recomment'),

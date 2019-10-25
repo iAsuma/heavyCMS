@@ -8,7 +8,7 @@
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
         </div>
    
-        <table id="reco" lay-filter="reco"></table>  
+        <table id="reco" lay-filter="reco" data-sturl="{:url('changeRecoWeight')}"></table>  
     </div>
   </div>
 </div>
@@ -42,6 +42,7 @@
       }
       ,cols: [[ //表头
         {field: 'name', title: '标题'}
+        ,{field: 'sorted', title: '权重', edit : 'text'}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });
@@ -58,7 +59,7 @@
           ,title: '添加'
           ,content: "{:url('recoadd')}"
           ,maxmin: true
-          ,area: ['25%', '20%']
+          ,area: ['500px', '200px']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var submit = layero.find('iframe').contents().find("#submit");
@@ -66,6 +67,23 @@
           }
         });
     });
+
+    table.on('edit(reco)', function(obj){
+
+      if(!/^(0|[1-9]+[0-9]*)$/.test(obj.value)){
+        layer.tips('请输入正确的数值', obj.tr.find('td:eq(1)'), {tips:1});
+        return false;  
+      }
+
+      $.post($('#reco').data('sturl'),{id: obj.data.id, newVal: obj.value}, function(res){
+        if(res.code != 1){
+          layer.tips(res.result, obj.tr.find('td:eq(1)'), {tips:1});
+       
+        }else{
+          tableIns.reload()
+        }
+      }, 'json')
+    })
     
     table.on('tool(reco)', function(obj){
         switch(obj.event){
@@ -75,7 +93,7 @@
                 ,title: '编辑'
                 ,content: "{:url('recoEdit')}?id="+obj.data.id
                 ,maxmin: true
-                ,area: ['350px', '180px']
+                ,area: ['500px', '200px']
                 ,btn: ['确定', '取消']
                 ,success: function (layero, index) {
                    layero.find('input[name=id]').val(obj.data.id)

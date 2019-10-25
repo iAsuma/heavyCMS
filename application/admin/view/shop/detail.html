@@ -10,7 +10,7 @@
     <div class="layui-col-md2 layui-col-sm4">
         <div class="cmdlist-container">
             <a href="javascript:;">
-              <img width="200" height="200" src="__FILEROOT__{$vo.sku_img}">
+              <img width="200" height="200" src="__FILEROOT__/thumb{$vo.sku_img}">
             </a>
             <a href="javascript:;">
               <div class="cmdlist-text">
@@ -53,7 +53,6 @@
           ,content: "{:url('Shop/recogoods')}?rid="+recoid
           ,maxmin: true
           ,area: ['95%', '95%']
-          ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var submit = layero.find('iframe').contents().find("#submit");
             submit.click();

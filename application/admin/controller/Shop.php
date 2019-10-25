@@ -106,6 +106,17 @@ class Shop extends Base
     public function addClass(Request $request)
     {
         if(checkFormToken($request->post())){
+            $validate = \think\Validate::make([
+                'name' => 'require|min:2',
+            ],[
+                'name.require'=> '请填写分类名称',
+                'name.min'    => '分类名称最少不能少于2个字符'
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
+
             try {
                 $data = [
                     'name' => $request->post('name'),
@@ -138,26 +149,41 @@ class Shop extends Base
 
 
     public function editClass(Request $request)
-    {
-        try {
-            $post = $request->post();
+    {   
+        if(checkFormToken($request->post())){
+            $validate = \think\Validate::make([
+                'name' => 'require|min:2',
+            ],[
+                'name.require'=> '请填写分类名称',
+                'name.min'    => '分类名称最少不能少于2个字符'
+            ]);
 
-            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-            $data = [
-                'name' => $request->post('name')
-            ];
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
 
-            $post['pid'] && $data['main_img'] = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+            try {
+                $post = $request->post();
 
-            $result = Db::table('shop_classification')->where('id', (int)$post['id'])->update($data);
-            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
-            Hook::listen('admin_log', ['商品分类', '修改了类别'.$data['name']]);
+                $data = [
+                    'name' => $request->post('name')
+                ];
+                if($post['pid'] > 0 && $request->post('image')){
+                    $img = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+                    $data['main_img'] = $img[1];
+                }
+               
+                $result = Db::table('shop_classification')->where('id', (int)$post['id'])->update($data);
+                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                Hook::listen('admin_log', ['商品分类', '修改了类别'.$data['name']]);
 
-            destroyFormToken($post);
-            return res_json(1);
-        } catch (\Exception $e) {
-            return res_json(-100, $e->getMessage());
+                destroyFormToken($post);
+                return res_json(1);
+            } catch (\Exception $e) {
+                return res_json(-100, $e->getMessage());
+            }
         }
+         return res_json(-2, '请勿重复提交');
         
     }
 
@@ -173,6 +199,19 @@ class Shop extends Base
     public function secondClass(Request $request)
     {
         if(checkFormToken($request->post())){
+            $validate = \think\Validate::make([
+                'name' => 'require|min:2',
+                'image' => 'require',
+            ],[
+                'name.require'=> '请填写分类名称',
+                'name.min'    => '分类名称最少不能少于2个字符',
+                'image.require'    => '请上传图片'
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
+
             $image = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
       
             try {
@@ -257,7 +296,7 @@ class Shop extends Base
  
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_banner')->where($formWhere);
-        $query = Db::table('shop_banner')->field('id,title,img,landing_url')->where($formWhere)->page($page, $limit)->order('id', 'desc');
+        $query = Db::table('shop_banner')->where($formWhere)->page($page, $limit)->order(['sorted', 'id']);
         $count = $countQuery->count();
         $data = $query->select();
         return table_json($data, $count);
@@ -271,6 +310,19 @@ class Shop extends Base
     public function addBanner(Request $request)
     {
         if(checkFormToken($request->post())){
+
+            $validate = \think\Validate::make([
+                'title' => 'require|min:2',
+                'image' => 'require',
+            ],[
+                'title.require'=> '请填写标题',
+                'title.min'    => '标题名称最少不能少于2个字符',
+                'image.require'    => '请上传图片'
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
     
             $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
       
@@ -305,27 +357,45 @@ class Shop extends Base
 
 
     public function editBanner(Request $request)
-    {
-        try {
-            $post = $request->post();
-            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
-      
-            $data = [
-                    'title' => $request->post('title'),
-                    'landing_url' => $request->post('landing_url'),
-                    'img' => $image[1]
-            ];
+    {   
+        if(checkFormToken($request->post())){
 
-            $result = Db::table('shop_banner')->where('id', (int)$post['id'])->update($data);
-            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
-            Hook::listen('admin_log', ['首页管理', '修改了banner']);
+             $validate = \think\Validate::make([
+                    'title' => 'require|min:2'
+                ],[
+                    'title.require'=> '请填写标题',
+                    'title.min'    => '标题名称最少不能少于2个字符'
+                ]);
 
-            destroyFormToken($post);
-            return res_json(1);
-        } catch (\Exception $e) {
-            return res_json(-100, $e->getMessage());
+                if(!$validate->check($request->post())){
+                    return res_json(-3, $validate->getError());
+                }
+
+            try {
+                $post = $request->post();
+          
+                $data = [
+                        'title' => $request->post('title'),
+                        'landing_url' => $request->post('landing_url')
+                ];
+
+                if($request->post('image')){
+                    $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
+                    $data['img'] = $image[1] ;
+                }
+                $result = Db::table('shop_banner')->where('id', (int)$post['id'])->update($data);
+                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                Hook::listen('admin_log', ['首页管理', '修改了banner']);
+
+                destroyFormToken($post);
+                return res_json(1);
+            } catch (\Exception $e) {
+                return res_json(-100, $e->getMessage());
+            }
+
         }
+
+         return res_json(-2, '请勿重复提交');
         
     }
 
@@ -341,6 +411,18 @@ class Shop extends Base
         }
       
     }
+
+
+    public function changeWeight()
+    {
+        $post = $this->request->post();
+
+        $post['id'] && $res = Db::name('shop_banner')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
+        !$res && exit(res_json_native(-3, '修改失败'));
+
+        return res_json(1);
+    }
+
 
     /**
      * 推荐位
@@ -359,7 +441,7 @@ class Shop extends Base
         $limit = $get['limit'] ?? 10;       
 
         $count = Db::table('shop_reco_place')->count();
-        $data = Db::table('shop_reco_place')->page($page, $limit)->order('id', 'asc')->select();
+        $data = Db::table('shop_reco_place')->page($page, $limit)->order(['sorted', 'id'])->select();
 
         return table_json($data, $count);
     }
@@ -372,6 +454,17 @@ class Shop extends Base
     public function addReco(Request $request)
     {
         if(checkFormToken($request->post())){
+            $validate = \think\Validate::make([
+                'name' => 'require|min:2'
+            ],[
+                'name.require'=> '请填写标题',
+                'name.min'    => '标题名称最少不能少于2个字符'
+            ]);
+
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
+
            try {
                 $data = [
                     'name' => $request->post('name')
@@ -399,26 +492,49 @@ class Shop extends Base
         return $this->fetch();
     }
 
+    public function changeRecoWeight()
+    {
+        $post = $this->request->post();
+
+        $post['id'] && $res = Db::name('shop_reco_place')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
+        !$res && exit(res_json_native(-3, '修改失败'));
+
+        return res_json(1);
+    }
+
+
 
     public function editReco(Request $request)
     {
-        try {
-            $post = $request->post();
-            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
-            $data = [
-                    'name' => $request->post('name')
-            ];
+       if(checkFormToken($request->post())){ 
+             $validate = \think\Validate::make([
+                'name' => 'require|min:2'
+            ],[
+                'name.require'=> '请填写标题',
+                'name.min'    => '标题名称最少不能少于2个字符'
+            ]);
 
-            $result = Db::table('shop_reco_place')->where('id', (int)$post['id'])->update($data);
-            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
-            Hook::listen('admin_log', ['首页管理', '修改了banner']);
+            if(!$validate->check($request->post())){
+                return res_json(-3, $validate->getError());
+            }
 
-            destroyFormToken($post);
-            return res_json(1);
-        } catch (\Exception $e) {
-            return res_json(-100, $e->getMessage());
+            try {
+                $post = $request->post();
+                $data = [
+                        'name' => $request->post('name')
+                ];
+
+                $result = Db::table('shop_reco_place')->where('id', (int)$post['id'])->update($data);
+                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                Hook::listen('admin_log', ['首页管理', '修改了banner']);
+
+                destroyFormToken($post);
+                return res_json(1);
+            } catch (\Exception $e) {
+                return res_json(-100, $e->getMessage());
+            }
         }
-        
+        return res_json(-2, '请勿重复提交'); 
     }
 
     public function detail()
@@ -454,7 +570,7 @@ class Shop extends Base
       
     }
 
-     public function recogoods()
+    public function recogoods()
     {    
         $rid = (int)$this->request->get('rid');
         $this->assign('rid', $rid);

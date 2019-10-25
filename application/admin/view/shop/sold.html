@@ -12,20 +12,20 @@
           <thead>
               <tr>
                   <th>规格</th>
-                  <th>图片</th>
-                  <th>库存</th>
-                  <th>市场价</th>
-                  <th>活动价</th>
+                  <th width="100px;">图片</th>
+                  <th width="100px;">库存</th>
+                  <th width="80px;">市场价</th>
+                  <th width="80px;">活动价</th>
               </tr>
           </thead>
           <tbody id="trnum">
             {volist name="data" id="vo"}
               <tr data-id="{$vo.id}" class="gattr">
                   <td style="white-space:normal !important;">{$vo.skus}</td>
-                  <td><img src="__FILEROOT__{$vo.sku_img}" alt="" width="30px" height="30px" /></td>
-                  <td><input type="number" required="required" value="{$vo.stocks}" min="0" class="sold layui-input"/></td>
-                  <td><input type="number" required="required" value="{$vo.market_price}" min="0.0"class="market_price layui-input"/></td>
-                  <td><input type="number" required="required" value="{$vo.price}" class="price layui-input" min="0.0" step="0.1" /></td>
+                  <td><img src="__FILEROOT__/thumb{$vo.sku_img}" alt="" width="30px" height="30px" /></td>
+                  <td><input type="text" required="required" value="{$vo.stocks}" min="0" class="sold layui-input"/></td>
+                  <td><input type="text" required="required" value="{$vo.market_price}" min="0.0"class="market_price layui-input"/></td>
+                  <td><input type="text" required="required" value="{$vo.price}" class="price layui-input" min="0.0" step="0.1" /></td>
               </tr>
               {/volist}
           </tbody>

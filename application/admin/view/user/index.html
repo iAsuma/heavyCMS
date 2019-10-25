@@ -1,0 +1,152 @@
+{extend name="public/base" /}
+{block name="title"}用户管理{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">
+    <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+      <div class="layui-form-item asuma-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+               <input type="text" name="phone" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="userSearch">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+        </div>
+        <div class="layui-inline">
+            <!-- <button class="layui-btn layui-btn-asuma export" type="button">导出Excel</button> -->
+        </div>
+      </div>
+    </form>
+    
+    <div class="layui-card-body">
+        
+        <table id="user" lay-filter="user"></table>  
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use([ 'table','form'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+
+   var tableIns =  table.render({
+      elem: '#user'
+      ,url: "{:url('userList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,toolbar: '#toolbar'
+      ,defaultToolbar: ['filter', 'print']
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {type: "checkbox",fixed: "left"}
+        ,{field: 'id', title: 'ID',  sort: true, width:65}
+        ,{field: 'name', title: '姓名'}
+        ,{field: 'phone', title: '手机号'} 
+        ,{field: 'gender', title: '性别', templet: function(d){
+          var gender = ''
+          switch(d.gender){
+            case 1:  gender = '男' ;break;
+            case 2:  gender = '女'; break;
+            case 0:  gender = '未知'; break;
+            default:;break;
+          }
+          return gender;
+        }}
+        ,{field: 'create_time', title: '创建时间', sort: true}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+   
+    table.on('sort(user)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+
+    $('.export').click(function(){
+        var _get = $('#searchForm').serialize()
+        var turl = "{:url('export_excel')}";
+        window.open(turl+'?'+_get);
+    })
+
+
+    //监听搜索
+    form.on('submit(userSearch)', function(data){
+      let field = data.field;
+      //执行重载
+      tableIns.reload({
+        where: field
+        ,page:{curr:1}
+      });
+
+      return false;
+    });
+
+    table.on('tool(user)', function(obj){
+        switch(obj.event){
+          case 'edit':
+              layer.open({
+                type: 2
+                ,title: '编辑用户'
+                ,content: "{:url('userEdit')}?id="+obj.data.id
+                ,maxmin: true
+                ,area: ['25%', '60%']
+                ,btn: ['确定', '取消']
+                ,success: function (layero, index) {
+                   layero.find('input[name=id]').val(obj.data.id)
+                }
+                ,yes: function(index, layero){
+                  var submit = layero.find('iframe').contents().find("#submit");
+                  submit.click();
+                }
+              });
+          break;
+          case 'del':
+              layer.confirm('确定删除？？', function(index){
+     
+                   $.post("{:url('User/del')}", {uid:obj.data.id}, function(res){
+                      if(res.code == 1){
+                        layer.msg('删除成功');
+                        table.reload('user'); //重载表格
+                        layer.close(index); //再执行关闭 
+                      }else{
+                        layer.msg(res.result, {icon: 5});
+                      }
+                    },'json');
+
+                }); 
+          break;
+        };
+    });
+
+
+  });
+</script>
+{/block}

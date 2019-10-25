@@ -1,15 +1,19 @@
 <?php
 namespace app\shop\controller;
 use think\Controller;
+use think\facade\Session;
 
 class Base extends Controller
 {
-	protected $wx_openid = "";
+	protected $userId = NULL;
+	protected $userName = NULL;
+	protected $userHeadImg = NULL;
 
 	protected function initialize()
 	{
-		$this->userPhone = "";
-		$this->wx_openid = "";
+		$this->userId = Session::get('wapUser.id');
+		$this->userName = Session::get('wapUser.name');
+		$this->userHeadImg = Session::get('wapUser.headimgurl');
 	}
 
 	/**

@@ -1,5 +1,8 @@
 {extend name="public/base" /}
 {block name="title"}商城首页{/block}
+{block name="css"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
 {block name="content"}
 <div id="app">
     <div class="home-swiper-box">
@@ -38,10 +41,12 @@
             <div class="home-content-xianshi-content fs0">
                 {volist name="$flashSale" id="vo"}
                 <div class="home-content-xianshi-content-item">
+                    <a href="{:url('shop/Goods/detail', ['id' => $vo.goods_id])}">
                     <img src="__FILEROOT__/thumb{$vo.sku_img}" alt="">
                     <div class="fs12 cl33 over">{$vo.goods_name}</div>
                     <div class="fs0"><span class="fs10 clog">￥<span class="fs12 fwb">{$vo.price}</span></span> <del class="clad fs10 ml5">￥<del>{$vo.market_price}</del></del>
                     </div>
+                    </a>
                 </div>
                 {/volist}
             </div>
@@ -71,6 +76,9 @@
 {include file="public/menu" /}
 {/block}
 {block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
 // 在 #app 标签下渲染一个按钮组件
 new Vue({

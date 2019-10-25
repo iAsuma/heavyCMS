@@ -1,14 +1,24 @@
 <div id="nav">
-    <a href="#" class="bot-a">
+    <a href="/shop" class="bot-a">
         <div class="bot">
+            {eq name="$Request.controller.'/'.$Request.action" value="Index/index"}
             <img src="__MOD__/shop/images/shangchengb.png" alt />
             <div class="fs10 cl33 clbb">商城</div>
+            {else /}
+            <img src="__MOD__/shop/images/shangcheng.png" alt />
+            <div class="fs10 cl33">商城</div>
+            {/eq}
         </div>
     </a>
-    <a href="#" class="bot-a">
+    <a href="{:url('Index/classify')}" class="bot-a">
         <div class="bot">
+            {eq name="$Request.controller.'/'.$Request.action" value="Index/classify"}
+            <img src="__MOD__/shop/images/fenleib.png" alt />
+            <div class="fs10 cl33 clbb">分类</div>
+            {else /}
             <img src="__MOD__/shop/images/fenlei.png" alt />
             <div class="fs10 cl33">分类</div>
+            {/eq}
         </div>
     </a>
      <a href="#" class="bot-a">

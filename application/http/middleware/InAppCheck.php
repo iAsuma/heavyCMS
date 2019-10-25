@@ -7,6 +7,7 @@
 
 namespace app\http\middleware;
 use Session;
+use think\Db;
 use EasyWeChat\Factory as WeChat;
 
 class InAppCheck
@@ -16,10 +17,13 @@ class InAppCheck
     	if (preg_match('~micromessenger~i', $request->header('user-agent'))) {
             $request->InApp = 'WeChat';
 
-            if(!Session::has('wechat.openid')){
-                
-                $this->wechat($request); //微信授权
+            if(!Session::has('wapUser.wx_openid')){
+                //读取微信配置并存入缓存
+                $wxConfig = Db::table('application_config')->order('id', 'desc')->cache('wx_config', 0, 'developer')->find();
+                //微信授权
+                $this->wechat($request, $wxConfig); 
             }
+
         } else if (preg_match('~alipay~i', $request->header('user-agent'))) {
             $request->InApp = 'Alipay';
         } else if (preg_match('~dingtalk~i', $request->header('user-agent'))) {
@@ -31,26 +35,27 @@ class InAppCheck
     	return $next($request);
     }
 
-    public function wechat($request)
+    public function wechat($request, $wxConfig)
     {
         $config = [
-            'app_id' => config('wechat.official_account')['default']['app_id'],
+            'app_id' => $wxConfig['app_id'],
         ];
         
         if($request->get('code')){
-            $config['secret'] = config('wechat.official_account')['default']['secret'];
+            $config['secret'] = $wxConfig['app_secret'];
             $app = WeChat::officialAccount($config);
             $user = $app->oauth->user();
-
-            Session::set('wechat.openid', $user['id']);
-            Session::set('wechat.userinfo', $user['original']);
+            
+            Session::set('wapUser.wx_openid', $user['id']);
+            Session::set('wapUser.wx_user_info', $user['original']);
         }else{
             $config['oauth'] = [
                 'scopes'   => ['snsapi_userinfo'], //snsapi_base  or snsapi_userinfo
                 'callback' => $this->getTargetUrl($request),
             ];
-            $app = WeChat::officialAccount($config);
 
+            $app = WeChat::officialAccount($config);
+            
             header("location: ". $app->oauth->redirect()->getTargetUrl());
             exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
         }

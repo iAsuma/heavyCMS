@@ -1,0 +1,149 @@
+{extend name="public/base" /}
+{block name="title"}商品分类{/block}
+{block name="content"}
+<div class="fenlei-search-box">
+    <input type="text" placeholder="搜索商品" class="fenlei-search pl30">
+    <div class="fenlei-search-box-img fs0">
+        <img src="__MOD__/shop/images/search.png " alt=" ">
+    </div>
+</div>
+<div class="fenlei-content">
+    <ul class="fenlei-content-left fs0">
+        <li class="fenlei-li-active">
+            <div>食品</div>
+        </li>
+        <li class="">
+            <div class="">服饰</div>
+        </li>
+        <li class="">
+            <div class="">家居</div>
+        </li>
+        <li class="">
+            <div class="">电器</div>
+        </li>
+        <li class="">
+            <div class="">洗护</div>
+        </li>
+    </ul>
+    <div class="fenlei-content-right">
+        <div id="fenleiShipin">
+            <div class="fenlei-content-right-img fs0"><img src="/uploads/temp/guanggao.png" alt=""></div>
+            <div class="fenlei-tuijian fs0">
+                <span class="fs14 cl33">热门推荐</span>
+                <span class="fs10 cl6e dfbtc">查看全部 <img src="__MOD__/shop/images/right.png" alt=""></span>
+            </div>
+            <div class="tuijian-content fs0">
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">水果</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">水果</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">水果</div>
+                </div>
+            </div>
+        </div>
+        <div id="fenleiFushi">
+            <div class="fenlei-content-right-img fs0"><img src="/uploads/temp/guanggao.png" alt=""></div>
+            <div class="fenlei-tuijian fs0">
+                <span class="fs14 cl33">热门推荐</span>
+                <span class="fs10 cl6e dfbtc">查看全部 <img src="__MOD__/shop/images/right.png" alt=""></span>
+            </div>
+            <div class="tuijian-content fs0">
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">衣服</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">衣服</div>
+                </div>
+            </div>
+        </div>
+        <div id="fenleiJiaju">
+            <div class="fenlei-content-right-img fs0"><img src="/uploads/temp/guanggao.png" alt=""></div>
+            <div class="fenlei-tuijian fs0">
+                <span class="fs14 cl33">热门推荐</span>
+                <span class="fs10 cl6e dfbtc">查看全部 <img src="__MOD__/shop/images/right.png" alt=""></span>
+            </div>
+            <div class="tuijian-content fs0">
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">家具</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">家具</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">家具</div>
+                </div>
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">家具</div>
+                </div>
+            </div>
+        </div>
+        <div id="fenleiDianqi">
+            <div class="fenlei-content-right-img fs0"><img src="/uploads/temp/guanggao.png" alt=""></div>
+            <div class="fenlei-tuijian fs0">
+                <span class="fs14 cl33">热门推荐</span>
+                <span class="fs10 cl6e dfbtc">查看全部 <img src="__MOD__/shop/images/right.png" alt=""></span>
+            </div>
+            <div class="tuijian-content fs0">
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">电器</div>
+                </div>
+            </div>
+        </div>
+        <div id="fenleiXihu">
+            <div class="fenlei-content-right-img fs0"><img src="/uploads/temp/guanggao.png" alt=""></div>
+            <div class="fenlei-tuijian fs0">
+                <span class="fs14 cl33">热门推荐</span>
+                <span class="fs10 cl6e dfbtc">查看全部 <img src="__MOD__/shop/images/right.png" alt=""></span>
+            </div>
+            <div class="tuijian-content fs0">
+                <div class="tuijian-content-item">
+                    <img src="/uploads/temp/touxiang.jpg" alt="">
+                    <div class="fs14 cl33 tc">洗护</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="footjs"}
+<script type="text/javascript">
+$(function() {
+        $(".fenlei-content-left li").click(function() {
+            $(this).addClass("fenlei-li-active").siblings().removeClass("fenlei-li-active")
+            console.log($(this).find('div').text())
+            switch ($(this).find('div').text()) {
+                case '服饰':
+                    $("#fenleiFushi").show().siblings().hide();
+                    break;
+                case '食品':
+                    $("#fenleiShipin").show().siblings().hide();
+                    break;
+                case '家居':
+                    $("#fenleiJiaju").show().siblings().hide();
+                    break;
+                case '电器':
+                    $("#fenleiDianqi").show().siblings().hide();
+                    break;
+                case '洗护':
+                    $("#fenleiXihu").show().siblings().hide();
+                    break;
+
+            }
+        })
+    })
+</script>
+{/block}

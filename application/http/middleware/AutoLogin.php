@@ -8,6 +8,7 @@
 namespace app\http\middleware;
 use Session;
 use Url;
+use think\Db;
 
 class AutoLogin
 {
@@ -34,23 +35,50 @@ class AutoLogin
             return $next($request);
         }
 
-    	//$userphone = Session::get('user.userphone');
-    	if(!$userphone){
-    		
+    	$userId = Session::get('wapUser.id');
+    	if(!$userId){
+    		$user = [];
+
             //登录业务逻辑
-            // .....
+            if($request->InApp == 'WeChat'){
+                $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
+                $user = Db::table('users')->where($where)->where('status', '=', 1)->find();
+
+                //定期修改头像
+                $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
+                $user && Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
+            }
             
             if($user){
-                //示例
-                //Session::set('user.id', $user['id']);
+                Session::set('wapUser.id', $user['id']);
+                Session::set('wapUser.name', $user['nickname']);
+                Session::set('wapUser.headimgurl', $user['headimgurl']);
             }else{
-                if($request->isAjax()){
-                    header('Ajax-Mark: redirect');
-                    header("Redirect-Path: ".Url::build($this->redirect_url));
-                }else{
-                    return redirect($this->redirect_url)->remember();
-                }
-                exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
+                $data = [
+                    'nickname' => Session::get('wapUser.wx_user_info')['nickname'],
+                    'create_time' => date('Y-m-d H:i:s'),
+                    'gender' => (int)Session::get('wapUser.wx_user_info')['sex'],
+                    'country' => Session::get('wapUser.wx_user_info')['country'],
+                    'province' => Session::get('wapUser.wx_user_info')['province'],
+                    'city' => Session::get('wapUser.wx_user_info')['city'],
+                    'status' => 1,
+                    'headimgurl' => Session::get('wapUser.wx_user_info')['headimgurl'],
+                    'wx_openid' => Session::get('wapUser.wx_openid')
+                ];
+
+                $userid = Db::table('users')->insertGetId($data);
+
+                Session::set('wapUser.id', $userid);
+                Session::set('wapUser.name', $data['nickname']);
+                Session::set('wapUser.headimgurl', $data['headimgurl']);
+
+                // if($request->isAjax()){
+                //     header('Ajax-Mark: redirect');
+                //     header("Redirect-Path: ".Url::build($this->redirect_url));
+                // }else{
+                //     return redirect($this->redirect_url)->remember();
+                // }
+                // exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
             }
     	}else{
             if(Session::has('from_redirect')){

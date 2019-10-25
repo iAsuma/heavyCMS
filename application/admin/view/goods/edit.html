@@ -316,9 +316,9 @@
             eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
             eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
           }else{
-            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
-            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
-            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+            eachNeed = eachNeed.replace('[stock]', '')
+            eachNeed = eachNeed.replace('[market]', '')
+            eachNeed = eachNeed.replace('[price]', '')
             eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
           }
           tbody += '<tr><td>'+madingData[i]+'</td>'+eachNeed+'</tr>';

@@ -18,9 +18,10 @@
     <div class="home-content">
         <div class="home-content-xianshi">
         	<!-- 抢购 -->
-            <!-- <div class="home-content-xianshi-title">
+            {if $flashSale}
+            <div class="home-content-xianshi-title">
                 <img src="__MOD__/shop/images/xianshi.png" alt="" class="home-content-xianshi-title-left">
-                <div class="home-content-xianshi-title-right">
+                <!-- <div class="home-content-xianshi-title-right">
                     <img src="__MOD__/shop/images/jishi.png" alt="">
                     <span class="fs10 mr10">倒计时</span>
                     <van-count-down :time="time">
@@ -32,17 +33,19 @@
                               <span class="item">{{ timeData.seconds }}</span>
                             </template>
                     </van-count-down>
-                </div>
+                </div> -->
             </div>
-            <div class="home-content-xianshi-content">
-                <div class="home-content-xianshi-content-item" v-for="(item,index) in qianggouList">
-                    <img src="./uploads/temp/touxiang.jpg" alt="">
-                    <div class="fs12 cl33 over">撒大大十大十大算法</div>
-                    <div class="fs0"><span class="fs10 clog">￥<span class="fs12 fwb">18</span></span> <del class="clad fs10 ml5">￥<del>18</del></del>
+            <div class="home-content-xianshi-content fs0">
+                {volist name="$flashSale" id="vo"}
+                <div class="home-content-xianshi-content-item">
+                    <img src="__FILEROOT__/thumb{$vo.sku_img}" alt="">
+                    <div class="fs12 cl33 over">{$vo.goods_name}</div>
+                    <div class="fs0"><span class="fs10 clog">￥<span class="fs12 fwb">{$vo.price}</span></span> <del class="clad fs10 ml5">￥<del>{$vo.market_price}</del></del>
                     </div>
                 </div>
-            </div> -->
-
+                {/volist}
+            </div>
+            {/if}
             <!--今日推荐  -->
             {foreach $reco as $k=>$vo}
             <div class="home-content-tuijian-title ">
@@ -73,11 +76,7 @@
 new Vue({
     el: '#app',
     data: {
-        SwiperImg: [],
         // time: 30 * 60 * 60 * 1000,
-    },
-    methods:{
-
     }
 });
 </script>

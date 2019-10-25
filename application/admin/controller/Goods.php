@@ -5,7 +5,7 @@ use think\Request;
 use think\facade\Hook;
 /**
  * 商品创建与编辑
- * asuma(li shuaiqiu)
+ * @author asuma(li shuaiqiu)
  */
 class Goods extends Base
 {
@@ -307,7 +307,7 @@ class Goods extends Base
                     return res_json(-4, '修改失败');
                 }
 
-                Hook::listen('admin_log', ['商品管理', '添加了新商品']);
+                Hook::listen('admin_log', ['商品管理', '修改了商品']);
                 
                 Db::commit();
                 destroyFormToken($request->post());

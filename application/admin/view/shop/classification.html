@@ -70,8 +70,15 @@ tbody .layui-table-cell img{width: auto;height: 32px}
           return pid;
         }}
       ,{field: 'main_img', title: '图片',templet: function(d){
+         if(d.pid !== 0){
+
         return '<img src="__FILEROOT__'+d.main_img +'">'
+         }else{
+          return  '';
+         }
+          
       }}
+
       ,{title: '操作', toolbar: '#optTpl'}
       ]]
     });

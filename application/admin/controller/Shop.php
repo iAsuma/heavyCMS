@@ -294,7 +294,7 @@ class Shop extends Base
  
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_banner')->where($formWhere);
-        $query = Db::table('shop_banner')->where($formWhere)->page($page, $limit)->order(['sorted', 'id']);
+        $query = Db::table('shop_banner')->where($formWhere)->page($page, $limit)->order(['sorted', 'id'=>'desc' ]);
         $count = $countQuery->count();
         $data = $query->select();
         return table_json($data, $count);

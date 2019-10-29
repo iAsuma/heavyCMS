@@ -40,7 +40,7 @@ class User extends Base
         $formWhere = $this->parseWhere($where);
 
         $countQuery = Db::table('users')->alias('u')->where($formWhere);
-        $userQuery = Db::table('users')->field('id,name,phone,gender,status,create_time')->where($formWhere)->page($page, $limit)->order('id', 'asc');
+        $userQuery = Db::table('users')->field('id,name,phone,gender,status,create_time,country,province,city')->where($formWhere)->page($page, $limit)->order('id', 'asc');
 
         $count = $countQuery->count();
         $user = $userQuery->select();

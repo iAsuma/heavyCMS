@@ -101,7 +101,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
           ,title: '添加轮播图'
           ,content: "{:url('banneradd')}"
           ,maxmin: true
-          ,area: ['35%', '50%']
+          ,area: ['520px', '480px']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var submit = layero.find('iframe').contents().find("#submit");
@@ -148,7 +148,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
                 ,title: '编辑轮播图'
                 ,content: "{:url('bannerEdit')}?id="+obj.data.id
                 ,maxmin: true
-                ,area: ['60%', '70%']
+                ,area: ['520px', '480px']
                 ,btn: ['确定', '取消']
                 ,success: function (layero, index) {
                    layero.find('input[name=id]').val(obj.data.id)

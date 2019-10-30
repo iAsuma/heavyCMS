@@ -1,22 +1,34 @@
 {extend name="public/base" /}
 {block name="title"}商城首页{/block}
 {block name="css"}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+<style type="text/css">
+body{background: #f8f8f8 !important;}
+.oneslide{width: 93%!important;left: 3%!important;}
+</style>
 {/block}
 {block name="content"}
 <div id="app">
     <div class="home-swiper-box">
-        <van-swipe :autoplay="3000" indicator-color="white">
+        {if count($banner) <= 1}
+        <div id="slide" class="slide" class="index-slide">
+            {if $banner[0]['landing_url']}
+            <div class="img oneslide"><a href="{$vo.landing_url}"><img src="__FILEROOT__{$banner[0]['img']}" /></a></div>
+            {else/}
+            <div class="img oneslide"><img src="__FILEROOT__{$banner[0]['img']}" /></div>
+            {/if}
+        </div>
+        {else /}
+        <div id="slide" class="slide" class="index-slide">
             {volist name="$banner" id="vo"}
-            <van-swipe-item>
-                {if $vo.landing_url}
-                <a href="{$vo.landing_url}"><img src="__FILEROOT__{$vo.img}" class="swiperimg" /></a>
-                {else/}
-                <img src="__FILEROOT__{$vo.img}" class="swiperimg" />
-                {/if}
-            </van-swipe-item>
+            {if $vo.landing_url}
+            <div class="img"><a href="{$vo.landing_url}"><img src="__FILEROOT__{$vo.img}" /></a></div>
+            {else/}
+            <div class="img"><img src="__FILEROOT__{$vo.img}" /></div>
+            {/if}
             {/volist}
-        </van-swipe>
+            <div class="slide-bt"></div>
+        </div>
+        {/if}
     </div>
     <div class="home-content">
         <div class="home-content-xianshi">
@@ -27,15 +39,11 @@
                 <!-- <div class="home-content-xianshi-title-right">
                     <img src="__MOD__/shop/images/jishi.png" alt="">
                     <span class="fs10 mr10">倒计时</span>
-                    <van-count-down :time="time">
-                        <template v-slot="timeData">
-                              <span class="item">{{ timeData.hours }}</span>
-                              <span class="maohao">:</span>
-                              <span class="item">{{ timeData.minutes }}</span>
-                              <span class="maohao">:</span>
-                              <span class="item">{{ timeData.seconds }}</span>
-                            </template>
-                    </van-count-down>
+                    <span class="item fs10" id="shi">00</span>
+                    <span class="maohao fs10">:</span>
+                    <span class="item fs10" id="fen">00</span>
+                    <span class="maohao fs10">:</span>
+                    <span class="item fs10" id="miao">00</span>
                 </div> -->
             </div>
             <div class="home-content-xianshi-content fs0">
@@ -76,16 +84,6 @@
 {include file="public/menu" /}
 {/block}
 {block name="footjs"}
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-// 在 #app 标签下渲染一个按钮组件
-new Vue({
-    el: '#app',
-    data: {
-        // time: 30 * 60 * 60 * 1000,
-    }
-});
-</script>
+<script type="text/javascript" src="__MOD__/shop/js/slide.js"></script>
+<!-- <script type="text/javascript" src="__MOD__/shop/js/time.js"></script> -->
 {/block}

@@ -1,0 +1,100 @@
+{extend name="public/base" /}
+{block name="title"}订单{/block}
+{block name="content"}
+<div id="huoList">
+    <ul class="liebiao-ul">
+        <li class="fs13 cl33 {eq name='$type' value='all'}heng-active{/eq}" data-type='all'>
+            <div class="fs14 cl33 heng-div"><span class="heng-span">全部</span> </div>
+        </li>
+        <li class="fs13 cl33 {eq name='$type' value='0'}heng-active{/eq}" data-type='0'>
+            <div class="fs14 cl33 heng-div "><span class="heng-span">待付款</span> </div>
+        </li>
+        <li class="fs13 cl33 {eq name='$type' value='1'}heng-active{/eq}" data-type='1'>
+            <div class="fs14 cl33 heng-div "><span class="heng-span">待发货</span> </div>
+        </li>
+        <li class="fs13 cl33 {eq name='$type' value='2'}heng-active{/eq}" data-type='2'>
+            <div class="fs14 cl33 heng-div"><span class="heng-span">待收货</span> </div>
+        </li>
+        <li class="fs13 cl33 {eq name='$type' value='3'}heng-active{/eq}" data-type='3'>
+            <div class="fs14 cl33 heng-div"><span class="heng-span">已完成</span> </div>
+        </li>
+    </ul>
+    <div class="liebiao-content">
+        <div id="quanbu">
+            <div class="geren-daifukuan">
+                <a href="./home.html" style="display: block;" class="geren-daifukuan-box">
+                    <div class="geren-daifukuan-content tl fs0">
+                        <div>
+                            <img src="/uploads\thumb\20191028\2b553fc2284e49c09b78fa27c25f2ab7.png" alt />
+                        </div>
+                        <div class="geren-daifukuan-content-word">
+                            <div class="fs14 cl33">答复</div>
+                            <div class="fs12 cl66 mt10 over2">是士大夫</div>
+                        </div>
+                        <div class="geren-daifukuan-content-pri">
+                            <div class="over">
+                                <span class="fs10 cl33">¥</span>
+                                <span class="fs14 cl33">12890.00</span>
+                            </div>
+                            <div class="over">
+                                <span class="fs12 cl66">x</span>
+                                <span class="fs12 cl66">12</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="geren-daifukuan-content tl fs0">
+                        <div>
+                            <img src="/uploads\thumb\20191028\2b553fc2284e49c09b78fa27c25f2ab7.png" alt />
+                        </div>
+                        <div class="geren-daifukuan-content-word">
+                            <div class="fs14 cl33">都是发的说法大师傅士大夫撒打发士大夫</div>
+                            <div class="fs12 cl66 mt10 over2">撒打发士大夫</div>
+                        </div>
+                        <div class="geren-daifukuan-content-pri">
+                            <div class="over">
+                                <span class="fs10 cl33">¥</span>
+                                <span class="fs14 cl33">23</span>
+                            </div>
+                            <div class="over">
+                                <span class="fs12 cl66">x</span>
+                                <span class="fs12 cl66">23</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="geren-daifukuan-bottom">
+                        <div class="fs12 cl33">
+                            共
+                            <span>{{item.num}}</span>件商品&nbsp&nbsp&nbsp
+                            <span>
+                                                            合计：
+                                                            <span class="fs10 cl33 ls10">¥</span>
+                            <span class="fs14 fwb">{{item.num*item.danpri}}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="geren-daifukuan-btn-box fs0">
+                        <div></div>
+                        <div>
+                            <button type="button">取消订单</button>
+                            <button type="button">付款</button>
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+    $(function() {
+        $(".liebiao-ul li").click(function() {
+            var type = $(this).data('type')
+            var reloadUrl = '{:url(\'order\')}?o='+type
+            window.location.replace(reloadUrl)
+        })
+    })
+</script>
+{/block}

@@ -11,20 +11,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <!-- 引入样式文件 -->
-    
+    {block name="frontcss"}{/block}
     <link rel="stylesheet" href="__MOD__/shop/css/main.css" />
-    <!--使用thinkphp模板引擎 引入css-->
 	{block name="css"}{/block}
     <script src="__MOD__/shop/js/main.js"></script>
-	<script type="text/javascript" src="__JS__/public/jquery-3.3.1.min.js"></script>
-	<!--使用thinkphp模板引擎 引入js-->
+	<script type="text/javascript" src="__JS__/public/jquery.min.js"></script>
 	{block name="headjs"}{/block}
 </head>
 <body class="body-container">
-<!--使用thinkphp模板引擎 引入主体内容-->
 {block name="content"}{/block}
 <script type="text/javascript" src="__JS__/public/ajax-rediect.js"></script>
-<!--使用thinkphp模板引擎 引入js-->
 {block name="footjs"}{/block}
 </body>
 </html

@@ -119,7 +119,7 @@
     }
     
     .body-container {
-        background: #fff;
+        background: #f8f8f8;
     }
     
     .cldb {
@@ -383,9 +383,6 @@
     .borbot {
         border-bottom: 1px solid #dedede;
     }
-    .bcw{
-        background-color: #fff
-    }
     /*轮播*/
     
     .slide {
@@ -503,6 +500,11 @@
         align-items: center;
         height: .6rem;
     }
+    
+/*    .home-content-xianshi-title-left {
+        width: 1.2rem;
+        height: .3rem;
+    }*/
     
     .home-content-xianshi-title-right {
         display: flex;
@@ -651,25 +653,7 @@
         font-size: .3rem;
         background: linear-gradient(-43deg, rgba(63, 104, 255, 1), rgba(125, 188, 253, 1));
     }
-    
-    .home-detail-pinjia-box {
-        background: #fff;
-        padding-top: .2rem;
-        font-size: 0rem;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-bottom: 1px solid #ebebeb;
-    }
-    
-    #homeDetailTwo {
-        display: none;
-    }
     /*已评价列表*/
-    
-    #homeDetailOne {
-        background: #fff;
-    }
     
     #homeDetail .van-popup {
         z-index: -11;
@@ -815,16 +799,6 @@
         font-size: 0.3rem;
         line-height: 1rem;
         text-align: center;
-    }
-    
-    .home-detail-pop {
-        position: absolute;
-        width: 100%;
-        bottom: -2rem;
-        left: 0rem;
-        min-height: 80%;
-        background: #fff;
-        border-radius: 8px 8px 0px 0px;
     }
     
     .home-detail-pop-box .home-detail-close-btn {
@@ -1056,12 +1030,12 @@
     }
     
     .fenleilist-content-item {
-        display: inline-block;
         width: 3.3rem;
         border-radius: 5px;
         background: #fff;
         margin-bottom: .28rem;
-        
+        display: inline-block;
+        margin-right: .28rem;
     }
     
     .fenleilist-content-item:nth-child(2n) {
@@ -1182,7 +1156,6 @@
     
     #gouWu {
         padding-bottom: 2rem;
-        background: #fff;
     }
     /*购物车支付列表*/
     
@@ -1450,7 +1423,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: .3rem .12rem .3rem .25rem;
+        padding: .3rem .02rem .3rem .25rem;
         border-bottom: 1px solid rgba(197, 197, 197, .2);
     }
     /*收货地址*/
@@ -1472,7 +1445,9 @@
     }
     
     .shdz-s-d-item-left {
-
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
         height: 0.9rem;
         width: 80%;
     }
@@ -1844,7 +1819,6 @@
         display: flex;
         justify-content: baseline;
         align-items: center;
-            margin-bottom: .2rem;
     }
     
     .geren-daifukuan-content img {
@@ -2009,75 +1983,6 @@
     }
     
     .sqtk-shouhuo .layui-form-radio {
-        margin: 0rem;
-    }
-    
-    .sqtk-state {
-        display: none;
-        height: 100%;
-        background: #fff;
-        position: fixed;
-        bottom: 0rem;
-        left: 0rem;
-        width: 100%;
-        background-color: rgba(0, 0, 0, 0);
-        z-index: -1;
-    }
-    
-    .sqtk-res-content {
-        padding: .5rem;
-    }
-    
-    .sqtk-res-content-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #DEDEDE;
-        padding: .3rem 0rem;
-    }
-    
-    .sqtk-res-content-item img {
-        width: .4rem;
-        height: .4rem;
-    }
-    
-    .sqtk-res {
-        display: none;
-        height: 100%;
-        background: #fff;
-        position: fixed;
-        bottom: 0rem;
-        left: 0rem;
-        width: 100%;
-        background-color: rgba(0, 0, 0, 0);
-        z-index: -1;
-    }
-    
-    .radio-res-box {
-        position: absolute;
-        width: 100%;
-        bottom: -2rem;
-        left: 0rem;
-        height: 78%;
-        background: #fff;
-        border-radius: 8px 8px 0px 0px;
-    }
-    
-    .sqtk-res .layui-form-radio {
-        margin: 0rem;
-    }
-    
-    .radio-state-box {
-        position: absolute;
-        width: 100%;
-        bottom: -2rem;
-        left: 0rem;
-        height: 3rem;
-        background: #fff;
-        border-radius: 8px 8px 0px 0px;
-    }
-    
-    .sqtk-state .layui-form-radio {
         margin: 0rem;
     }
     
@@ -2351,7 +2256,6 @@
         align-items: center;
         position: fixed;
         bottom: 0px;
-        box-shadow: 0px 6px 9px 2px rgba(177, 175, 175, 0.41);
     }
     
     #nav a {
@@ -2381,17 +2285,4 @@
     .bot img {
         width: 0.4rem;
         height: 0.4rem;
-    }
-    .moren{
-        display: inline-block;
-        height: .3rem;
-        line-height: .3rem;
-        padding: 0rem .06rem;
-        box-sizing: border-box;
-        background: rgba(80,134,255,.6);
-        color: #FFF;
-        font-size: .24rem;
-    }
-    [v-cloak] {
-      display: none !important;
     }

@@ -16,7 +16,7 @@ class AutoLogin
      * 跳转地址，支持符合规则的路由或模块/控制器/方法
      *
      */
-    protected $redirect_url = 'login';  // 必设项，检测到未登录时的跳转地址
+    protected $redirect_url = '/only-wechat';  // 必设项，检测到未登录时的跳转地址
 
     /**
      * 排除的验证地址
@@ -25,8 +25,8 @@ class AutoLogin
      * @var array
      */
     protected $except = [
-        //'Login',
-        //'Through'
+        'shop/Index',
+        'shop/Goods'
     ];
 
     public function handle($request, \Closure $next, $name)
@@ -36,6 +36,7 @@ class AutoLogin
         }
 
     	$userId = Session::get('wapUser.id');
+
     	if(!$userId){
     		$user = [];
 
@@ -47,6 +48,14 @@ class AutoLogin
                 //定期修改头像
                 $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
                 $user && Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
+            }else{
+                if($request->isAjax()){
+                    header('Ajax-Mark: redirect');
+                    header("Redirect-Path: ".Url::build($this->redirect_url));
+                }else{
+                    return redirect($this->redirect_url)->remember();
+                }
+                exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
             }
             
             if($user){
@@ -71,14 +80,6 @@ class AutoLogin
                 Session::set('wapUser.id', $userid);
                 Session::set('wapUser.name', $data['nickname']);
                 Session::set('wapUser.headimgurl', $data['headimgurl']);
-
-                // if($request->isAjax()){
-                //     header('Ajax-Mark: redirect');
-                //     header("Redirect-Path: ".Url::build($this->redirect_url));
-                // }else{
-                //     return redirect($this->redirect_url)->remember();
-                // }
-                // exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
             }
     	}else{
             if(Session::has('from_redirect')){

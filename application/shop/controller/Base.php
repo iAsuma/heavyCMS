@@ -13,7 +13,6 @@ class Base extends Controller
 	{
 		$this->userId = Session::get('wapUser.id');
 		$this->userName = Session::get('wapUser.name');
-		$this->userHeadImg = Session::get('wapUser.headimgurl');
 	}
 
 	/**

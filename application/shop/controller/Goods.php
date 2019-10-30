@@ -2,7 +2,7 @@
 namespace app\shop\controller;
 use think\Request;
 /**
- * 
+ * 商品
  */
 class Goods extends Base
 {

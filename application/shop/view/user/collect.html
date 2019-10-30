@@ -1,0 +1,116 @@
+{extend name="public/base" /}
+{block name="title"}我的收藏{/block}
+{block name="css"}
+<style type="text/css">
+body{background: #f8f8f8 !important;}
+</style>
+{/block}
+{block name="content"}
+<div class="fenleilist-top">
+    <div class="fenleilist-search-box">
+        <input type="text" placeholder="搜索商品" class="fenleilist-search pl30" value="{$words}">
+        <div class="fenleilist-search-box-img fs0" id="search">
+            <img src="__MOD__/shop/images/search.png " alt=" ">
+        </div>
+    </div>
+</div>
+
+<div class="collect" data-wd="{$words}" data-url="{:url('collect')}">
+	<div class="shoucang-content"></div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/javascript" src="__THIRD__/dropload.min.js"></script>
+<script type="text/javascript">
+function collectHtml(data){
+	var html = ''
+	$.each(data, function(i, v){
+		html += '<div class="fenleilist-content-item fs0">'
+			        +'<div class="fenleilist-content-item-img">'
+			            +'<img src="__FILEROOT__/thumb'+v.sku_img+'" alt="">'
+			        +'</div>'
+			        +'<div class="fenleilist-content-item-des">'
+			            +'<div class="fenleilist-content-item-des-title over2">'+v.goods_name+'</div>'
+			            +'<div class="fenleilist-content-item-des-pri">'
+			                +'<span class="clog fs10">￥<span class="fs14 fwb">'+v.price+'</span></span>'
+			                +'<span class="fs10 clad shoucangdel">取消收藏</span>'
+			            +'</div>'
+			        +'</div>'
+			    +'</div>';
+	})
+	return html;
+}
+</script>
+<script type="text/javascript">
+    var pageStart = 1;
+	var perpage = 6;
+	var words = $('.collect').data('wd')
+	var url = $('.collect').data('url')
+    
+    $('.collect').dropload({
+        scrollArea: window,
+        domDown: {
+        	domRefresh:'<div class="dropload-refresh fs14 tc cl6e">↑上拉加载更多</div>',
+        	domLoad: '<div class="dropload-load fs14 tc cl6e">加载中...</div>',
+            domNoData: '<div class="dropload-noData fs14 tc cl6e">没有更多了</div>'
+        },
+        loadDownFn: function(me) {
+            var result = '';
+            $.ajax({
+                type: 'POST',
+                url: '{:url("collectList")}',
+                dataType: 'json',
+                data:{perpage: perpage, pageStart: pageStart, words: words},
+                success: function(res) {
+                	if(res.code == 1){
+                		var data = res.result
+                		var dataLen = data.length
+
+                		var collection = collectHtml(data)
+                        // 插入数据到页面，放到最后面
+                        $('.shoucang-content').append(collection);
+
+                		pageStart += perpage;
+
+                		//数据条数小于每页显示的最大数
+                		if(dataLen < perpage){
+                			me.lock(); // 锁定
+                            me.noData(); // 无数据
+                		}
+                	}else{
+                		// 锁定
+                        me.lock();
+                        // 无数据
+                        me.noData();
+                	}
+
+                    // 每次数据插入，必须重置
+                    me.resetload();
+                },
+                error: function(xhr, type) {
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                    return false;
+                }
+            });
+        },
+        threshold: 50
+    });
+
+    $('#search').on('click', function(){
+        var content = $(this).siblings('input').val()
+        if(content != words){
+            window.location.href = url+'?wd='+content
+        }
+    })
+
+    $('.fenleilist-search').on('keypress', function(e){
+        if (e.keyCode == '13') {
+            var content = $(this).val()
+            if(content != words){
+            	window.location.href = url+'?wd='+content
+            }
+        }
+    })
+</script>
+{/block}

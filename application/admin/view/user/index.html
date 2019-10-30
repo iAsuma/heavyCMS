@@ -67,8 +67,7 @@
       ,cols: [[ //表头
         {type: "checkbox",fixed: "left"}
         ,{field: 'id', title: 'ID',  sort: true, width:65}
-        ,{field: 'name', title: '姓名'}
-        ,{field: 'phone', title: '手机号'} 
+        ,{field: 'nickname', title: '昵称'}
         ,{field: 'gender', title: '性别', templet: function(d){
           var gender = ''
           switch(d.gender){
@@ -79,9 +78,11 @@
           }
           return gender;
         }}
-         ,{field: 'country', title: '国家'}
-         ,{field: 'province', title: '省份'}
-         ,{field: 'city', title: '市'}
+        ,{field: 'country', title: '国家'}
+        ,{field: 'province', title: '省份'}
+        ,{field: 'city', title: '市'}
+        ,{field: 'name', title: '姓名'}
+        ,{field: 'phone', title: '手机号'}
         ,{field: 'create_time', title: '创建时间', sort: true}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
@@ -98,7 +99,6 @@
         var turl = "{:url('export_excel')}";
         window.open(turl+'?'+_get);
     })
-
 
     //监听搜索
     form.on('submit(userSearch)', function(data){

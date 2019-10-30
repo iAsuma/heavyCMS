@@ -1,0 +1,120 @@
+{extend name="public/base" /}
+{block name="title"}购物车{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="content"}
+<div id="gouWu" v-cloak>
+    <van-checkbox-group v-model="result" ref="checkboxGroup">
+        <div v-for="(item,index) in info_list" class="gouwu-item-box">
+            <van-checkbox :name="index" checked-color="#FF5B05"></van-checkbox>
+            <div class="gouwu-item fs0">
+                <img src="./images/touxiang.jpg" alt="">
+                <div class="gouwu-item-right">
+                    <div class="gouwu-item-right-top over2">{{item.word}}
+                        <div class="gouwu-item-right-top-des">
+                            颜色分类：{{item.des}}
+                        </div>
+                    </div>
+                    <div class="gouwu-item-right-bot">
+                        <span class="clog fs10">￥<span class="fs14 fwb">{{item.pri}}</span></span>
+                        <span><van-stepper v-model="item.num" integer  input-width="40px" button-size="20px" /></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </van-checkbox-group>
+    <div class="gouwu-jiesuan-box">
+        <div class="gouwu-jiesuan-box-left">
+            <van-checkbox v-model="quanxuan" checked-color="#FF5B05" @change="togglequanxuan">全选</van-checkbox>
+            <div class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            </div>
+        </div>
+        <div class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
+    </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    // 在 #app 标签下渲染一个按钮组件
+    new Vue({
+        el: '#gouWu',
+        data: {
+            info_list: [{
+                id: 2,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 6.4,
+                num: 1,
+                image: ""
+            }, {
+                id: 22,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 2.3,
+                num: 1,
+                image: ""
+            }, {
+                id: 22,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 2.3,
+                num: 1,
+                image: ""
+            }, {
+                id: 22,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 2.3,
+                num: 1,
+                image: ""
+            }, {
+                id: 22,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 2.3,
+                num: 1,
+                image: ""
+            }, {
+                id: 22,
+                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                des: "茉莉花（提花面料）",
+                pri: 2.3,
+                num: 1,
+                image: ""
+            }],
+            result: [],
+            quanxuan: false,
+        },
+        methods: {
+            sub() {
+                console.log(this.info_list)
+            },
+            /*是否全选*/
+            togglequanxuan(value) {
+                if (value) {
+                    this.$refs.checkboxGroup.toggleAll(true);
+                } else {
+                    this.$refs.checkboxGroup.toggleAll();
+                }
+            },
+
+        },
+        computed: {
+            total() {
+                let allpri = 0;
+                for (let i = 0; i < this.result.length; i++) {
+                    allpri += this.info_list[this.result[i]].pri * this.info_list[this.result[i]].num
+                }
+
+                return allpri.toFixed(2);
+            }
+
+        }
+    });
+</script>
+{/block}

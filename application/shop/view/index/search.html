@@ -1,0 +1,171 @@
+{extend name="public/base" /}
+{block name="title"}{$info.name}{/block}
+{block name="css"}
+<style type="text/css">
+body{background: #f8f8f8 !important;}
+</style>
+{/block}
+{block name="content"}
+<div class="fenleilist-top">
+    <div class="fenleilist-search-box">
+        <input type="text" placeholder="搜索商品" class="fenleilist-search pl30" value="{$words}">
+        <div class="fenleilist-search-box-img fs0" id="search">
+            <img src="__MOD__/shop/images/search.png " alt=" ">
+        </div>
+    </div>
+    <ul class="fenleilist-shaixuan fs0" >
+        <li class="screening {eq name='t' value='norm'}fll-li-div-active{/eq}" data-type="norm">
+            <div class="fs14 cl33"><span>综合</span> </div>
+        </li>
+        <li class="screening {eq name='t' value='sell'}fll-li-div-active{/eq}" data-type="sell">
+            <div class="fs14 cl33"> <span>销量</span> </div>
+        </li>
+        <li class="screening {eq name='t' value='price'}fll-li-div-active{/eq}" data-type="price" data-now="{$t}">
+            <div class="fs14 cl33">
+            	<span>
+            		价格
+            		{if $t == 'price'}
+            		<img src="__MOD__/shop/images/shaixuanx.png" alt="">
+            		{elseif $t == 'priced' /}
+            		<img src="__MOD__/shop/images/shaixuans.png" alt="">
+            		{else /}
+            		<img src="__MOD__/shop/images/shaixuan.png" alt="">
+            		{/if}
+            	</span>
+        	</div>
+        </li>
+    </ul>
+</div>
+<div class="class-content" data-url="{:url('search')}">
+	<div class="fenleilist-content" data-pid="{$info.id}" data-wd="{$words}" data-type="{$t}"></div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/javascript" src="__THIRD__/dropload.min.js"></script>
+<script type="text/javascript">
+function goodsHtml(data){
+	var html = ''
+	$.each(data, function(i, v){
+		html += '<div class="fenleilist-content-item fs0">'
+					+'<a href="/shop/g/'+v.goods_id+'">'
+			        +'<div class="fenleilist-content-item-img">'
+			            +'<img src="__FILEROOT__/thumb'+v.sku_img+'" alt="">'
+			        +'</div>'
+			        +'<div class="fenleilist-content-item-des">'
+			            +'<div class="fenleilist-content-item-des-title over2">'+v.goods_name+'</div>'
+			            +'<div class="fenleilist-content-item-des-pri">'
+			                +'<span class="clog fs10">￥<span class="fs14 fwb">'+v.price+'</span></span>'
+			                +'<span class="fs10 clad"><span>'+v.buy+'</span>人购买</span>'
+			            +'</div>'
+			        +'</div>'
+			        +'</a>'
+			    +'</div>';
+	})
+	return html;
+}
+</script>
+<script type="text/javascript">
+    var pageStart = 1;
+	var perpage = 6;
+    var pid = $('.fenleilist-content').data('pid')
+    var words = $('.fenleilist-content').data('wd')
+    var type = $('.fenleilist-content').data('type')
+    var url = $('.class-content').data('url')
+    
+    $('.class-content').dropload({
+        scrollArea: window,
+        domDown: {
+            domRefresh:'<div class="dropload-refresh fs14 tc cl6e">↑上拉加载更多</div>',
+            domLoad: '<div class="dropload-load fs14 tc cl6e">加载中</div>',
+            domNoData: '<div class="dropload-noData fs14 tc cl6e">没有更多了</div>'
+        },
+        loadDownFn: function(me) {
+            // 拼接HTML
+            var result = '';
+            $.ajax({
+                type: 'POST',
+                url: '{:url("searchList")}',
+                dataType: 'json',
+                data:{perpage: perpage, pageStart: pageStart, pid: pid, words: words, type: type},
+                success: function(res) {
+                	if(res.code == 1){
+                		var data = res.result
+                		var dataLen = data.length
+
+                		var goods = goodsHtml(data)
+                        // 插入数据到页面，放到最后面
+                        $('.fenleilist-content').append(goods);
+
+                		pageStart += perpage;
+
+                		//数据条数小于每页显示的最大数
+                		if(dataLen < perpage){
+                			me.lock(); // 锁定
+                            me.noData(); // 无数据
+                		}
+                	}else{
+                		// 锁定
+                        me.lock();
+                        // 无数据
+                        me.noData();
+                	}
+
+                    // 每次数据插入，必须重置
+                    me.resetload();
+                },
+                error: function(xhr, type) {
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                    return false;
+                }
+            });
+        },
+        threshold: 50
+    });
+
+    $('#search').on('click', function(){
+        var content = $(this).siblings('input').val()
+        if(content != words){
+            window.location.href = url+'?wd='+content
+        }
+    })
+
+    $('.fenleilist-search').on('keypress', function(e){
+        if (e.keyCode == '13') {
+            var content = $(this).val()
+            if(content != words){
+            	if(pid != ''){
+            		window.location.href = url+'?pid='+pid+'&wd='+content
+            	}else{
+            		window.location.href = url+'?wd='+content
+            	}
+            }
+        }
+    })
+
+    $('.screening').on('click', function(){
+    	var _this = $(this)
+    	var type = _this.data('type')
+
+    	if(type == 'price'){
+    		if(_this.data('now') == 'price'){
+    			type = 'priced'
+    		}else{
+    			type = 'price'
+    		}
+    	}
+
+    	var reloadUrl = url+'?t='+type
+
+    	if(pid != ''){
+    		reloadUrl += '&pid='+pid;
+    	}
+
+    	if(words != ''){
+    		reloadUrl += '&wd='+words
+    	}
+
+    	window.location.replace(reloadUrl)
+    })
+</script>
+{/block}

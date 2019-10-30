@@ -8,8 +8,11 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+// + lishuaiqiu (sqiu_li@163.com)
+// +----------------------------------------------------------------------
 
 Route::get('redirect', 'index/redirectLast'); //记住的跳转地址
+Route::get('only-wechat', 'index/Login/onlyWechat');
 
 Route::group('admin', function(){
 	Route::group(['method' => 'get'],[
@@ -19,5 +22,9 @@ Route::group('admin', function(){
 	Route::rule('layuiUpload', 'admin/index/layuiUpload');
 });
 
-Route::get('shop/', 'shop/Index/index');
-Route::get('shop/g/:id', 'shop/Goods/detail');
+Route::group('shop', function(){
+	Route::group(['method' => 'get'], [
+		'/' => 'shop/Index/index',
+		'g/:id' => 'shop/Goods/detail',
+	]);
+});

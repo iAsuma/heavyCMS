@@ -21,16 +21,26 @@
             {/eq}
         </div>
     </a>
-     <a href="#" class="bot-a">
+     <a href="{:url('Cart/index')}" class="bot-a">
         <div class="bot">
+            {eq name="$Request.controller.'/'.$Request.action" value="Cart/index"}
+            <img src="__MOD__/shop/images/gouwucheb.png" alt />
+            <div class="fs10 cl33 clbb">购物车</div>
+            {else /}
             <img src="__MOD__/shop/images/gouwuche.png" alt />
             <div class="fs10 cl33">购物车</div>
+            {/eq}
         </div>
     </a>
-     <a href="#" class="bot-a">
+     <a href="{:url('User/index')}" class="bot-a">
         <div class="bot">
+            {eq name="$Request.controller.'/'.$Request.action" value="User/index"}
+            <img src="__MOD__/shop/images/wodeb.png" alt />
+            <div class="fs10 cl33 clbb">我的</div>
+            {else /}
             <img src="__MOD__/shop/images/wode.png" alt />
             <div class="fs10 cl33">我的</div>
+            {/eq}
         </div>
     </a>
 </div>

@@ -49,9 +49,92 @@ class Index extends Base
 		return $info;
 	}
 
+	/*分类页*/
 	public function classify()
 	{
-		
+		$levelOne = Db::table('shop_classification')->where(['pid' => 0])->select();
+
+		$this->assign('levelOne', $levelOne);
 		return $this->fetch();
+	}
+
+	public function getSecondClass()
+	{
+		$banner = $this->getAnyBanner();
+
+		$pid = (int)$this->request->post('id');
+
+		$classify = Db::table('shop_classification')->where(['pid' => $pid])->select();
+
+		return res_json(1, [$banner, $classify]);
+	}
+
+	public function getAnyBanner()
+	{
+		$banner = $this->getBanners();
+		
+		$rand = rand(0, count($banner)-1);
+		return $banner[$rand];
+	}
+
+	/*搜索*/
+	public function search()
+	{
+		$pid = (int)$this->request->get('pid');
+		$words = trim($this->request->get('wd'));
+		$type = $this->request->get('t') ?: 'norm';
+
+		if($pid){
+			$info = Db::table('shop_classification')->field('id,name')->where(['id' => $pid])->find();
+		}else{
+			$wd = $words ?: '全部';
+			$info = ['name' => '搜索-'.$wd, 'id' => ''];
+		}
+
+		$this->assign('words', $words);
+		$this->assign('info', $info);
+		$this->assign('t', $type);
+		return $this->fetch();
+	}
+
+	public function searchList()
+	{
+		$page = $this->request->post('pageStart') ?: 1;
+		$limit = $this->request->post('perpage') ?: 6;
+		$pid = $this->request->post('pid');
+		$words = $this->request->post('words');
+		$type = $this->request->post('type');
+
+		$where = [
+			['g.status', '=', 1],
+			['g.is_sold', '=', 1],
+			['s.status', '=', 1],
+			['s.is_sold', '=', 1]
+		];
+
+		if($pid){
+			$where[] = ['g.classification_id', '=', $pid];
+		}
+
+		if($words){
+			$where[] =  ['g.goods_name', 'LIKE', '%'.$words.'%'];
+		}
+
+		$query = Db::table('shop_goods')->alias('g')->field('g.id goods_id,g.goods_name,min(s.price) price,s.sku_img,CASE WHEN o.buy IS NULL THEN 0 ELSE o.buy END buy')->join('shop_goods_sku s', 'g.id=s.goods_id')->leftjoin('(SELECT goods_id,count(goods_id) AS buy FROM shop_order_detail GROUP BY goods_id) o', 'g.id=o.goods_id')->where($where)->group('g.id');
+
+		if($type == 'sell'){
+			$query->order('buy', 'desc');
+		}else if($type == 'price'){
+			$query->order('price', 'asc');
+		}else if($type == 'priced'){
+			$query->order('price', 'desc');
+		}else{
+			$query->order('goods_id', 'desc');
+		}
+
+		$list = $query->page($page, $limit)->select();
+		empty($list) && exit(res_json_native(-1));
+
+		return res_json(1, $list);
 	}
 }

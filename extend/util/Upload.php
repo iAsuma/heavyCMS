@@ -62,7 +62,7 @@ class Upload
      * @param  bool             $autoAppendExt     自动补充扩展名
      * @return false|File       false-失败 否则返回File实例
      */
-	public function action($file, $scale=[600, 600], $isGetThumbnail=false, $autoname = true)
+	public function action($file, $scale=[500, 500], $isGetThumbnail=false, $autoname = true)
 	{
 		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
 

@@ -65,10 +65,10 @@
         }
       }
       ,cols: [[ //表头
-        {type: "checkbox",fixed: "left"}
-        ,{field: 'id', title: 'ID',  sort: true, width:65}
-        ,{field: 'nickname', title: '昵称'}
-        ,{field: 'gender', title: '性别', templet: function(d){
+        {type: "checkbox",fixed: "left", rowspan: 2}
+        ,{field: 'id', title: 'ID',  sort: true, width:65, rowspan: 2}
+        ,{field: 'nickname', title: '昵称', rowspan: 2}
+        ,{field: 'gender', title: '性别', rowspan: 2, templet: function(d){
           var gender = ''
           switch(d.gender){
             case 1:  gender = '男' ;break;
@@ -78,13 +78,15 @@
           }
           return gender;
         }}
-        ,{field: 'country', title: '国家'}
+        ,{title: '地区', align:'center', colspan: 3}
+        ,{field: 'name', title: '姓名', rowspan: 2}
+        ,{field: 'phone', title: '手机号', rowspan: 2}
+        ,{field: 'create_time', title: '创建时间', sort: true, rowspan: 2}
+        ,{title: '操作',toolbar: '#optTpl', rowspan: 2}
+      ],[
+        {field: 'country', title: '国家'}
         ,{field: 'province', title: '省份'}
         ,{field: 'city', title: '市'}
-        ,{field: 'name', title: '姓名'}
-        ,{field: 'phone', title: '手机号'}
-        ,{field: 'create_time', title: '创建时间', sort: true}
-        ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });
    

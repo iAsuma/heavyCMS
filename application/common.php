@@ -301,3 +301,8 @@ function off_xss($val) {
     }
     return htmlspecialchars($val);
 }
+
+function round2($num = 0)
+{
+    return sprintf("%01.2f", $num);
+}

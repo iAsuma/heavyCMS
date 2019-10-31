@@ -746,9 +746,12 @@
     .icontop {
         position: absolute;
         bottom: 1rem;
-        right: .6rem;
+        right: .1rem;
     }
-    
+    .icontop img{
+        width: 1rem;
+        height: 1rem;
+    }
     .home-detail-pop-box {
         padding: .3rem;
     }
@@ -2395,3 +2398,4 @@
     [v-cloak] {
       display: none !important;
     }
+    .detail-content img{width: 100%;height: auto;}

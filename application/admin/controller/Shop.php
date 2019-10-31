@@ -7,14 +7,9 @@ use Db;
 use think\facade\Hook;
 /**
 * 微商城
-* @author zhaoyun  
 */
 class Shop extends Base
 {
-    /**
-     * 用户列表
-     * @author zhaoyun  
-     */
     public function goods()
     {
         $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
@@ -26,7 +21,7 @@ class Shop extends Base
         return $this->fetch();
     }
 
-    public function dataList()
+    public function goodsList()
     {   
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
@@ -40,16 +35,13 @@ class Shop extends Base
         ];
  
         $formWhere = $this->parseWhere($where);
-        $countQuery = Db::table('shop_goods')->where($formWhere);
+        $count = Db::table('shop_goods')->where($formWhere)->count();
 
-        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
-        $count = $countQuery->count();
-        $data = $query->select();
+        $data = Db::table('shop_goods')->alias('g')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time,c.name cname,cc.name ccname')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
+
         foreach ($data as $k => $val) {
             $arr = explode(',',$val['goods_imgs']);
             $data[$k]['imgs'] = $arr[0];
-            $pid = Db::table('shop_classification')->where('id','=',$val['pid'])->find();
-            $data[$k]['classfy'] = $pid['name'].' || '.$val['name'];
         }
      
         return table_json($data, $count);

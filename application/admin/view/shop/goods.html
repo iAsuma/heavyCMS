@@ -2,8 +2,8 @@
 {block name="title"}商品列表{/block}
 {block name="css"}
 <style type="text/css">
-tbody .layui-table-cell{height:32px;line-height:32px;}
-tbody .layui-table-cell img{width: auto;height: 32px}
+tbody .layui-table-cell{height:50px;line-height:50px;}
+tbody .layui-table-cell img{width: auto;height: 50px}
 </style>
 {/block}
 {block name="content"}
@@ -84,7 +84,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
 
    var tableIns =  table.render({
       elem: '#goods'
-      ,url: "{:url('dataList')}" //数据接口
+      ,url: "{:url('goodsList')}" 
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -94,12 +94,20 @@ tbody .layui-table-cell img{width: auto;height: 32px}
         }
       }
       ,cols: [[ //表头
-        {field: 'goods_name', title: '商品名称'}
-        ,{field: 'imgs', title: '图片', templet: function(d){
+        {field: 'goods_name', title: '商品名称', rowspan: 2, width: '20%'}
+        ,{field: 'imgs', title: '图片', rowspan: 2, width: 80,templet: function(d){
           return '<img src="__FILEROOT__/thumb'+d.imgs+'"';
         }}
-        ,{field: 'classfy', title: '所属分类'} 
-          ,{field: 'post_type', title: '邮寄方式', templet: function(d){
+        ,{title: '分类', align:'center', colspan: 2}
+        ,{title: '快递', align:'center', colspan: 2}
+        
+        ,{field:'is_sold', title:'是否上架',templet:'#statusTpl', rowspan: 2}
+        ,{field: 'create_time', title: '创建时间', sort: true, rowspan: 2}
+        ,{title: '操作',toolbar: '#optTpl', rowspan: 2}
+      ],[
+        {field: 'ccname', title: '一级'}
+        ,{field: 'cname', title: '二级'}
+        ,{field: 'post_type', title: '邮寄方式', rowspan: 2, templet: function(d){
           var post_type = ''
           switch(d.post_type){
             case 1:  post_type = '免邮' ;break;
@@ -109,10 +117,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
           }
           return post_type;
         }}
-        ,{field: 'freight', title: '运费'} 
-        ,{field:'is_sold', title:'是否上架',templet:'#statusTpl'}
-        ,{field: 'create_time', title: '创建时间', sort: true}
-        ,{title: '操作',toolbar: '#optTpl'}
+        ,{field: 'freight', title: '运费', rowspan: 2} 
       ]]
     });
    

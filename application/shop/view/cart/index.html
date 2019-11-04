@@ -5,32 +5,42 @@
 {/block}
 {block name="content"}
 <div id="gouWu" v-cloak>
+    <div class="gouwu-guanli cb" @click="glstate = !glstate;jiesuan = !jiesuan">{{glstate?"完成":"管理"}} </div>
     <van-checkbox-group v-model="result" ref="checkboxGroup">
-        <div v-for="(item,index) in info_list" class="gouwu-item-box">
-            <van-checkbox :name="index" checked-color="#FF5B05"></van-checkbox>
+        <div v-for="(item,index) in cart_list" class="gouwu-item-box">
+            <van-checkbox v-if="item.stocks > 1" :name="index" checked-color="#FF5B05" :disabled="item.stocks < 1 ? true : false"></van-checkbox>
+            <van-radio v-else name="1" disabled></van-radio>
+
             <div class="gouwu-item fs0">
-                <img src="./images/touxiang.jpg" alt="">
+                <img :src="`__FILEROOT__/thumb${item.goods_img}`" alt="">
                 <div class="gouwu-item-right">
-                    <div class="gouwu-item-right-top over2">{{item.word}}
+                    <div class="gouwu-item-right-top over2">{{item.goods_name}}
                         <div class="gouwu-item-right-top-des">
-                            颜色分类：{{item.des}}
+                            {{item.goods_sku}}
                         </div>
                     </div>
                     <div class="gouwu-item-right-bot">
-                        <span class="clog fs10">￥<span class="fs14 fwb">{{item.pri}}</span></span>
-                        <span><van-stepper v-model="item.num" integer  input-width="40px" button-size="20px" /></span>
+                        <span class="clog fs10">￥<span class="fs14 fwb">{{item.price}}</span></span>
+                        <span v-if="item.stocks < 1" class="fs14 cl6e">
+                            库存不足
+                        </span>
+                        <span v-else>
+                            <van-stepper v-model="item.goods_num" :max="item.stocks" integer input-width="40px" button-size="20px" @change="bugNumChange(index)"/>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
+        
     </van-checkbox-group>
     <div class="gouwu-jiesuan-box">
         <div class="gouwu-jiesuan-box-left">
             <van-checkbox v-model="quanxuan" checked-color="#FF5B05" @change="togglequanxuan">全选</van-checkbox>
-            <div class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            <div v-show = "!jiesuan"  class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
             </div>
         </div>
-        <div class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
+        <div v-show = "!jiesuan" class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
+        <div v-show = "jiesuan" class="gouwu-del-btn" @click="del()">删除({{result.length}})</div>
     </div>
 </div>
 {include file="public/menu" /}
@@ -40,81 +50,57 @@
 <script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-    // 在 #app 标签下渲染一个按钮组件
-    new Vue({
-        el: '#gouWu',
-        data: {
-            info_list: [{
-                id: 2,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 6.4,
-                num: 1,
-                image: ""
-            }, {
-                id: 22,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 2.3,
-                num: 1,
-                image: ""
-            }, {
-                id: 22,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 2.3,
-                num: 1,
-                image: ""
-            }, {
-                id: 22,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 2.3,
-                num: 1,
-                image: ""
-            }, {
-                id: 22,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 2.3,
-                num: 1,
-                image: ""
-            }, {
-                id: 22,
-                word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
-                des: "茉莉花（提花面料）",
-                pri: 2.3,
-                num: 1,
-                image: ""
-            }],
-            result: [],
-            quanxuan: false,
+// 在 #app 标签下渲染一个按钮组件
+new Vue({
+    el: '#gouWu',
+    data: {
+        result: [],
+        cart_list: eval('{$cart|json_encode}'.replace(/&quot;/g, "\"")),
+        quanxuan: false,
+        glstate:false,
+        jiesuan:false
+    },
+    methods: {
+        sub() {
+            console.log(this.cart_list)
         },
-        methods: {
-            sub() {
-                console.log(this.info_list)
-            },
-            /*是否全选*/
-            togglequanxuan(value) {
-                if (value) {
-                    this.$refs.checkboxGroup.toggleAll(true);
-                } else {
-                    this.$refs.checkboxGroup.toggleAll();
-                }
-            },
-
-        },
-        computed: {
-            total() {
-                let allpri = 0;
-                for (let i = 0; i < this.result.length; i++) {
-                    allpri += this.info_list[this.result[i]].pri * this.info_list[this.result[i]].num
-                }
-
-                return allpri.toFixed(2);
+        /*是否全选*/
+        togglequanxuan(value) {
+            if (value) {
+                this.$refs.checkboxGroup.toggleAll(true);
+            } else {
+                this.$refs.checkboxGroup.toggleAll();
             }
-
+        },
+        bugNumChange(index){
+            vant.Toast.loading({ forbidClick: true });
+            
+            axios.post('{:url(\'changeStock\')}', {
+                cart_id: this.cart_list[index].id,
+                goods_num: this.cart_list[index].goods_num
+            }).then(res => {
+                vant.Toast.clear();
+                if (res.data.code == 1) {
+                    
+                } else {
+                    vant.Toast.fail('修改失败');
+                    setTimeout(function() {
+                        // window.location.reload()
+                    }, 500);
+                }
+            });
         }
-    });
+    },
+    computed: {
+        total() {
+            let allpri = 0;
+            for (let i = 0; i < this.result.length; i++) {
+                allpri += this.cart_list[this.result[i]].price * this.cart_list[this.result[i]].goods_num
+            }
+            return allpri.toFixed(2);
+        }
+
+    }
+});
 </script>
 {/block}

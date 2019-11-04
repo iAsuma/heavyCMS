@@ -1,0 +1,183 @@
+{extend name="public/base" /}
+{block name="title"}结算{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="content"}
+<div id="gouWuZhiFu" class="fs0 layui-form">
+    <div class="gwz-top">
+        <div class="gwz-top-left">
+            <div class="fs14 cl33">收货人: <span>asdasdsadsadasdsa</span> <span class="ml20">sdasdas d</span></div>
+            <div class="fs14 cl33 mt20">收货地址: <span>dasdasd a</span></div>
+        </div>
+        <img src="__MOD__/shop/images/right.png" alt="">
+    </div>
+    <img src="__MOD__/shop/images/addresstiao.png" alt="" class="gwz-address-img fs0">
+    <div class="gwz-item-content">
+        <div class="gwz-item fs0" v-for="(item,index) in info_list">
+            <img src="__MOD__/shop/images/touxiang.jpg" alt="">
+            <div class="gwz-item-right">
+                <div class="gwz-item-right-top">
+                    <div class="fs14 cl33">{{item.name}}</div>
+                    <div class="fs12 clad mt5">{{item.des}}</div>
+                </div>
+                <div class="gwz-item-right-bot">
+                    <span class="fs10 clog">￥<span class="fs14 fwb">{{item.pri}}</span></span>
+                    <span class="fs16 cl33">×<span>{{item.num}}</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="gwz-youhuiquan">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">购买数量</div>
+                <div>
+                    <van-stepper v-model="value" />
+                </div>
+            </div>
+        </div>
+        <div class="gwz-youhuiquan">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">小计</div>
+                <div class="fs14 clog">¥12</div>
+            </div>
+        </div>
+<!--         <div class="gwz-youhuiquan">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">优惠券</div>
+                <div><span class="fs12 clog">满1000元减100优惠券</span><img src="__MOD__/shop/images/right.png" alt="" class="gwz-right-img"></div>
+            </div>
+            <div class="gwz-youhuiquan-bot">
+                <div class="dfbtc">
+                    <div>
+                        <van-switch v-model="checked" size=".4rem" />
+                    </div>
+                    <span class="fs14 cl33 ml5">积分抵扣(当前积分50)</span>
+                </div>
+
+                <div class="fs14"><span class="fs12 clog">-￥5.00</span><img src="__MOD__/shop/images/right.png" alt="" class="gwz-right-img"></div>
+            </div>
+        </div> -->
+        <div class="gwz-mjly fs12 cl33">
+            买家留言:
+            <input type="text" value="" placeholder="填写内容">
+        </div>
+    </div>
+    <div class="gwz-bot fs0">
+        <div class="gwz-bot-item">
+            <div class="fs12 cl33">配送费</div>
+            <div>
+                <span class="fs12 cl33">商家包邮</span>
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
+        </div>
+        <div class="gwz-bot-item">
+            <div class="fs12 cl33">支付方式</div>
+            <div>
+                <span class="fs12 cl33">在线支付</span>
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
+        </div>
+        <div class="gwz-bot-item bbn">
+            <div class="fs12 cl33">发票</div>
+            <div>
+                <span class="fs12 clad pr5">暂无发票</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="gwz-jiesuan-box">
+        <div class="gwz-jiesuan-box-left">
+            <div class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            </div>
+        </div>
+        <div class="gwz-jiesuan-btn" @click="sub()">提交订单</div>
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+        new Vue({
+            el: '#gouWuZhiFu',
+            data: {
+                info_list: [{
+                    id: 2,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 6.4,
+                    num: 1,
+                    image: ""
+                }, {
+                    id: 22,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 2.3,
+                    num: 1,
+                    image: ""
+                }, {
+                    id: 22,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 2.3,
+                    num: 1,
+                    image: ""
+                }, {
+                    id: 22,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 2.3,
+                    num: 1,
+                    image: ""
+                }, {
+                    id: 22,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 2.3,
+                    num: 1,
+                    image: ""
+                }, {
+                    id: 22,
+                    word: "太湖雪蚕丝枕 真丝枕头 颈椎护理枕芯真丝枕套+蚕丝枕芯",
+                    des: "茉莉花（提花面料）",
+                    pri: 2.3,
+                    num: 1,
+                    image: ""
+                }],
+                value: 0,
+                checked: false
+            },
+            methods: {
+                sub() {
+                    console.log(this.info_list)
+                    console.log(this.result)
+                },
+                /*是否全选*/
+                togglequanxuan(value) {
+                    if (value) {
+                        this.$refs.checkboxGroup.toggleAll(true);
+                    } else {
+                        this.$refs.checkboxGroup.toggleAll();
+                    }
+                },
+                change(value) {
+                    console.log(value)
+                }
+
+
+            },
+            computed: {
+                total() {
+                    let allpri = 0;
+                    for (let i = 0; i < this.info_list.length; i++) {
+                        allpri += this.info_list[i].pri * this.info_list[i].num
+                    }
+
+                    return (allpri * this.value).toFixed(2);
+                }
+
+            }
+        });
+    </script>
+{/block}

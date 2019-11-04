@@ -1,5 +1,5 @@
 {extend name="public/base" /}
-{block name="title"}添加收货地址{/block}
+{block name="title"}修改收货地址{/block}
 {block name="frontcss"}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
 {/block}
@@ -21,7 +21,7 @@
         </div>
         <div class="addshdz-itembox">
             <span class="cl66 fwb fs14 ls10 minw24 tl">详细地址:</span>
-            <input type="text" id="deipt" placeholder="小区、楼栋、单元室、门牌号" class="huifangsousuo-itembox-input cl33 fs14" v-model="address" />
+            <input type="text" id="deipt" placeholder="小区、楼栋、单元室、门牌号" class="huifangsousuo-itembox-input cl33 fs14" v-model="address" value="{$info.address}" />
         </div>
         <div class="huifangsousuo-itembox">
             <span class="cl66 fwb fs14 ls10 minw34 tl">设为默认地址:</span>
@@ -47,21 +47,24 @@
 <script src="__THIRD__/layer/mobile/layer.js"></script>
 <script>
 // 在 #app 标签下渲染一个按钮组件
+console.log(Boolean(parseInt('1')))
+console.log(Boolean(parseInt('0')))
 new Vue({
     el: '#shouHuoDiZhi',
     data: {
-        username: "" /*收货人 */ ,
-        phone: "" /*电话 */ ,
-        address: "" /*详细地址*/ ,
+        edit_id:"{$info.id}",
+        username: "{$info.name}" /*收货人 */ ,
+        phone: "{$info.phone}" /*电话 */ ,
+        address: "{$info.address}" /*详细地址*/ ,
 
         /*选择区域*/
         area_show: false, //地区下拉框显示隐藏
-        area_value: "", //地区所选的值
+        area_value: "{$info.province}-{$info.city}-{$info.district}", //地区所选的值
         area_num: "", //地区所选的编号
         area: area, //地区数据
         ing: false,
         /*是否设置为默认地址*/
-        checked: false
+        checked: Boolean(parseInt('{$info.is_default}'))
     },
     methods: {
         /*区域选择回填*/
@@ -105,7 +108,8 @@ new Vue({
                 vant.Notify("手机号码有误");
             } else {
                 this.ing = true;
-                axios.post('{:url(\'newAddress\')}', {
+                axios.post('{:url(\'editAddress\')}', {
+                    id: this.edit_id,
                     userName: this.username,
                     userPhone: this.phone,
                     area: this.area_value,
@@ -115,14 +119,14 @@ new Vue({
                     this.ing = false;
                     if (res.data.code == 1) {
                         vant.Notify({
-                            message: "添加成功",
+                            message: "修改成功",
                             background: "#1989fa"
                         });
                         setTimeout(function() {
-                            window.history.go(-1);
+                            window.location.reload()
                         }, 1000);
                     } else {
-                        vant.Notify('添加失败，请重试');
+                        vant.Notify('修改失败，请重试');
                     }
                 });
             }

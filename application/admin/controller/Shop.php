@@ -37,7 +37,7 @@ class Shop extends Base
         $formWhere = $this->parseWhere($where);
         $count = Db::table('shop_goods')->where($formWhere)->count();
 
-        $data = Db::table('shop_goods')->alias('g')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time,c.name cname,cc.name ccname')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
+        $data = Db::table('shop_goods')->alias('g')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,c.name cname,cc.name ccname')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
 
         foreach ($data as $k => $val) {
             $arr = explode(',',$val['goods_imgs']);
@@ -314,7 +314,7 @@ class Shop extends Base
                 return res_json(-3, $validate->getError());
             }
     
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
+            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [640, 320]);
       
             try {
                 $data = [

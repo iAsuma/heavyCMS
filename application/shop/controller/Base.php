@@ -2,6 +2,7 @@
 namespace app\shop\controller;
 use think\Controller;
 use think\facade\Session;
+use think\Db;
 
 class Base extends Controller
 {
@@ -23,5 +24,26 @@ class Base extends Controller
 	public function defaultTpl($code="404|页面飞走了！", $type="error")
 	{
 		return $this->fetch('public/tips', ['type' => $type, 'code' => $code]);
+	}
+
+	/**
+    * 判断当前商品用户是否已经收藏
+    */
+	public function isCollected($goods_id)
+	{
+		$res = Db::table('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->find();
+		if($res){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	/**
+    * 查询当前商品的库存
+    */
+	public function goodsStock($goods_id)
+	{
+		// $stock = Db::table('')
 	}
 }

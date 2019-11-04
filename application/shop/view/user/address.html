@@ -15,7 +15,7 @@
                     {$vo.province}{$vo.city}{$vo.district}{$vo.address}
                 </div>
             </div>
-            <div class="fs14 cldb">编辑</div>
+            <a href="{:url('addressEdit', ['id' => $vo.id])}"><div class="fs14 cldb">编辑</div></a>
         </div>
         {/volist}
     </div>

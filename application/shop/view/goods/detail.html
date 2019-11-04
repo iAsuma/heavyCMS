@@ -9,9 +9,9 @@ body{background: #f8f8f8 !important;}
 </style>
 {/block}
 {block name="content"}
-<div class="div-top">
-    <div id="homeDetail">
-        <div class="home-detail-swiper-box" v-cloak>
+<div id="homeDetail" v-cloak>
+    <div class="div-top">
+        <div class="home-detail-swiper-box" >
             <van-swipe :autoplay="3000" indicator-color="white" @change="onChange">
                 {foreach $info.main_img as $v}
                 <van-swipe-item>
@@ -23,146 +23,142 @@ body{background: #f8f8f8 !important;}
                 </div>
             </van-swipe>
         </div>
-    </div>
-    <div class="home-detail-mid fs0">
-        <div><span class="fs14 clog">￥<span class="fs20 fwb">{$info.price|round2}</span> </span> <del class="fs12 clad ml10">￥<del>{$info.market_price|round2}</del></del>
+        
+        <div class="home-detail-mid fs0">
+            <div><span class="fs14 clog">￥<span class="fs20 fwb">{$info.price|round2}</span> </span> <del class="fs12 clad ml10">￥<del>{$info.market_price|round2}</del></del>
+            </div>
+            <div class="fs12 cl6e over mt10">{$info.introduction}</div>
+            <div class="fs14 cl33 over2 mt10 home-detail-goods-detail">{$info.goods_name}</div>
+            <div class="home-detail-goods-send fs12 cl6e">
+                <span>快递：<span>{eq name="$info.post_type" value="2"}{$info.freight|sprintf='%01.2f', ###}元{else/}免运费{/eq}</span>
+                </span>
+                <span>月销：<span>{$info.sold|default=0}</span>笔</span>
+                <span>配送：<span>{eq name="$info.post_type" value="3"}自提{else/}商家配送{/eq}</span></span>
+            </div>
         </div>
-        <div class="fs12 cl6e over mt10">{$info.introduction}</div>
-        <div class="fs14 cl33 over2 mt10 home-detail-goods-detail">{$info.goods_name}</div>
-        <div class="home-detail-goods-send fs12 cl6e">
-            <span>快递：<span>{eq name="$info.post_type" value="2"}{$info.freight|sprintf='%01.2f', ###}元{else/}免运费{/eq}</span>
-            </span>
-            <span>月销：<span>{$info.sold|default=0}</span>笔</span>
-            <span>配送：<span>{eq name="$info.post_type" value="3"}自提{else/}商家配送{/eq}</span></span>
+        <div class="home-detail-chose fs12 choseshuxing" @click="openBuy(1)">
+            <div class="home-detail-chose-left">选择</div>
+            <div class="home-detail-chose-mid">
+                <input type="text" placeholder="请选择" readonly v-model="done_attr">
+            </div>
+            <div class="home-detail-chose-right">
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
         </div>
-    </div>
-    <div class="home-detail-chose fs12 choseshuxing">
-        <div class="home-detail-chose-left">选择</div>
-        <div class="home-detail-chose-mid">
-            <input type="text" placeholder="请选择" readonly>
-        </div>
-        <div class="home-detail-chose-right">
-            <img src="__MOD__/shop/images/right.png" alt="">
-        </div>
-    </div>
-    <!-- 商品详情 -->
-    <div class="mt10">
-        <ul class="home-detail-pinjia-box">
-            <li class="fs12 cl33 heng-active" id="detail">
-                <div class="heng-div">
-                    <span class="heng-span">商品详情</span></div>
-            </li>
-            <li class="fs12 cl33" id="assess">
-                <div class="heng-div"><span class="heng-span">商品评价</span></div>
-            </li>
-        </ul>
-        <div class="detail-content fs15" id="homeDetailOne">{$info.description|raw}</div>
-        <div id="homeDetailTwo">
-            <div class="home-detail-box ">
-                <div class="home-detail-box-top fs0 ">
-                    <div class="home-detail-box-top-left ">
-                        <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                        <div class="dsfx ml10 ">
-                            <span class="fs12 cl33 ">*****xxx</span>
-                            <div id="rate">
-                                <van-rate v-model="readonly_star" readonly size="4" gutter="2 " /><span class="fs10 clb4 ml10 "><span>5</span>分</span>
+        <!-- 商品详情 -->
+        <div class="mt10">
+            <ul class="home-detail-pinjia-box">
+                <li class="fs12 cl33 detailChange heng-active">
+                    <div class="heng-div">
+                        <span class="heng-span">商品详情</span></div>
+                </li>
+                <li class="fs12 cl33 detailChange" id="assess">
+                    <div class="heng-div"><span class="heng-span">商品评价</span></div>
+                </li>
+            </ul>
+            <div class="content-box detail-content fs15" id="homeDetailOne">{$info.description|raw}</div>
+            <div class="content-box" id="homeDetailTwo">
+                <div class="home-detail-box ">
+                    <div class="home-detail-box-top fs0 ">
+                        <div class="home-detail-box-top-left ">
+                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
+                            <div class="dsfx ml10 ">
+                                <span class="fs12 cl33 ">*****xxx</span>
+                                <div id="rate">
+                                    <van-rate v-model="readonly_star" readonly size="4" gutter="2 " /><span class="fs10 clb4 ml10 "><span>5</span>分</span>
+                                </div>
+
                             </div>
-
+                        </div>
+                        <div class="fs12 cl6e ">2019-12-10</div>
+                    </div>
+                    <!-- 评价内容 -->
+                    <div class="fs0 tl home-detail-pinajiacontent ">
+                        <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价</div>
+                        <div class="home-detail-image-content tl ">
+                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
+                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
+                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
+                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
+                        </div>
+                        <div class="home-detail-shangjiahuifu ">
+                            <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb ">商家回复</div>
+                            <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10 ">
+                                这个时刻，想用一句最恰当的话表达我的感谢与祝福变得如此的不容易。无须太多言语，一切尽在不言中，感谢亲的赞美。我们相信用心去做的事情总是会得到认可与支持的。祝您购物愉快
+                            </div>
+                        </div>
+                        <div class="home-detail-zhuijia fs0">
+                            <div class="fs14 fwb ">购买<span>3</span>天后追评</div>
+                            <div class="cl33 fs12 mt20 ">天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评</div>
                         </div>
                     </div>
-                    <div class="fs12 cl6e ">2019-12-10</div>
                 </div>
-                <!-- 评价内容 -->
-                <div class="fs0 tl home-detail-pinajiacontent ">
-                    <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价</div>
-                    <div class="home-detail-image-content tl ">
-                        <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                        <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                        <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                        <img src="/uploads/temp/touxiang.jpg " alt=" ">
+            </div>
+
+        </div>
+        <div class="icontop">
+            <img src="__MOD__/shop/images/top.png" />
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="home-detail-bot" id="bottom_part" data-id="{$info.id}">
+        <div class="home-detail-bot-left ">
+            <a href="{:url('shop/Index/index')}" class="dffccb ">
+                <img src="__MOD__/shop/images/home.png " alt=" ">
+                <span class="fs10 cl33 ">首页</span>
+            </a>
+            <div class="dffccb collectd">
+                {if $info.collectd}
+                <img src="__MOD__/shop/images/collectd.png" alt=" " data-mark="1">
+                <span class="fs10 cl33 ">已收藏</span>
+                {else /}
+                <img src="__MOD__/shop/images/collect.png" alt=" " data-mark="2">
+                <span class="fs10 cl33 ">收藏</span>
+                {/if}
+            </div>
+            <a href="{:url('Cart/index')}" class="dffccb ">
+                <img src="__MOD__/shop/images/shop.png " alt=" ">
+                <span class="fs10 cl33 ">购物车</span>
+            </a>
+        </div>
+
+        <div class="home-detail-bot-btnone " @click="openBuy(2)">加入购物车</div>
+        <div class="home-detail-bot-btntwo " @click="openBuy(3)">立即购买</div>
+    </div>
+
+    <!-- 选择商品属性 -->
+    <van-popup v-model="shuxing" class="bugbox" position="bottom" :style="{ height: '80%' }">
+        <div class="home-detail-pop-box">
+            <div class="home-detail-pop-box-top">
+                <img src="__FILEROOT__/thumb{$info['main_img'][0]}" alt="" class="sku_img">
+                <div class="home-detail-pop-box-info">
+                    <div class="home-detail-pop-box-info-des over2">{$info.goods_name}</div>
+                    <div class="fs10 clog">￥<span class="fs14 fwb sku_price">{$info.price|round2}</span></div>
+                    <div class="fs12 cl6e">库存<span class="sku_stock">{$info.stocks|default=0}</span>件</div>
+                    <div class="fs12 cl33">已选：{{attr_selected}}</div>
+                </div>
+            </div>
+            <div class="home-detail-of">
+                
+                <div class="home-detail-pop-box-mid" v-for="(item,index) in good_attrs">
+                    <div class="fs14 cl33">{{item[0]}}</div>
+                    <div class="mt15 fs0">
+                        <div class="home-detail-shuxing-btn" v-for="(v,i) in item[1]">{{v}}</div>
                     </div>
-                    <div class="home-detail-shangjiahuifu ">
-                        <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb ">商家回复</div>
-                        <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10 ">
-                            这个时刻，想用一句最恰当的话表达我的感谢与祝福变得如此的不容易。无须太多言语，一切尽在不言中，感谢亲的赞美。我们相信用心去做的事情总是会得到认可与支持的。祝您购物愉快
-                        </div>
-                    </div>
-                    <div class="home-detail-zhuijia fs0">
-                        <div class="fs14 fwb ">购买<span>3</span>天后追评</div>
-                        <div class="cl33 fs12 mt20 ">天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评</div>
-                    </div>
+                </div>
+                
+            </div>
+            <img src="__MOD__/shop/images/close.png" alt="" class="home-detail-close-btn" @click="shuxing = false">
+            <div class="dfbtc mt20">
+                <div class="cl33 fwb fs14">购买数量</div>
+                <div>
+                    <van-stepper v-model="buyNum" />
                 </div>
             </div>
         </div>
-
-    </div>
-    <div class="icontop">
-        <img src="__MOD__/shop/images/top.png" />
-    </div>
-</div>
-
-<!-- 底部按钮 -->
-<div class="home-detail-bot ">
-    <div class="home-detail-bot-left ">
-        <a href="{:url('shop/Index/index')}" class="dffccb ">
-            <img src="__MOD__/shop/images/home.png " alt=" ">
-            <span class="fs10 cl33 ">首页</span>
-        </a>
-        <div class="dffccb collectd">
-            {if $info.collectd}
-            <img src="__MOD__/shop/images/collectd.png " alt=" ">
-            <span class="fs10 cl33 ">已收藏</span>
-            {else /}
-            <img src="__MOD__/shop/images/collect.png " alt=" ">
-            <span class="fs10 cl33 ">收藏</span>
-            {/if}
-        </div>
-        <a href="{:url('Cart/index')}" class="dffccb ">
-            <img src="__MOD__/shop/images/shop.png " alt=" ">
-            <span class="fs10 cl33 ">购物车</span>
-        </a>
-
-    </div>
-
-    <div class="home-detail-bot-btnone ">
-        加入购物车
-    </div>
-    <div class="home-detail-bot-btntwo ">
-        立即购买
-    </div>
-</div>
-
-
-<!-- 选择商品属性 -->
-<div class="sqtk-shouhuo">
-    <div class="home-detail-pop">
-        <div class="home-detail-pop-box ">
-            <div class="home-detail-pop-box-top ">
-                <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                <div class="home-detail-pop-box-info ">
-                    <div class="home-detail-pop-box-info-des over2 ">百草味 每日坚果炒货 笑口 板栗 即食香糯</div>
-                    <div class="fs10 clog ">￥<span class="fs14 fwb ">58.00</span></div>
-                    <div class="fs12 cl6e ">库存<span>500</span>件</div>
-                    <div class="fs12 cl33 ">已选：{{shuxing_list[shuxing_index]}}</div>
-                </div>
-            </div>
-            <div class="home-detail-pop-box-mid ">
-                <div class="fs14 cl33 ">属性</div>
-                <div class="mt15 fs0 ">
-                    <div class="home-detail-shuxing-btn btn-active">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                    <div class="home-detail-shuxing-btn ">{{sx}}</div>
-                </div>
-            </div>
-            <img src="__MOD__/shop/images/close.png " alt=" " class="home-detail-close-btn" id="homeCloseBtn">
-        </div>
-        <div class="sqbtn" id="homeShuCingBtn">确定</div>
-    </div>
+        <div class="huowubtn" @click="sureSelect()">确定</div>
+    </van-popup>
 </div>
 {/block}
 {block name="footjs"}
@@ -170,86 +166,125 @@ body{background: #f8f8f8 !important;}
 <script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-    // vant.Toast('提示内容');
-
 // 在 #app 标签下渲染一个按钮组件
-new Vue({
-    el: '.div-top',
-    data: {
-        current: 0,
-        readonly_star: 2
-    },
-    methods: {
-        onChange(index) {
-            this.current = index;
-        }
-    }
-});
+ var vue = new Vue({
+            el: '#homeDetail',
+            data: {
+                current: 0,
+                done_attr: '',
+                readonly_star: 5, //评分的星星
+                shuxing: false, //属性框显示
+                buyNum: 1, //步进器 数量
+                mark: 0,
+                goods_id: '{$info.id}',
+                good_attrs: eval('{$info.goods_sku_attributes}'.replace(/&quot;/g,"\"")),
+                attr_len : 0,
+                attrSelected: [],
+                attr_selected: ''
+            },
+            mounted(){
+                this.attr_len = this.good_attrs.length
+            },
+            methods: {
+                onChange(index) {
+                    this.current = index;
+                },
+                openBuy(mark){
+                    this.shuxing = true
+                    this.mark = mark
+                },
+                sureSelect(){
+                    var mark = this.mark
+                    var buyNum = this.buyNum
+                    var attrSelected = this.attrSelected
+                    var sureLen = attrSelected.length
 
+                    if(sureLen != this.attr_len){
+                        return false;
+                    }
+                    
+                    this.shuxing = false
+                    if(mark == 1){
+                        this.done_attr = '已选：' + attrSelected.join(' ');
+                    }else if(mark == 2){
+                        axios.post('{:url(\'pushToCart\')}', {
+                            goods_id: this.goods_id,
+                            attrs: attrSelected,
+                            buyNum: this.buyNum
+                        }).then(res => {
+                            if (res.data.code == 1) {
+                                this.done_attr = '已选：' + attrSelected.join(' ');
+                                vant.Toast.success('添加成功');
+                            } else {
+                                vant.Toast.fail('添加失败');
+                            }
+                        });
+                    }else{
 
+                    }
+
+                }
+            }
+        });
+</script>
+<script type="text/javascript">
 $(function() {
     $('.collectd').on('click', function(){
-        vant.Toast('提示内容');
+        var _this = $(this)
+        var mark = _this.children('img').data('mark');
+        var id = $('#bottom_part').data('id')
+        $.post('{:url(\'doCollected\')}', {mark: mark, id: id}, function(res){
+            if(res.code == 1){
+                if(mark == 1){
+                    vant.Toast('已取消收藏')
+                    _this.children('img').attr('src', '__MOD__/shop/images/collect.png')
+                    _this.children('img').data('mark', 2)
+                    _this.children('span').html('收藏')
+                }else{
+                    vant.Toast('收藏成功')
+                    _this.children('img').attr('src', '__MOD__/shop/images/collectd.png')
+                    _this.children('img').data('mark', 1)
+                    _this.children('span').html('已收藏')
+                }
+            }else{
+                vant.Toast('收藏失败')
+            }
+        })
+        
     })
 
-    $("#detail").click(function() {
+    $('.detailChange').click(function(){
+        var idx = $(this).index()
         $(this).addClass("heng-active").siblings().removeClass("heng-active")
-        $("#homeDetailOne").show();
-        $("#homeDetailTwo").hide();
-    })
-
-    $("#assess ").click(function() {
-        $(this).addClass("heng-active").siblings().removeClass("heng-active")
-        $("#homeDetailOne").hide();
-        $("#homeDetailTwo").show();
-    })
-
-    /*弹出*/
-    $(".choseshuxing").click(function() {
-        $(".sqtk-shouhuo").css({
-            "background-color": "rgba(0, 0, 0, .7)",
-            "z-index": "11"
-        })
-        $(".sqtk-shouhuo").show()
-        $(".home-detail-pop").animate({
-            bottom: "0rem"
-        }, 100);
-    })
-
-    /*点击关闭图标*/
-    $("#homeCloseBtn").click(function() {
-        $(".home-detail-pop").animate({
-            bottom: "-80%"
-        }, 100);
-        $(".sqtk-shouhuo").css({
-            "background-color": "rgba(0, 0, 0, 0)",
-        })
-        setTimeout(function() {
-            $(".sqtk-shouhuo").css({
-                "z-index": "-1"
-            })
-        }, 200)
-    })
-
-    /*点击确定*/
-    $("#homeShuCingBtn").click(function() {
-
-        $(".home-detail-pop").animate({
-            bottom: "-80%"
-        }, 100);
-        $(".sqtk-shouhuo").css({
-            "background-color": "rgba(0, 0, 0, 0)",
-        })
-        setTimeout(function() {
-            $(".sqtk-shouhuo").css({
-                "z-index": "-1"
-            })
-        }, 200)
+        $('.content-box').eq(idx).show()
+        $('.content-box').eq(idx).siblings('.content-box').hide()
     })
 
     /*选择属性*/
-    $(".home-detail-shuxing-btn").click(function() {
+    $('body').on('click', '.home-detail-shuxing-btn', function() {
+        var idx = $(this).parents('.home-detail-pop-box-mid').index()
+        var text = $(this).html()
         $(this).addClass("btn-active").siblings().removeClass("btn-active")
+        var attrs = vue.attrSelected
+        if(typeof attrs[idx] == 'undefined'){
+            vue.attrSelected.push(text)
+        }else{
+            vue.attrSelected.splice(idx, 1, text)
+        }
+
+        if(vue.attr_len == vue.attrSelected.length){
+            vue.attr_selected = vue.attrSelected.join(' ');
+            $.post('{:url(\'getAttrInfo\')}', {goods_id: vue.goods_id, attrs: vue.attrSelected}, function(res){
+                if(res.code == 1){
+                    console.log(res)
+                    $('.sku_img').attr('src', '__FILEROOT__/thumb'+res.result.sku_img)
+                    $('.sku_price').html(res.result.price)
+                    $('.sku_stock').html(res.result.stocks)
+                }else{
+                    vant.Toast.fail('系统错误');
+                }
+            })
+        }
     })
 
     $('.icontop').on('click', function() {

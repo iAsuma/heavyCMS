@@ -212,7 +212,7 @@ function rand_str($length=16)
 /**
  * @param $code 状态码
  * @author lishuaiqiu
- * Admin后台json数据全局统一返回格式
+ * json数据全局统一返回格式
  */
 function res_json(int $code=100, $result="")
 {

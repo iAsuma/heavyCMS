@@ -26,7 +26,7 @@ class User extends Base
 		$data['nopay'] = Db::table('shop_order')->where($where)->where(['order_status' => 0])->count();
 		$data['nosend'] = Db::table('shop_order')->where($where)->where(['order_status' => 1])->count();
 		$data['noget'] = Db::table('shop_order')->where($where)->where(['order_status' => 2])->count();
-		// dump($data);die;
+		
 		return $data;
 	}
 
@@ -91,13 +91,61 @@ class User extends Base
 			'is_default' => $post['isdefault']
 		];
 
+		Db::startTrans();
+
 		if($post['isdefault'] == 1){
 			Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
 		}
 
 		$res = Db::table('shop_receiver_address')->insert($data);
-		!$res && exit(res_json_native(-1, 'fail'));
+		if(!$res){
+			Db::rollback();
+			return res_json(-1, 'fail');
+		}
 
+		Db::commit();
+		return res_json(1, 'success');
+	}
+
+	public function addressEdit(int $id)
+	{
+		$info = [];
+		$id && $info = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
+
+		$this->assign('info', $info);
+		return $this->fetch();
+	}
+
+	public function editAddress()
+	{
+		$post = $this->request->post();
+
+		$area = explode('-', $post['area']);
+		$data = [
+			'name' => $post['userName'],
+			'phone' => $post['userPhone'],
+			'province' => $area[0],
+			'city' => $area[1],
+			'district' => $area[2],
+			'address' => $post['address'],
+			'user_id' => $this->userId,
+			'is_default' => $post['isdefault']
+		];
+
+		Db::startTrans();
+
+		if($post['isdefault'] == 1){
+			Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
+		}
+
+		$res = Db::table('shop_receiver_address')->where(['id' => $post['id']])->update($data);
+		
+		if(!is_numeric($res)){
+			Db::rollback();
+			return res_json(-1, 'fail');
+		}
+
+		Db::commit();
 		return res_json(1, 'success');
 	}
 

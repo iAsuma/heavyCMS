@@ -5,11 +5,11 @@
 {/block}
 {block name="content"}
 <div id="gouWu" v-cloak>
-    <div class="gouwu-guanli cb" @click="glstate = !glstate;jiesuan = !jiesuan">{{glstate?"完成":"管理"}} </div>
+    <div class="gouwu-guanli cb" @click="glstateChange">{{glstate ? "完成" : "管理"}} </div>
     <van-checkbox-group v-model="result" ref="checkboxGroup">
         <div v-for="(item,index) in cart_list" class="gouwu-item-box">
-            <van-checkbox v-if="item.stocks > 1" :name="index" checked-color="#FF5B05" :disabled="item.stocks < 1 ? true : false"></van-checkbox>
-            <van-radio v-else name="1" disabled></van-radio>
+            <van-checkbox :name="index" ref="checkboxes" checked-color="#FF5B05" disabled v-if="item.stocks < 1 && !glstate"></van-checkbox>
+            <van-checkbox :name="index" ref="checkboxes" checked-color="#FF5B05" v-else></van-checkbox>
 
             <div class="gouwu-item fs0">
                 <img :src="`__FILEROOT__/thumb${item.goods_img}`" alt="">
@@ -36,11 +36,11 @@
     <div class="gouwu-jiesuan-box">
         <div class="gouwu-jiesuan-box-left">
             <van-checkbox v-model="quanxuan" checked-color="#FF5B05" @change="togglequanxuan">全选</van-checkbox>
-            <div v-show = "!jiesuan"  class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            <div v-show = "!glstate"  class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
             </div>
         </div>
-        <div v-show = "!jiesuan" class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
-        <div v-show = "jiesuan" class="gouwu-del-btn" @click="del()">删除({{result.length}})</div>
+        <div v-show = "!glstate" class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
+        <div v-show = "glstate" class="gouwu-del-btn" @click="del()">删除({{result.length}})</div>
     </div>
 </div>
 {include file="public/menu" /}
@@ -49,6 +49,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
 <script>
 // 在 #app 标签下渲染一个按钮组件
 new Vue({
@@ -57,19 +58,30 @@ new Vue({
         result: [],
         cart_list: eval('{$cart|json_encode}'.replace(/&quot;/g, "\"")),
         quanxuan: false,
-        glstate:false,
-        jiesuan:false
+        glstate:false
     },
     methods: {
         sub() {
             console.log(this.cart_list)
         },
+        glstateChange(){
+            this.glstate = !this.glstate
+            this.$refs.checkboxGroup.toggleAll(false);
+            this.quanxuan = false
+        },
         /*是否全选*/
         togglequanxuan(value) {
             if (value) {
                 this.$refs.checkboxGroup.toggleAll(true);
+                if(!this.glstate){
+                    for(var i =0; i < this.cart_list.length; i++){
+                        if(this.cart_list[i].stocks < 1){
+                            this.$refs.checkboxes[i].toggle(false)
+                        }
+                    }
+                }
             } else {
-                this.$refs.checkboxGroup.toggleAll();
+                this.$refs.checkboxGroup.toggleAll(false);
             }
         },
         bugNumChange(index){
@@ -93,11 +105,11 @@ new Vue({
     },
     computed: {
         total() {
-            let allpri = 0;
+            let allprice = 0;
             for (let i = 0; i < this.result.length; i++) {
-                allpri += this.cart_list[this.result[i]].price * this.cart_list[this.result[i]].goods_num
+                allprice += this.cart_list[this.result[i]].price * this.cart_list[this.result[i]].goods_num
             }
-            return allpri.toFixed(2);
+            return allprice.toFixed(2);
         }
 
     }

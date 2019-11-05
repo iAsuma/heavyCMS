@@ -31,6 +31,10 @@ class Base extends Controller
     */
 	public function isCollected($goods_id)
 	{
+		if(!$this->userId || !$goods_id){
+			return false;
+		}
+
 		$res = Db::table('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->find();
 		if($res){
 			return true;
@@ -45,5 +49,14 @@ class Base extends Controller
 	public function goodsStock($goods_id)
 	{
 		// $stock = Db::table('')
+	}
+
+	/**
+    * 用户默认的收货地址
+    */
+	public function userDefaultAddress()
+	{
+		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->find();
+		return $address;
 	}
 }

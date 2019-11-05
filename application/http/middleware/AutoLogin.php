@@ -49,7 +49,7 @@ class AutoLogin
                 $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
                 $user && Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
             }else{
-                if($request->isAjax()){
+                if($request->isAjax() || $request->isPost()){
                     header('Ajax-Mark: redirect');
                     header("Redirect-Path: ".Url::build($this->redirect_url));
                 }else{

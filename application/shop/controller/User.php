@@ -2,16 +2,48 @@
 namespace app\shop\controller;
 use think\Db;
 /**
- * 个人中心(我的)
+ * 用户操作相关及个人中心(我的)
  */
 class User extends Base
 {
+	/*
+	* 商品收藏
+	*/
+	public function dogGoodsCollected()
+	{
+		$goods_id = $this->request->post('id');
+		$mark = $this->request->post('mark');
+
+		if($mark == 1 && $this->isCollected($goods_id)){
+			$res = Db::table('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->delete();
+		}else{
+			$res = Db::table('user_goods_collection')->insert(['user_id' => $this->userId, 'goods_id' => $goods_id, 'create_time' => date('Y-m-d H:i:s')]);
+		}
+
+		if($res){
+			return res_json(1);
+		}else{
+			return res_json(-1);
+		}
+	}
 
 	public function index()
 	{
 		$report = $this->orderCount();
 
 		$this->assign('report', $report);
+		return $this->fetch();
+	}
+
+	/**
+	* 订单数据相关
+	*/
+	public function order()
+	{
+		$type = $this->request->get('o');
+		$type == '' && $type = 'all';
+
+		$this->assign('type', $type);
 		return $this->fetch();
 	}
 
@@ -30,6 +62,9 @@ class User extends Base
 		return $data;
 	}
 
+	/**
+	* 个人中心收藏
+	*/
 	public function collect()
 	{
 		$words = trim($this->request->get('wd'));
@@ -62,9 +97,16 @@ class User extends Base
 		return res_json(1, $list);
 	}
 
+	/**
+	* 收货地址
+	*/
 	public function address()
 	{
 		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId])->order(['is_default' => 'desc', 'id' => 'desc'])->select();
+
+		if($preorder = $this->request->param('preorder')){
+			$this->assign('preorder', $preorder);
+		}
 
 		$this->assign('address', $address);
 		return $this->fetch();
@@ -147,14 +189,5 @@ class User extends Base
 
 		Db::commit();
 		return res_json(1, 'success');
-	}
-
-	public function order()
-	{
-		$type = $this->request->get('o');
-		$type == '' && $type = 'all';
-
-		$this->assign('type', $type);
-		return $this->fetch();
 	}
 }

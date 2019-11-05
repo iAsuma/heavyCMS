@@ -1,5 +1,5 @@
 {extend name="public/base" /}
-{block name="title"}商品{/block}
+{block name="title"}商品详情{/block}
 {block name="frontcss"}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
 {/block}
@@ -136,7 +136,7 @@ body{background: #f8f8f8 !important;}
                     <div class="home-detail-pop-box-info-des over2">{$info.goods_name}</div>
                     <div class="fs10 clog">￥<span class="fs14 fwb sku_price">{$info.price|round2}</span></div>
                     <div class="fs12 cl6e">库存<span class="sku_stock">{$info.stocks|default=0}</span>件</div>
-                    <div class="fs12 cl33">已选：{{attr_selected}}</div>
+                    <div class="fs12 cl33">已选：{{attr_selected_str}}</div>
                 </div>
             </div>
             <div class="home-detail-of">
@@ -165,9 +165,10 @@ body{background: #f8f8f8 !important;}
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
 <script>
 // 在 #app 标签下渲染一个按钮组件
- var vue = new Vue({
+var vue = new Vue({
             el: '#homeDetail',
             data: {
                 current: 0,
@@ -180,7 +181,8 @@ body{background: #f8f8f8 !important;}
                 good_attrs: eval('{$info.goods_sku_attributes}'.replace(/&quot;/g,"\"")),
                 attr_len : 0,
                 attrSelected: [],
-                attr_selected: ''
+                attr_selected_str: '',
+                goods_sku_id: ''
             },
             mounted(){
                 this.attr_len = this.good_attrs.length
@@ -207,7 +209,7 @@ body{background: #f8f8f8 !important;}
                     if(mark == 1){
                         this.done_attr = '已选：' + attrSelected.join(' ');
                     }else if(mark == 2){
-                        axios.post('{:url(\'pushToCart\')}', {
+                        axios.post('{:url(\'Cart/pushToCart\')}', {
                             goods_id: this.goods_id,
                             attrs: attrSelected,
                             buyNum: this.buyNum
@@ -220,7 +222,12 @@ body{background: #f8f8f8 !important;}
                             }
                         });
                     }else{
-
+                        let goods_id = this.goods_id
+                        let goods_sku_id = this.goods_sku_id
+                        let buy_num = this.buyNum
+                        let time = Date.parse(new Date()).toString().slice(0, -3);
+                        let buy =  mark + '_' + time + '_' + '00' + '_' + goods_id + '_' + buy_num + '_' + goods_sku_id
+                        window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
                     }
 
                 }
@@ -233,7 +240,7 @@ $(function() {
         var _this = $(this)
         var mark = _this.children('img').data('mark');
         var id = $('#bottom_part').data('id')
-        $.post('{:url(\'doCollected\')}', {mark: mark, id: id}, function(res){
+        $.post('{:url(\'User/dogGoodsCollected\')}', {mark: mark, id: id}, function(res){
             if(res.code == 1){
                 if(mark == 1){
                     vant.Toast('已取消收藏')
@@ -273,10 +280,10 @@ $(function() {
         }
 
         if(vue.attr_len == vue.attrSelected.length){
-            vue.attr_selected = vue.attrSelected.join(' ');
+            vue.attr_selected_str = vue.attrSelected.join(' ');
             $.post('{:url(\'getAttrInfo\')}', {goods_id: vue.goods_id, attrs: vue.attrSelected}, function(res){
                 if(res.code == 1){
-                    console.log(res)
+                    vue.goods_sku_id = res.result.id
                     $('.sku_img').attr('src', '__FILEROOT__/thumb'+res.result.sku_img)
                     $('.sku_price').html(res.result.price)
                     $('.sku_stock').html(res.result.stocks)

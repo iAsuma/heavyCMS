@@ -5,7 +5,7 @@
     <div class="shdz-shouhuo-address-first">
         {volist name="address" id="vo"}
         <div class="shdz-s-d-item">
-            <div class="shdz-s-d-item-left">
+            <div class="shdz-s-d-item-left address-item" data-id="{$vo.id}" data-order="{$preorder ?? ''}">
                 <div class="fs16 cl33 fwb tl ls10">
                     <span class="shdz-s-d-item-left-name">{$vo.name}</span>
                     <span class="fs14 cl6e ml5 ls10">{$vo.phone}</span>
@@ -31,5 +31,14 @@
     $('#add').click(function(){
         window.location.href = $(this).data('url')
     })
+
+    $('.address-item').on('click', function(){
+        if($(this).data('order')){
+            var param = $(this).data('order').replace('_00_', '_'+$(this).data('id')+'_')
+            var url = "{:url('Order/preSure')}?buy="+param
+            window.location.replace(url);
+        }
+    })
+    
 </script>
 {/block}

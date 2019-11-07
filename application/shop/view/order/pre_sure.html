@@ -16,7 +16,7 @@
     </a>
     <img src="__MOD__/shop/images/addresstiao.png" alt="" class="gwz-address-img fs0">
     <div class="gwz-item-content">
-		<div class="gwz-item fs0" v-for="(item,index) in info_list">
+		<div class="gwz-item fs0" v-for="(item,index) in buy_list">
             <img :src="`__FILEROOT__/thumb${item.sku_img}`" alt="">
             <div class="gwz-item-right">
                 <div class="gwz-item-right-top">
@@ -29,16 +29,15 @@
                 </div>
             </div>
         </div>
-        {eq name="from" value="3"}
-        <div class="gwz-youhuiquan">
+
+        <div class="gwz-youhuiquan" v-if="from == 3">
             <div class="gwz-youhuiquan-top">
                 <div class="fs14 cl33">购买数量</div>
                 <div>
-                    <van-stepper v-model="info_list[0].buynum" max="{$goods[0]['stocks']}"/>
+                    <van-stepper v-model="buy_list[0].buynum" max="{$goods[0]['stocks']}"/>
                 </div>
             </div>
         </div>
-        {/eq}
 
         <div class="gwz-youhuiquan">
             <div class="gwz-youhuiquan-top">
@@ -105,35 +104,47 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
 <script>
-        new Vue({
-            el: '#gouWuZhiFu',
-            data: {
-                info_list: eval('{$goods|json_encode}'.replace(/&quot;/g, "\"")),
-                // checked: false,
-                freight: '{$freight}'
-            },
-            methods: {
-                sub() {
-                    console.log(this.info_list)
-                    console.log(this.result)
+new Vue({
+    el: '#gouWuZhiFu',
+    data: {
+        buy_list: eval('{$goods|json_encode}'.replace(/&quot;/g, "\"")),
+        // checked: false,
+        from: '{$from}',
+        cart_ids: '{$cart_ids ?? ''}',
+        freight: '{$freight}'
+    },
+    methods: {
+        sub() {
+            vant.Toast.loading({ forbidClick: true });
+            axios.post('{:url(\'make\')}', {
+                buy_list: this.buy_list,
+                freight: this.freight,
+                order_price: this.total,
+                address_id: '{$address.id}',
+                cart_ids: this.cart_ids
+            }).then(res => {
+                vant.Toast.clear();
+                if (res.data.code == 1) {
+                	window.location.replace('{:url('detail')}?from=pre&no='+res.data.result)
+                }else{
+                	vant.Toast.fail('系统错误');
                 }
-            },
-            computed: {
-            	goods_total(){
-            		let allprice = 0;
-                    for (let i = 0; i < this.info_list.length; i++) {
-                        allprice += this.info_list[i].price * this.info_list[i].buynum
-                    }
-
-                    return allprice.toFixed(2);
-            	},
-                total() {
-                    
-
-                    return parseFloat(this.goods_total)+parseFloat(this.freight);
-                }
-
+            });
+        }
+    },
+    computed: {
+    	goods_total(){
+    		let allprice = 0;
+            for (let i = 0; i < this.buy_list.length; i++) {
+                allprice += this.buy_list[i].price * this.buy_list[i].buynum
             }
-        });
-    </script>
+
+            return allprice.toFixed(2);
+    	},
+        total() {
+            return parseFloat(this.goods_total)+parseFloat(this.freight);
+        }
+    }
+});
+</script>
 {/block}

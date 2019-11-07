@@ -153,7 +153,7 @@ body{background: #f8f8f8 !important;}
             <div class="dfbtc mt20">
                 <div class="cl33 fwb fs14">购买数量</div>
                 <div>
-                    <van-stepper v-model="buyNum" />
+                    <van-stepper v-model="buyNum" :max="maxbuy"/>
                 </div>
             </div>
         </div>
@@ -176,13 +176,15 @@ var vue = new Vue({
                 readonly_star: 5, //评分的星星
                 shuxing: false, //属性框显示
                 buyNum: 1, //步进器 数量
+                maxbuy: 1,
                 mark: 0,
                 goods_id: '{$info.id}',
                 good_attrs: eval('{$info.goods_sku_attributes}'.replace(/&quot;/g,"\"")),
                 attr_len : 0,
                 attrSelected: [],
                 attr_selected_str: '',
-                goods_sku_id: ''
+                goods_sku_id: '',
+                sureBtn: false
             },
             mounted(){
                 this.attr_len = this.good_attrs.length
@@ -204,6 +206,11 @@ var vue = new Vue({
                     if(sureLen != this.attr_len){
                         return false;
                     }
+
+                    if(this.sureBtn == false){
+                        vant.Toast.fail('库存不足');
+                        return false;
+                    }
                     
                     this.shuxing = false
                     if(mark == 1){
@@ -222,10 +229,10 @@ var vue = new Vue({
                             }
                         });
                     }else{
+                        let time = Date.parse(new Date()).toString().slice(0, -3);
                         let goods_id = this.goods_id
                         let goods_sku_id = this.goods_sku_id
                         let buy_num = this.buyNum
-                        let time = Date.parse(new Date()).toString().slice(0, -3);
                         let buy =  mark + '_' + time + '_' + '00' + '_' + goods_id + '_' + buy_num + '_' + goods_sku_id
                         window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
                     }
@@ -287,6 +294,12 @@ $(function() {
                     $('.sku_img').attr('src', '__FILEROOT__/thumb'+res.result.sku_img)
                     $('.sku_price').html(res.result.price)
                     $('.sku_stock').html(res.result.stocks)
+                    vue.maxbuy = res.result.stocks
+                    if(res.result.stocks > 1){
+                        vue.sureBtn = true;
+                    }else{
+                        vue.sureBtn = false;
+                    }
                 }else{
                     vant.Toast.fail('系统错误');
                 }

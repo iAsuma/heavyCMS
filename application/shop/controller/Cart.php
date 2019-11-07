@@ -53,7 +53,6 @@ class Cart extends Base
 
 	public function index()
 	{
-		// $this->userId = 1;
 		$cart = Db::table('shop_shopping_cart')->field('c.*,s.price,s.stocks')->alias('c')->join('shop_goods_sku s', 'c.goods_sku_id=s.id')->join('shop_goods g', 's.goods_id=g.id')->where(['s.status' => 1, 'g.status' => 1, 'user_id' => $this->userId])->select();
 		
 		$this->assign('cart', $cart);
@@ -70,6 +69,17 @@ class Cart extends Base
 
 		$res = Db::table('shop_shopping_cart')->where(['id' => $id, 'user_id' => $this->userId])->update(['goods_num' => $num]);
 		!$res && exit(res_json_native(-1));
+		return res_json(1);
+	}
+
+	public function delGoodsInCart(Request $request)
+	{
+		$ids = $request->post('cart_ids');
+		!$ids && exit(res_json_native(-1));
+		
+		$res = Db::table('shop_shopping_cart')->where('id', 'IN', $ids)->delete();
+		!$res && exit(res_json_native(-2));
+
 		return res_json(1);
 	}
 }

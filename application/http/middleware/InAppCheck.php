@@ -8,7 +8,7 @@
 namespace app\http\middleware;
 use Session;
 use think\Db;
-use EasyWeChat\Factory as WeChat;
+use wechat\facade\Loader as WeChat;
 
 class InAppCheck
 {
@@ -18,10 +18,8 @@ class InAppCheck
             $request->InApp = 'WeChat';
 
             if(!Session::has('wapUser.wx_openid')){
-                //读取微信配置并存入缓存
-                $wxConfig = Db::table('application_config')->order('id', 'desc')->cache('wx_config', 0, 'developer')->find();
                 //微信授权
-                $this->wechat($request, $wxConfig); 
+                $this->wechat($request); 
             }
 
         } else if (preg_match('~alipay~i', $request->header('user-agent'))) {
@@ -35,15 +33,10 @@ class InAppCheck
     	return $next($request);
     }
 
-    public function wechat($request, $wxConfig)
+    public function wechat($request)
     {
-        $config = [
-            'app_id' => $wxConfig['app_id'],
-        ];
-        
         if($request->get('code')){
-            $config['secret'] = $wxConfig['app_secret'];
-            $app = WeChat::officialAccount($config);
+            $app = WeChat::officialAccount();
             $user = $app->oauth->user();
             
             Session::set('wapUser.wx_openid', $user['id']);

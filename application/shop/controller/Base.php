@@ -8,12 +8,13 @@ class Base extends Controller
 {
 	protected $userId = NULL;
 	protected $userName = NULL;
-	protected $userHeadImg = NULL;
+	protected $wx_openid = NULL;
 
 	protected function initialize()
 	{
 		$this->userId = Session::get('wapUser.id');
 		$this->userName = Session::get('wapUser.name');
+		$this->wx_openid = Session::get('wapUser.wx_openid');
 	}
 
 	/**
@@ -57,6 +58,15 @@ class Base extends Controller
 	public function userDefaultAddress()
 	{
 		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->find();
+		return $address;
+	}
+
+	/**
+    * 根据ID得到收获地址
+    */
+	public function userAddressById($id)
+	{
+		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
 		return $address;
 	}
 }

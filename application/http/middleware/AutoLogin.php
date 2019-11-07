@@ -26,7 +26,8 @@ class AutoLogin
      */
     protected $except = [
         'shop/Index',
-        'shop/Goods'
+        'shop/Goods',
+        'shop/Api'
     ];
 
     public function handle($request, \Closure $next, $name)

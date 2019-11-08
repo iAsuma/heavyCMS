@@ -1,8 +1,11 @@
 {extend name="public/base" /}
-{block name="title"}订单{/block}
+{block name="title"}我的订单{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__JS__/mylayer/mylayer.css">
+{/block}
 {block name="content"}
-<div id="huoList">
-    <ul class="liebiao-ul">
+<div id="huoList" class="bcf8 height100">
+    <ul class="liebiao-ul" data-mark="{$type}">
         <li class="fs13 cl33 {eq name='$type' value='all'}heng-active{/eq}" data-type='all'>
             <div class="fs14 cl33 heng-div"><span class="heng-span">全部</span> </div>
         </li>
@@ -20,81 +23,200 @@
         </li>
     </ul>
     <div class="liebiao-content">
-        <div id="quanbu">
-            <div class="geren-daifukuan">
-                <a href="./home.html" style="display: block;" class="geren-daifukuan-box">
-                    <div class="geren-daifukuan-content tl fs0">
-                        <div>
-                            <img src="/uploads\thumb\20191028\2b553fc2284e49c09b78fa27c25f2ab7.png" alt />
-                        </div>
-                        <div class="geren-daifukuan-content-word">
-                            <div class="fs14 cl33">答复</div>
-                            <div class="fs12 cl66 mt10 over2">是士大夫</div>
-                        </div>
-                        <div class="geren-daifukuan-content-pri">
-                            <div class="over">
-                                <span class="fs10 cl33">¥</span>
-                                <span class="fs14 cl33">12890.00</span>
-                            </div>
-                            <div class="over">
-                                <span class="fs12 cl66">x</span>
-                                <span class="fs12 cl66">12</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="geren-daifukuan-content tl fs0">
-                        <div>
-                            <img src="/uploads\thumb\20191028\2b553fc2284e49c09b78fa27c25f2ab7.png" alt />
-                        </div>
-                        <div class="geren-daifukuan-content-word">
-                            <div class="fs14 cl33">都是发的说法大师傅士大夫撒打发士大夫</div>
-                            <div class="fs12 cl66 mt10 over2">撒打发士大夫</div>
-                        </div>
-                        <div class="geren-daifukuan-content-pri">
-                            <div class="over">
-                                <span class="fs10 cl33">¥</span>
-                                <span class="fs14 cl33">23</span>
-                            </div>
-                            <div class="over">
-                                <span class="fs12 cl66">x</span>
-                                <span class="fs12 cl66">23</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="geren-daifukuan-bottom">
-                        <div class="fs12 cl33">
-                            共
-                            <span>{{item.num}}</span>件商品&nbsp&nbsp&nbsp
-                            <span>
-                                                            合计：
-                                                            <span class="fs10 cl33 ls10">¥</span>
-                            <span class="fs14 fwb">{{item.num*item.danpri}}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="geren-daifukuan-btn-box fs0">
-                        <div></div>
-                        <div>
-                            <button type="button">取消订单</button>
-                            <button type="button">付款</button>
-                        </div>
-
-                    </div>
-                </a>
-
-            </div>
-        </div>
+        <div id="order-list"></div>
     </div>
 </div>
 {/block}
 {block name="footjs"}
-<script>
-    $(function() {
-        $(".liebiao-ul li").click(function() {
-            var type = $(this).data('type')
-            var reloadUrl = '{:url(\'order\')}?o='+type
-            window.location.replace(reloadUrl)
+<script type="text/javascript" src="__THIRD__/layer/mobile/layer.js" ></script>
+<script type="text/javascript" src="__JS__/mylayer/mylayer.js"></script>
+<script type="text/javascript" src="__THIRD__/dropload/dropload.min.js"></script>
+<script type="text/javascript">
+function orderHtml(data) {
+    var html = '';
+    $.each(data, function(i, v){
+        var sumGds = 0;
+        html += '<div class="geren-daifukuan" data-id="'+v[0].order_no+'">'
+                    +'<div class="geren-daifukuan-box"><a href="'+'{:url(\'Order/detail\')}?no='+v[0].order_no+'" >';
+
+        $.each(v[1], function(ii, vv){
+            sumGds += vv.goods_num
+            html +=     '<div class="geren-daifukuan-content tl fs0">'
+                            +'<div>'
+                                +'<img src="__FILEROOT__/thumb'+vv.goods_img+'" alt />'
+                            +'</div>'
+                            +'<div class="geren-daifukuan-content-word">'
+                                +'<div class="fs14 cl33">'+vv.goods_name+'</div>'
+                                +'<div class="fs12 cl66 mt10 over2">'+vv.goods_sku+'</div>'
+                            +'</div>'
+                            +'<div class="geren-daifukuan-content-pri">'
+                                +'<div class="over">'
+                                    +'<span class="fs10 cl33">¥</span>'
+                                    +'<span class="fs14 cl33">'+vv.unit_price+'</span>'
+                                +'</div>'
+                                +'<div class="over">'
+                                    +'<span class="fs12 cl66">x</span>'
+                                    +'<span class="fs12 cl66">'+vv.goods_num+'</span>'
+                                +'</div>'
+                            +'</div>'
+                        +'</div>';
         })
+
+        html +=         '</a><div class="geren-daifukuan-bottom">'
+                            +'<div class="fs12 cl33">共'
+                                +'<span>'+sumGds+'</span>件商品&nbsp&nbsp&nbsp'
+                                +'<span>合计：<span class="fs10 cl33 ls10">¥</span>'
+                                +'<span class="fs14 fwb">'+v[0].price+'</span>'
+                                +'</span>'
+                            +'</div>'
+                        +'</div>'
+                        +'<div class="geren-daifukuan-btn-box fs0">';
+
+        if(v[0].order_status == 0){
+            html +=          '<div class="fs12 clog">待付款</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="01">取消订单</button>'
+                                +'<button type="button" class="orderOpt" data-o="02">付款</button>';
+        }else if(v[0].order_status == 1){
+            html +=          '<div class="fs12 clog">待发货</div>'
+                            +'<div>';
+        }else if(v[0].order_status == 2){
+            html +=          '<div class="fs12 clog">待收货</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="21">确认收货</button>';
+        }else if(v[0].order_status == 3){
+            html +=          '<div class="fs12 clog">交易完成</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="31">申请退货</button>'
+                                +'<button type="button" class="orderOpt" data-o="32">评价</button>';
+        }else if(v[0].order_status == 4){
+            html +=          '<div class="fs12 clog">已取消</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="41">删除订单</button>';
+        }else if(v[0].order_status == 5){
+            html +=          '<div class="fs12 clog">退款中</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="51">申请取消</button>';
+        }else if(v[0].order_status == 6){
+            html +=          '<div class="fs12 clog">已退款</div>'
+                            +'<div>';
+        }
+
+        html +=             '</div>'
+                        +'</div>'
+                    +'</div>'
+                +'</div>';
     })
+
+    return html;
+}
+
+function changeOrderStatus(orderNo, status, obj) {
+    if(orderNo == '' || status === ''){
+        layer_msg('非法操作')
+        return false;
+    }
+
+    var idx = layer_loading();
+    $.post('{:url(\'changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
+        if(res.code == 1){
+            if(status == -1){
+                obj.parents('.geren-daifukuan').remove()
+                layer.close(idx);
+            }else{
+                window.location.reload();
+            }
+        }else{
+            layer_msg('系统错误')
+            layer.close(idx);
+        }
+    })
+}
+</script>
+<script>
+$(function() {
+    $(".liebiao-ul li").click(function() {
+        var type = $(this).data('type')
+        var reloadUrl = '{:url(\'order\')}?o='+type
+        window.location.replace(reloadUrl)
+    })
+
+    var pageStart = 1;
+    var perpage = 8;
+    
+    $('.liebiao-content').dropload({
+        scrollArea: window,
+        domDown: {
+            domRefresh:'<div class="dropload-refresh">↑上拉加载更多</div>',
+            domLoad: '<div class="dropload-load">加载中</div>',
+            domNoData: '<div class="dropload-noData">没有更多订单</div>'
+        },
+        loadDownFn: function(me) {
+            // 拼接HTML
+            var result = '';
+            $.ajax({
+                type: 'POST',
+                url: '{:url("orderList")}',
+                dataType: 'json',
+                data:{perpage: perpage, pageStart: pageStart, type: $('.liebiao-ul').data('mark')},
+                success: function(res) {
+                    if(res.code == 1){
+                        var data = res.result
+                        var dataLen = data.length
+                        var orders = orderHtml(data)
+                        // 插入数据到页面，放到最后面
+                        $('#order-list').append(orders);
+
+                        pageStart += 1;
+
+                        //数据条数小于每页显示的最大数
+                        if(dataLen < perpage){
+                            me.lock(); // 锁定
+                            me.noData(); // 无数据
+                        }
+                    }else{
+                        // 锁定
+                        me.lock();
+                        // 无数据
+                        me.noData();
+                    }
+
+                    // 每次数据插入，必须重置
+                    me.resetload();
+                },
+                error: function(xhr, type) {
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                    return false;
+                }
+            });
+        },
+        threshold: 50
+    });
+
+    $('body').on('click', '.orderOpt', function(){
+        var _this = $(this)
+        var order_no = _this.parents('.geren-daifukuan').data('id')
+        var opt = _this.data('o')
+        
+        if(opt == '01'){
+            layer_confirm('取消订单', function(){
+                changeOrderStatus(order_no, 4)
+            }, ['是', '否'])
+        }else if(opt == '02'){
+            window.location.href = '{:url(\'Order/detail\')}?from=list&no='+order_no;
+        }else if(opt == '21'){
+            layer_confirm('确认收货', function(idx){
+                layer.close(idx);
+                changeOrderStatus(order_no, 3, _this)
+            })
+        }else if(opt == '41'){
+            layer_confirm('删除订单', function(idx){
+                layer.close(idx);
+                changeOrderStatus(order_no, -1, _this)
+            })
+        }
+    })
+})
 </script>
 {/block}

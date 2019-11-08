@@ -46,7 +46,7 @@ class AutoLogin
                 $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
                 $user = Db::table('users')->where($where)->where('status', '=', 1)->find();
 
-                //定期修改头像
+                //定期修改头像,防止微信头像失效
                 $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
                 $user && Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
             }else{

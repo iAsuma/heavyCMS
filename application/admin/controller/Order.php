@@ -108,7 +108,7 @@ class Order extends Base
         isset($info) && $this->assign('order', $order);
 
         //订单是否评价
-        $order_no && $setcontent = Db::table('shop_goods_evaluate')->field('content,stars')->where(['order_id' => $order['id']])->find();
+        $order_no && $setcontent = Db::table('shop_goods_reviews')->field('content,stars')->where(['order_id' => $order['id']])->find();
         $this->assign('setcontent', $setcontent);
 
         return $this->fetch();
@@ -160,7 +160,7 @@ class Order extends Base
     public function assess()
     {
         $id = $this->request->get('id');
-        $info = Db::table('shop_goods_evaluate')->field('content,id,stars')->where(['order_id' => $id])->find();
+        $info = Db::table('shop_goods_reviews')->field('content,id,stars')->where(['order_id' => $id])->find();
         isset($info) && $this->assign('info', $info);
         return $this->fetch();
     }
@@ -188,7 +188,7 @@ class Order extends Base
                     'goods_sku_id' => 0,
                     'order_id' => $request->post('id')
                 ];
-                $result = Db::table('shop_goods_evaluate') -> insert($data);
+                $result = Db::table('shop_goods_reviews') -> insert($data);
                 !$result && exit(res_json_native(-3, '回复失败'));
                 Hook::listen('admin_log', ['订单管理', '订单回复']);
 

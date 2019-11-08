@@ -1,0 +1,4 @@
+.layer-msg{max-width: 90% !important;width: auto!important;background-color: rgba(0,0,0,.7) !important;color: #fff;}
+.layer-msg .layui-m-layercont{padding: 10px 30px;}
+.layer-confirm{max-width: 90% !important;width: auto!important;min-width: 230px;font-size: .3rem!important}
+.layer-confirm .layui-m-layercont{padding: 36px 30px;}

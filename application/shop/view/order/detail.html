@@ -4,6 +4,7 @@
 <style type="text/css">
 body{background: #f8f8f8 !important;}
 </style>
+<link rel="stylesheet" type="text/css" href="__JS__/mylayer/mylayer.css">
 {/block}
 {block name="content"}
 <div id="dfkDetail">
@@ -124,7 +125,7 @@ body{background: #f8f8f8 !important;}
         {/if}
 
         <!-- 按钮 -->
-        <div class="d-daifukuan-btn-box fs0 pr10">
+        <div class="d-daifukuan-btn-box fs0 pr10" data-status="{$order[0]['order_status']}">
         	{if $order[0]['order_status'] == 0}<span>取消订单</span>{/if}
         	{if $order[0]['order_status'] == 0}<span id="beginPay" data-from="{$Request.get.from}">付款</span>{/if}
         	{if $order[0]['order_status'] == 3}<span>申请退款</span>{/if}
@@ -135,32 +136,15 @@ body{background: #f8f8f8 !important;}
 {/block}
 {block name="footjs"}
 <script src="__THIRD__/layer/mobile/layer.js" type="text/javascript"></script>
+<script type="text/javascript" src="__JS__/mylayer/mylayer.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	if($('#beginPay').data('from')){
+	if($('#beginPay').parent('div').data('status') == '0'){
 		var wxConfig = JSON.parse('{$payJsConfig}'.replace(/&quot;/g, "\""));
 		wx.config(wxConfig)
 	}
 </script>
 <script type="text/javascript">
-function layer_msg(msg) {
-	layer.open({
-	    content: msg
-	    ,skin: 'msg'
-	    ,time: 3
-	});
-}
-
-function layer_loading(msg) {
-	var index = layer.open({
-	    type: 2
-	    ,content: msg
-	    ,shadeClose: false
-	});
-
-	return index
-}
-
 var loadingIdx = null;
 var longajax = null;
 
@@ -196,7 +180,6 @@ function longPolling(idx) {
 
 function openPay(){
 	$.post('{:url(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
-		console.log(res)
 		if(res.code == 1){
 			wx.chooseWXPay({
 			  timestamp: res.result.timestamp,

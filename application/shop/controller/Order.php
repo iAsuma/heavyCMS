@@ -190,7 +190,8 @@ class Order extends Base
 					'create_time' => $orderTime,
 					'user_id' => $this->userId,
 					'goods_id' => $v['goods_id'],
-					'goods_sku_id' => $v['sku_id']
+					'goods_sku_id' => $v['sku_id'],
+					'status' => 1
 				];
 			}
 			$detail = Db::table('shop_order_detail')->insertAll($data2);

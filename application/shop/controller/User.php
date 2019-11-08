@@ -27,6 +27,9 @@ class User extends Base
 		}
 	}
 
+	/*
+	* 首页
+	*/
 	public function index()
 	{
 		$report = $this->orderCount();
@@ -38,15 +41,6 @@ class User extends Base
 	/**
 	* 订单数据相关
 	*/
-	public function order()
-	{
-		$type = $this->request->get('o');
-		$type == '' && $type = 'all';
-
-		$this->assign('type', $type);
-		return $this->fetch();
-	}
-
 	public function orderCount()
 	{
 		$uid = $this->userId;
@@ -60,6 +54,88 @@ class User extends Base
 		$data['noget'] = Db::table('shop_order')->where($where)->where(['order_status' => 2])->count();
 		
 		return $data;
+	}
+
+	public function order()
+	{
+		$type = $this->request->get('o');
+		($type == '' || !in_array($type, [0,1,2,3])) && $type = 'all';
+
+		$this->assign('type', $type);
+		return $this->fetch();
+	}
+
+	public function orderList()
+	{
+		$page = $this->request->post('pageStart') ?: 1;
+		$limit = $this->request->post('perpage') ?: 8;
+		$status = $this->request->post('type');
+
+		$where = [
+			['status', '=', 1],
+			['user_id', '=', $this->userId]
+		];
+
+		switch ($status) {
+			case '1':
+				$where[] = ['order_status', '=', 1];
+				break;
+			case '2':
+				$where[] = ['order_status', '=', 2];
+				break;
+			case '3':
+				$where[] = ['order_status', '=', 3];
+				break;
+			case '0':
+				$where[] = ['order_status', '=', 0];
+				break;
+			default:
+				break;
+		}
+
+		$table = Db::table('shop_order')->where($where)->order('id', 'desc')->page($page, $limit)->buildSql();
+
+		$list = Db::table($table)->alias('o')->field('o.order_no,o.price,o.pay_money,o.order_status,d.goods_name,d.goods_sku,d.goods_img,d.unit_price,d.goods_num')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where('d.status', '=', 1)->order('o.id', 'desc')->select();
+
+		$result = [];
+		foreach ($list as $v) {
+			$result[$v['order_no']][0]['order_no'] = $v['order_no'];
+			$result[$v['order_no']][0]['price'] = $v['price'];
+			$result[$v['order_no']][0]['pay_money'] = $v['pay_money'];
+			$result[$v['order_no']][0]['order_status'] = $v['order_status'];
+			$result[$v['order_no']][1][] = [
+				'goods_name' => $v['goods_name'],
+				'goods_sku' => $v['goods_sku'],
+				'goods_img' => $v['goods_img'],
+				'unit_price' => $v['unit_price'],
+				'goods_num' => $v['goods_num'],
+			];
+		}
+
+		empty($result) && exit(res_json_native(-1));
+
+		return res_json(1, array_values($result));
+	}
+
+	public function changeOrderStatus()
+	{
+		$orderNo = $this->request->post('order_no');
+		$status = $this->request->post('status');
+
+		$data = [
+			'complete_time' => time()
+		];
+
+		if($status == '-1'){
+			$data['status'] = $status;
+		}else{
+			$data['order_status'] = $status;
+		}
+
+		$res = Db::table('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->update($data);
+		!$res && exit(res_json_native(-1));
+
+		return res_json(1);
 	}
 
 	/**

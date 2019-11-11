@@ -128,6 +128,21 @@ class User extends Base
 
 		if($status == '-1'){
 			$data['status'] = $status;
+		}else if($status == '11'){
+			$data['order_status'] = $status;
+			$refund = [
+				'order_no' => $orderNo,
+				'user_id' => $this->userId,
+				'create_time' => time(),
+				'type' => 1,
+				'status' => 0
+			];
+			$isRefund = Db::table('shop_order_return')->insert($refund);
+			if(!$isRefund) return res_json(-2);
+		}else if($status == '12'){
+			$data['order_status'] = 1;
+			$del = Db::table('shop_order_return')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->delete();
+			if(!$del) return res_json(-3);
 		}else{
 			$data['order_status'] = $status;
 		}
@@ -167,10 +182,21 @@ class User extends Base
 			$where[] =  ['g.goods_name', 'LIKE', '%'.$words.'%'];
 		}
 
-		$list = Db::table('user_goods_collection')->alias('c')->field('g.id goods_id,g.goods_name,min(s.price) price,s.sku_img')->join('shop_goods g', 'c.goods_id=g.id')->join('shop_goods_sku s', 'g.id=s.goods_id')->where($where)->group('g.id')->page($page, $limit)->select();
+		$list = Db::table('user_goods_collection')->alias('c')->field('c.id,g.id goods_id,g.goods_name,min(s.price) price,s.sku_img')->join('shop_goods g', 'c.goods_id=g.id')->join('shop_goods_sku s', 'g.id=s.goods_id')->where($where)->group('g.id')->page($page, $limit)->select();
 		empty($list) && exit(res_json_native(-1));
 
 		return res_json(1, $list);
+	}
+
+	public function cancelCollcet()
+	{
+		$id = $this->request->post('id');
+		empty($id) && exit(res_json_native(-1));
+
+		$res = Db::table('user_goods_collection')->where(['id' => $id])->delete();
+		!$res && exit(res_json_native(-2));
+
+		return res_json(1);
 	}
 
 	/**

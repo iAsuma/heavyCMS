@@ -74,7 +74,7 @@
 
    var tableIns =  table.render({
       elem: '#order'
-      ,url: "{:url('dataList')}" //数据接口
+      ,url: "{:url('orderList')}"
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -127,7 +127,6 @@
       }
     })
 
-
     //监听搜索
     form.on('submit(orderSearch)', function(data){
       let field = data.field;
@@ -140,8 +139,7 @@
       return false;
     });
     
-    
-      form.on('switch(optstatus)', function(obj){
+    form.on('switch(optstatus)', function(obj){
       var wish = obj.elem.checked
       var id = obj.value
       $.post($('#statusTpl').data('url'),{id:id, is_sold: wish}, function(res){
@@ -152,7 +150,6 @@
         }
       }, 'json')
     })
-    
 
     table.on('tool(order)', function(obj){
         switch(obj.event){
@@ -185,7 +182,6 @@
           break;
         };
     });
-
 
   });
 </script>

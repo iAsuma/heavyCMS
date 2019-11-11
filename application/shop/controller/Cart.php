@@ -72,6 +72,9 @@ class Cart extends Base
 		return res_json(1);
 	}
 
+	/**
+	 * 删除购物车中的商品
+	 */
 	public function delGoodsInCart(Request $request)
 	{
 		$ids = $request->post('cart_ids');

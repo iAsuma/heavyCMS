@@ -79,7 +79,12 @@ function orderHtml(data) {
                                 +'<button type="button" class="orderOpt" data-o="02">付款</button>';
         }else if(v[0].order_status == 1){
             html +=          '<div class="fs12 clog">待发货</div>'
-                            +'<div>';
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="11">退款</button>';
+        }else if(v[0].order_status == 11){
+            html +=          '<div class="fs12 clog">退款中</div>'
+                            +'<div>'
+                                +'<button type="button" class="orderOpt" data-o="111">取消退款</button>';
         }else if(v[0].order_status == 2){
             html +=          '<div class="fs12 clog">待收货</div>'
                             +'<div>'
@@ -87,10 +92,11 @@ function orderHtml(data) {
         }else if(v[0].order_status == 3){
             html +=          '<div class="fs12 clog">交易完成</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="31">申请退货</button>'
-                                +'<button type="button" class="orderOpt" data-o="32">评价</button>';
+                                +'<button type="button" class="orderOpt" data-o="41">删除订单</button>'
+                                +'<button type="button" class="orderOpt" data-o="42">申请退货</button>'
+                                +'<button type="button" class="orderOpt" data-o="43">评价</button>';
         }else if(v[0].order_status == 4){
-            html +=          '<div class="fs12 clog">已取消</div>'
+            html +=          '<div class="fs12 clog">交易取消</div>'
                             +'<div>'
                                 +'<button type="button" class="orderOpt" data-o="41">删除订单</button>';
         }else if(v[0].order_status == 5){
@@ -111,7 +117,7 @@ function orderHtml(data) {
     return html;
 }
 
-function changeOrderStatus(orderNo, status, obj) {
+function changeOrderStatus(orderNo, status, callback) {
     if(orderNo == '' || status === ''){
         layer_msg('非法操作')
         return false;
@@ -121,7 +127,9 @@ function changeOrderStatus(orderNo, status, obj) {
     $.post('{:url(\'changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
         if(res.code == 1){
             if(status == -1){
-                obj.parents('.geren-daifukuan').remove()
+                if(typeof callback == 'function'){
+                    callback()
+                }
                 layer.close(idx);
             }else{
                 window.location.reload();
@@ -130,7 +138,7 @@ function changeOrderStatus(orderNo, status, obj) {
             layer_msg('系统错误')
             layer.close(idx);
         }
-    })
+    }, 'json')
 }
 </script>
 <script>
@@ -205,15 +213,27 @@ $(function() {
             }, ['是', '否'])
         }else if(opt == '02'){
             window.location.href = '{:url(\'Order/detail\')}?from=list&no='+order_no;
+        }else if(opt == '11'){
+            layer_confirm('确认退款？<br/><span style="font-size:.24rem;">申请退款后请耐心等待，若有疑问请联系客服。</span>', function(idx){
+                layer.close(idx);
+                changeOrderStatus(order_no, 11)
+            })
+        }else if(opt == '111'){
+            layer_confirm('取消退款', function(idx){
+                layer.close(idx);
+                changeOrderStatus(order_no, 12)
+            }, ['是', '否'])
         }else if(opt == '21'){
             layer_confirm('确认收货', function(idx){
                 layer.close(idx);
-                changeOrderStatus(order_no, 3, _this)
+                changeOrderStatus(order_no, 3)
             })
         }else if(opt == '41'){
             layer_confirm('删除订单', function(idx){
                 layer.close(idx);
-                changeOrderStatus(order_no, -1, _this)
+                changeOrderStatus(order_no, -1, function(){
+                    _this.parents('.geren-daifukuan').remove()
+                })
             })
         }
     })

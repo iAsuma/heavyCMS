@@ -180,6 +180,7 @@ function longPolling(idx) {
 
 function openPay(){
 	$.post('{:url(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
+        console.log(res)
 		if(res.code == 1){
 			wx.chooseWXPay({
 			  timestamp: res.result.timestamp,
@@ -197,7 +198,7 @@ function openPay(){
 		}else{
 			layer_msg(res.result)
 		}
-	})
+	}, 'json')
 }
 </script>
 <script type="text/javascript">

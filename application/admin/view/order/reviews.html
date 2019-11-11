@@ -30,10 +30,8 @@ $(function () {
         var rate = layui.rate,
         form = layui.form;
         layer = parent.layer === undefined ? layui.layer : parent.layer,
-            //回填数据
-        //渲染评分
         
-        console.log(stars);
+        //渲染评分
         rate.render({
             elem: '#rate',
             value:stars,
@@ -52,20 +50,20 @@ $(function () {
         });
            
           //监听提交
-    form.on('submit(submit)', function(data){
-      var field = data.field; //获取提交的字段
-      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
- 
-      //提交 Ajax 成功后，关闭当前弹层并重载表格
-      $.post("{:url('recomment')}", data.field, function(res){
-        if(res.code == 1){
-          parent.layer.msg('评论成功');
-          parent.layer.close(index); //再执行关闭 
-        }else{
-          layer.msg(res.result, {icon: 5});
-        }
-      },'json');
-    });
+        form.on('submit(submit)', function(data){
+          var field = data.field; //获取提交的字段
+          var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+     
+          //提交 Ajax 成功后，关闭当前弹层并重载表格
+          $.post("{:url('recomment')}", data.field, function(res){
+            if(res.code == 1){
+              parent.layer.msg('评论成功');
+              parent.layer.close(index); //再执行关闭 
+            }else{
+              layer.msg(res.result, {icon: 5});
+            }
+          },'json');
+        });
 
     })
 })

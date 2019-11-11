@@ -1,4 +1,5 @@
 {extend name="public/base" /}
+{block name="title"}退货订单管理{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
@@ -67,7 +68,7 @@
 
    var tableIns =  table.render({
       elem: '#order'
-      ,url: "{:url('detailList')}" //数据接口
+      ,url: "{:url('returnOrderList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]

@@ -4,6 +4,7 @@
 <style type="text/css">
 body{background: #f8f8f8 !important;}
 </style>
+<link rel="stylesheet" type="text/css" href="__JS__/mylayer/mylayer.css">
 {/block}
 {block name="content"}
 <div class="fenleilist-top">
@@ -20,7 +21,9 @@ body{background: #f8f8f8 !important;}
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/javascript" src="__THIRD__/dropload.min.js"></script>
+<script type="text/javascript" src="__THIRD__/dropload/dropload.min.js"></script>
+<script type="text/javascript" src="__THIRD__/layer/mobile/layer.js" ></script>
+<script type="text/javascript" src="__JS__/mylayer/mylayer.js"></script>
 <script type="text/javascript">
 function collectHtml(data){
 	var html = ''
@@ -33,7 +36,7 @@ function collectHtml(data){
 			            +'<div class="fenleilist-content-item-des-title over2">'+v.goods_name+'</div>'
 			            +'<div class="fenleilist-content-item-des-pri">'
 			                +'<span class="clog fs10">￥<span class="fs14 fwb">'+v.price+'</span></span>'
-			                +'<span class="fs10 clad shoucangdel">取消收藏</span>'
+			                +'<span class="fs10 clad shoucangdel cancelCol" data-id="'+v.id+'">取消收藏</span>'
 			            +'</div>'
 			        +'</div>'
 			    +'</div>';
@@ -111,6 +114,19 @@ function collectHtml(data){
             	window.location.href = url+'?wd='+content
             }
         }
+    })
+
+    $('body').on('click', '.cancelCol', function(){
+        var _this = $(this)
+        layer_confirm('确认取消', function(idx){
+            layer.close(idx);
+            $.post('{:url(\'cancelCollcet\')}',{id: _this.data('id')}, function(res){
+                if(res.code == 1){
+                    _this.parents('.fenleilist-content-item').remove()
+                    layer_msg('取消成功')
+                }
+            }, 'json')
+        }, ['是', '否'])
     })
 </script>
 {/block}

@@ -16,12 +16,12 @@ class Order extends Base
      * 订单列表
      * @author zhaoyun  
      */
-    public function list()
+    public function index()
     {
         return $this->fetch();
     }
 
-    public function dataList()
+    public function orderList()
     {   
 
         $get = $this->request->get();
@@ -29,7 +29,7 @@ class Order extends Base
         $limit = $get['limit'] ?? 10;
         
         $where = [
-             ['shop_order.status', '<>', '-1']
+             ['shop_order.status', '<>', -1]
             ,['shop_order.order_no', '=', $get['order_no'] ?? '']
             ,['shop_order.order_status', '=', $get['order_status'] ?? '']
             ,['shop_order.pay_type', '=', $get['pay_type'] ?? '']
@@ -49,21 +49,20 @@ class Order extends Base
      * 退货订单管理
      * @author zhaoyun  
      */
-    public function back()
+    public function returnOrder()
     {
         return $this->fetch();
     }
 
-    public function detailList()
+    public function returnOrderList()
     {   
-
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
         
         $where = [
              ['shop_order.status', '<>', '-1']
-             ,['shop_order.order_status', '>', '4']
+            ,['shop_order.order_status', '>', '4']
             ,['shop_order.order_no', '=', $get['goods_name'] ?? '']
             ,['shop_order.order_status', '=', $get['order_status'] ?? '']
             ,['shop_order.pay_type', '=', $get['pay_type'] ?? '']
@@ -157,7 +156,7 @@ class Order extends Base
     }
 
     //订单评价
-    public function assess()
+    public function reviews()
     {
         $id = $this->request->get('id');
         $info = Db::table('shop_goods_reviews')->field('content,id,stars')->where(['order_id' => $id])->find();

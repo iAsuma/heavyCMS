@@ -4,6 +4,7 @@ use think\Db;
 use think\Request;
 /**
  * 购物车相关
+ * @author asuma(lishuaiqiu)
  */
 class Cart extends Base
 {	

@@ -62,11 +62,17 @@ function orderHtml(data) {
                         +'</div>';
         })
 
+        if(v[0].order_status != 0 && v[0].order_status != 4){
+            var price = v[0].pay_money
+        }else{
+            var price = v[0].price
+        }
+        console.log(price)
         html +=         '</a><div class="geren-daifukuan-bottom">'
                             +'<div class="fs12 cl33">共'
                                 +'<span>'+sumGds+'</span>件商品&nbsp&nbsp&nbsp'
                                 +'<span>合计：<span class="fs10 cl33 ls10">¥</span>'
-                                +'<span class="fs14 fwb">'+v[0].price+'</span>'
+                                +'<span class="fs14 fwb">'+price+'</span>'
                                 +'</span>'
                             +'</div>'
                         +'</div>'

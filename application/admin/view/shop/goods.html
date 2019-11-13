@@ -101,13 +101,13 @@ tbody .layui-table-cell img{width: auto;height: 50px}
         ,{title: '分类', align:'center', colspan: 2}
         ,{title: '快递', align:'center', colspan: 2}
         
-        ,{field:'is_sold', title:'是否上架',templet:'#statusTpl', rowspan: 2}
+        ,{field:'is_sold', title:'是否上架', templet:'#statusTpl', rowspan: 2, width: 100}
         ,{field: 'create_time', title: '创建时间', sort: true, rowspan: 2}
         ,{title: '操作',toolbar: '#optTpl', rowspan: 2}
       ],[
         {field: 'ccname', title: '一级'}
         ,{field: 'cname', title: '二级'}
-        ,{field: 'post_type', title: '邮寄方式', rowspan: 2, templet: function(d){
+        ,{field: 'post_type', title: '邮寄方式', rowspan: 2, width: 100, templet: function(d){
           var post_type = ''
           switch(d.post_type){
             case 1:  post_type = '免邮' ;break;
@@ -117,7 +117,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
           }
           return post_type;
         }}
-        ,{field: 'freight', title: '运费', rowspan: 2} 
+        ,{field: 'freight', title: '运费', rowspan: 2, width: 100} 
       ]]
     });
    

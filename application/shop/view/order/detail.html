@@ -91,8 +91,14 @@ body{background: #f8f8f8 !important;}
                 </div>
                 <div class="fs12 cl33 dfbtc mt10">
                     <span class="fs14">合计</span>
-                    <span class="fs12 cloy">¥<span class="fs14">{$order[0]['price']}</span></span>
+                    <span class="fs12">¥<span class="fs14">{$order[0]['price']}</span></span>
                 </div>
+                {if $order[0]['order_status'] !=0 && $order[0]['order_status'] != 4}
+                <div class="fs12 cl33 dfbtc mt10">
+                    <span class="fs14">实际支付</span>
+                    <span class="fs12 cloy">¥<span class="fs14">{$order[0]['pay_money']}</span></span>
+                </div>
+                {/if}
             </div>
         </div>
         <div class="daifukuan-dingdanbiaohao" id="orderBox" data-num="{$order[0]['order_no']}">

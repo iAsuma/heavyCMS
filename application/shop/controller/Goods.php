@@ -4,6 +4,7 @@ use think\Request;
 use think\Db;
 /**
  * 商品
+ * @author asuma(lishuaiqiu)
  */
 class Goods extends Base
 {

@@ -3,7 +3,10 @@ namespace app\shop\controller;
 use think\Controller;
 use think\facade\Session;
 use think\Db;
-
+/**
+ * 基础控制器
+ * @author asuma(lishuaiqiu)
+ */
 class Base extends Controller
 {
 	protected $userId = NULL;

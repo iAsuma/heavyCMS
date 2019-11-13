@@ -3,6 +3,7 @@ namespace app\shop\controller;
 use think\Db;
 /**
  * 用户操作相关及个人中心(我的)
+ * @author asuma(lishuaiqiu)
  */
 class User extends Base
 {

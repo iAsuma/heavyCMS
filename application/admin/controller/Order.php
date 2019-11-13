@@ -29,16 +29,16 @@ class Order extends Base
         $limit = $get['limit'] ?? 10;
         
         $where = [
-             ['shop_order.status', '<>', -1]
-            ,['shop_order.order_no', '=', $get['order_no'] ?? '']
-            ,['shop_order.order_status', '=', $get['order_status'] ?? '']
-            ,['shop_order.pay_type', '=', $get['pay_type'] ?? '']
+             ['o.status', '<>', -1]
+            ,['o.order_no', '=', $get['order_no'] ?? '']
+            ,['o.order_status', '=', $get['order_status'] ?? '']
+            ,['o.pay_type', '=', $get['pay_type'] ?? '']
         ];
  
         $formWhere = $this->parseWhere($where);
 
-        $countQuery = Db::table('shop_order')->where($formWhere);
-        $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.name,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('o.id', 'desc');
+        $countQuery = Db::table('shop_order')->alias('o')->where($formWhere);
+        $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('o.id', 'desc');
         $count = $countQuery->count();
         $data = $query->select();
  
@@ -81,7 +81,7 @@ class Order extends Base
     //订单详情
     public function detail()
     {
-        $order_no = (int)$this->request->get('order_no');
+        $order_no = $this->request->get('order_no');
 
         //商品信息
         $list = $this->goods_detail($order_no);

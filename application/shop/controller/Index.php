@@ -3,6 +3,7 @@ namespace app\shop\controller;
 use think\Db;
 /**
  * 商城
+ * @author asuma(lishuaiqiu)
  */
 class Index extends Base
 {

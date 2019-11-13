@@ -18,8 +18,6 @@
                 <option value="">请选择类型</option>
                 <option value="1">微信支付</option>
                 <option value="2">支付宝</option>
-                <option value="3">积分</option>
-                <option value="4">网银</option>
               </select>
           </div>
         </div>
@@ -85,7 +83,8 @@
         }
       }
       ,cols: [[ //表头
-        {field: 'order_no', title: '订单编号'}
+        {field: 'create_time', title: '订单生成时间', sort: true}
+        ,{field: 'order_no', title: '订单编号'}
         ,{field: 'price', title: '订单价格'} 
         ,{field: 'pay_money', title: '实际支付'} 
         ,{field: 'pay_type', title: '支付类型',templet:function(d){
@@ -93,13 +92,11 @@
             switch(d.pay_type){
             case 1:  pay_type = '微信支付'; break;
             case 2:  pay_type = '支付宝'; break;
-            case 3:  pay_type = '积分'; break;
-            case 4:  pay_type = '网银'; break;
-            default:;break;
+            default: pay_type = '其他';break;
           }
           return pay_type;
         }} 
-        ,{field: 'name', title: '用户名'} 
+        ,{field: 'nickname', title: '用户名'} 
         ,{field: 'receiver_name', title: '收货人姓名'} 
         ,{field: 'receiver_phone', title: '收货人电话'} 
         ,{field: 'order_status', title: '订单状态', templet: function(d){
@@ -116,7 +113,6 @@
           }
           return order_status;
         }}
-        ,{field: 'create_time', title: '订单生成时间', sort: true}
         ,{title: '操作',toolbar: '#optTpl'}
       ]]
     });

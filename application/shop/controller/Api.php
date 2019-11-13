@@ -4,6 +4,7 @@ use think\Db;
 use wechat\facade\Loader as WeChat;
 /**
  * 支付接口相关
+ * @author asuma(lishuaiqiu)
  */
 class Api
 {	

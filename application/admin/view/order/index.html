@@ -5,6 +5,8 @@
   <div class="layui-card">
     <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
       <div class="layui-form-item asuma-form-item">
+        <blockquote class="layui-elem-quote">列表默认显示<span style="color: #F78400;font-weight: bold;"> 待发货 </span>订单，退货订单请至退货订单列表查看</blockquote>
+
         <div class="layui-inline">
             <label class="layui-form-label">订单编号</label>
             <div class="layui-input-block">
@@ -25,14 +27,12 @@
           <label class="layui-form-label">订单状态</label>
           <div class="layui-input-block">
               <select name="order_status">
-                <option value="">请选择状态</option>
-                <option value="1">待发货</option>
+                <option value="">全部</option>
+                <option value="1" selected="">待发货</option>
                 <option value="2">待收货</option>
                 <option value="3">已完成</option>
                 <option value="4">已取消</option>
-                <option value="5">退款中</option>
-                <option value="6">已退款</option>
-                <option value="0">未付款</option>
+                <option value="0">待付款</option>
               </select>
           </div>
         </div>
@@ -77,6 +77,7 @@
       ,limit:10
       ,limits:[10,25,50]
       ,defaultToolbar: ['filter', 'print']
+      ,where: {order_status: 1}
       ,done:function (res, curr, count) {
         if(count <= this.limit){
           $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
@@ -104,8 +105,11 @@
           switch(d.order_status){
             case 0:  order_status = '未付款' ;break;
             case 1:  order_status = '待发货'; break;
+            case 11:  order_status = '申请退款'; break;
             case 2:  order_status = '待收货'; break;
             case 3:  order_status = '已完成'; break;
+            case 31:  order_status = '申请退货'; break;
+            case 32:  order_status = '已完成'; break;
             case 4:  order_status = '已取消'; break;
             case 5:  order_status = '退款中'; break;
             case 6:  order_status = '已退款'; break;
@@ -150,9 +154,9 @@
     table.on('tool(order)', function(obj){
         switch(obj.event){
           case 'detail':
-              layer.open({
+              var d_index = layer.open({
                 type: 2
-                ,title: '订单详情'
+                ,title: '订单详情：'+obj.data.order_no
                 ,content: "{:url('detail')}?order_no="+obj.data.order_no
                 ,maxmin: true
                 ,area: ['80%', '90%']
@@ -160,6 +164,7 @@
                    layero.find('input[name=id]').val(obj.data.id)
                 }
               });
+              layer.full(d_index);
           break;
           case 'del':
               layer.confirm('确定删除？？', function(index){

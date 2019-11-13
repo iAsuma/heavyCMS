@@ -1,20 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>订单详情</title>
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <link rel="stylesheet" href="__THIRD__/layuiadmin/layui/css/layui.css" media="all">
-  <link rel="stylesheet" href="__THIRD__/layuiadmin/style/admin.css" media="all">
-  <link rel="stylesheet" href="__CSS__/default.css" media="all">
-  <link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
-  
-</head>
-<body>
-
-<div class="layui-card" id="pr" >
+{extend name="public/base" /}
+{block name="title"}订单列表{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
+{/block}
+{block name="content"}
+<div class="layui-card detail-container" id="pr" >
   <div class="layui-card-body">
     <div class="order-detail-box">
         <div class="order-detail">
@@ -151,7 +141,8 @@
     </div>
   </div>
 </div>
-
+{/block}
+{block name="footjs"}
 <script>
     function preview(oper){
         if (oper < 10){
@@ -168,10 +159,6 @@
         }
     }
 </script>
-</body>
-<script type="text/javascript" src="__JS__/public/jquery.min.js"></script>
-<script type="text/javascript" src="__JS__/public/ajax-rediect.js"></script>
-<script src="__THIRD__/layuiadmin/layui/layui.js"></script>
 <script>
   layui.use(['form'], function(){
     var form = layui.form;
@@ -203,7 +190,5 @@
     });
     
   })
-</script> 
-
-
-</html>
+</script>
+{/block}

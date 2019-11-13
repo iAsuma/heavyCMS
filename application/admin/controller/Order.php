@@ -14,13 +14,16 @@ class Order extends Base
 
     /**
      * 订单列表
-     * @author zhaoyun  
      */
     public function index()
     {
         return $this->fetch();
     }
 
+    /**
+     * 订单列表
+     * lishuaiqiu 修改于2019-11-13
+     */
     public function orderList()
     {   
 
@@ -29,16 +32,26 @@ class Order extends Base
         $limit = $get['limit'] ?? 10;
         
         $where = [
-             ['o.status', '<>', -1]
-            ,['o.order_no', '=', $get['order_no'] ?? '']
-            ,['o.order_status', '=', $get['order_status'] ?? '']
-            ,['o.pay_type', '=', $get['pay_type'] ?? '']
+            ['o.status', '<>', -1],
+            ['o.order_no', '=', $get['order_no'] ?? ''],
+            ['o.pay_type', '=', $get['pay_type'] ?? '']
         ];
+
+        if($get['order_status'] ?? ''){
+            if($get['order_status'] == 3){
+                $where[] = ['o.order_status', 'IN', '3,32'];
+            }else{
+                $where[] = ['o.order_status', '=', $get['order_status'] ?? ''];
+            }
+        }else{
+            $where[] = ['o.order_status', 'IN', '0,1,2,3,4,32'];
+        }
  
         $formWhere = $this->parseWhere($where);
 
         $countQuery = Db::table('shop_order')->alias('o')->where($formWhere);
         $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('o.id', 'desc');
+
         $count = $countQuery->count();
         $data = $query->select();
  
@@ -47,7 +60,6 @@ class Order extends Base
 
     /**
      * 退货订单管理
-     * @author zhaoyun  
      */
     public function returnOrder()
     {

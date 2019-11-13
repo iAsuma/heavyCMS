@@ -19,7 +19,7 @@
             <div class="fs14 cl33 heng-div"><span class="heng-span">待收货</span> </div>
         </li>
         <li class="fs13 cl33 {eq name='$type' value='3'}heng-active{/eq}" data-type='3'>
-            <div class="fs14 cl33 heng-div"><span class="heng-span">已完成</span> </div>
+            <div class="fs14 cl33 heng-div"><span class="heng-span">待评价</span> </div>
         </li>
     </ul>
     <div class="liebiao-content">
@@ -75,34 +75,38 @@ function orderHtml(data) {
         if(v[0].order_status == 0){
             html +=          '<div class="fs12 clog">待付款</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="01">取消订单</button>'
-                                +'<button type="button" class="orderOpt" data-o="02">付款</button>';
+                                +'<button type="button" class="orderOpt" data-o="001">取消订单</button>'
+                                +'<button type="button" class="orderOpt" data-o="002">付款</button>';
         }else if(v[0].order_status == 1){
             html +=          '<div class="fs12 clog">待发货</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="11">退款</button>';
+                                +'<button type="button" class="orderOpt" data-o="101">退款</button>';
         }else if(v[0].order_status == 11){
             html +=          '<div class="fs12 clog">退款中</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="111">取消退款</button>';
+                                +'<button type="button" class="orderOpt" data-o="1101">取消退款</button>';
         }else if(v[0].order_status == 2){
             html +=          '<div class="fs12 clog">待收货</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="21">确认收货</button>';
+                                +'<button type="button" class="orderOpt" data-o="201">确认收货</button>';
         }else if(v[0].order_status == 3){
             html +=          '<div class="fs12 clog">交易完成</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="41">删除订单</button>'
-                                +'<button type="button" class="orderOpt" data-o="42">申请退货</button>'
-                                +'<button type="button" class="orderOpt" data-o="43">评价</button>';
+                                +'<button type="button" class="orderOpt" data-o="401">删除订单</button>'
+                                +'<button type="button" class="orderOpt" data-o="301">评价</button>';
+        }else if(v[0].order_status == 31){
+            html +=          '<div class="fs12 clog">有商品退货中</div>'
+                            +'<div>';
+        }else if(v[0].order_status == 32){
+            html +=          '<div class="fs12 clog">交易完成</div>'
+                            +'<div>';
         }else if(v[0].order_status == 4){
             html +=          '<div class="fs12 clog">交易取消</div>'
                             +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="41">删除订单</button>';
+                                +'<button type="button" class="orderOpt" data-o="401">删除订单</button>';
         }else if(v[0].order_status == 5){
             html +=          '<div class="fs12 clog">退款中</div>'
-                            +'<div>'
-                                +'<button type="button" class="orderOpt" data-o="51">申请取消</button>';
+                            +'<div>';
         }else if(v[0].order_status == 6){
             html +=          '<div class="fs12 clog">已退款</div>'
                             +'<div>';
@@ -124,12 +128,10 @@ function changeOrderStatus(orderNo, status, callback) {
     }
 
     var idx = layer_loading();
-    $.post('{:url(\'changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
+    $.post('{:url(\'User/changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
         if(res.code == 1){
-            if(status == -1){
-                if(typeof callback == 'function'){
-                    callback()
-                }
+            if(typeof callback == 'function'){
+                callback()
                 layer.close(idx);
             }else{
                 window.location.reload();
@@ -207,28 +209,30 @@ $(function() {
         var order_no = _this.parents('.geren-daifukuan').data('id')
         var opt = _this.data('o')
         
-        if(opt == '01'){
+        if(opt == '001'){
             layer_confirm('取消订单', function(){
                 changeOrderStatus(order_no, 4)
             }, ['是', '否'])
-        }else if(opt == '02'){
+        }else if(opt == '002'){
             window.location.href = '{:url(\'Order/detail\')}?from=list&no='+order_no;
-        }else if(opt == '11'){
+        }else if(opt == '101'){
             layer_confirm('确认退款？<br/><span style="font-size:.24rem;">申请退款后请耐心等待，若有疑问请联系客服。</span>', function(idx){
                 layer.close(idx);
                 changeOrderStatus(order_no, 11)
             })
-        }else if(opt == '111'){
+        }else if(opt == '1101'){
             layer_confirm('取消退款', function(idx){
                 layer.close(idx);
                 changeOrderStatus(order_no, 12)
             }, ['是', '否'])
-        }else if(opt == '21'){
+        }else if(opt == '201'){
             layer_confirm('确认收货', function(idx){
                 layer.close(idx);
                 changeOrderStatus(order_no, 3)
             })
-        }else if(opt == '41'){
+        }else if(opt == '301'){
+            window.location.href = '{:url(\'User/reviews\')}?no='+order_no;
+        }else if(opt == '401'){
             layer_confirm('删除订单', function(idx){
                 layer.close(idx);
                 changeOrderStatus(order_no, -1, function(){

@@ -55,4 +55,22 @@ class Goods extends Base
 
 		return res_json(1, $sku);
 	}
+
+	public function getGoodsReviews(Request $request)
+	{
+		$page = $request->post('pageStart') ?: 1;
+		$limit = $request->post('perpage') ?: 5;
+
+		$goods_id = $request->post('goods_id');
+
+		$table = Db::table('shop_goods_reviews')->field('goods_id,content,imgs,stars,user_id,create_time')->group('goods_id,user_id')->buildSql();
+		$list = Db::table($table)->alias('r')->field('u.nickname,u.headimgurl,r.*')->join('users u', 'r.user_id=u.id')->page($page, $limit)->where(['goods_id' => $goods_id])->select();
+		foreach ($list as &$v) {
+			$v['imgs'] = explode(',', $v['imgs']);
+			$v['create_time'] = date('Y-m-d', strtotime($v['create_time']));
+		}
+		empty($list) && exit(res_json_native(-1));
+
+		return res_json(1, $list);
+	}
 }

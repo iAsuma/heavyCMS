@@ -245,7 +245,9 @@ body {
 .ml15 {
     margin-left: 0.3rem;
 }
-
+.pb11{
+padding-bottom: 1.1rem;
+}
 .ml20 {
     margin-left: 0.4rem;
 }
@@ -632,8 +634,9 @@ body {
 }
 
 .div-top {
-    padding-bottom: 1rem;
+    padding-bottom: 1.2rem;
     position: relative;
+
 }
 
 .home-detail-bot-left {
@@ -688,10 +691,6 @@ body {
     z-index: -11;
 }
 
-#homeDetail .van-tabs__content {
-    display: none;
-}
-
 .home-detail-box {
     padding: .3rem;
     border-bottom: 1px solid #e6e6e6;
@@ -728,8 +727,8 @@ body {
 }
 
 .home-detail-image-content img {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: 3px;
     margin-right: 5px;
 }
@@ -1143,8 +1142,8 @@ body {
 
 .layui-form-checked[lay-skin=primary] i {
     border-radius: 50% !important;
-    background-color: #ff5b05 !important;
-    border-color: #ff5b05 !important;
+    background-color:  rgba(80, 134, 255, 1) !important;
+    border-color:  rgba(80, 134, 255, 1) !important;
     color: #fff;
 }
 
@@ -1827,7 +1826,18 @@ body {
     line-height: 1.2rem;
     padding-right: 0.34rem;
 }
-
+.geren-shenqingtuikuan-btn{ 
+    display: inline-block;
+    width: 1.4rem;
+    height: 0.5rem;
+    font-size: 0.24rem;
+    color: #333333;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+    border-radius: 0.25rem;
+    margin-right: 0.2rem;
+    text-align: center;
+    line-height: 0.5rem;}
 .d-daifukuan-btn-box span {
     display: inline-block;
     width: 1.4rem;
@@ -1911,6 +1921,9 @@ body {
     padding: 0.1rem 0rem;
     box-sizing: border-box;
     float: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .geren-daifukuan-detail-heji {
@@ -1936,12 +1949,6 @@ body {
     justify-content: center;
 }
 
-.van-image__img {
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 5px;
-}
-
 .van-uploader__wrapper {
     display: flex;
     justify-content: space-around;
@@ -1957,7 +1964,9 @@ body {
 .sqtuikuan-sub-box {
     width: 100%;
     position: fixed;
-    bottom: 0.3rem;
+    height: 1rem;
+    bottom: 0rem;
+    background-color: #fff;
 }
 
 .sqtuikuan-sub {
@@ -2275,7 +2284,27 @@ textarea::placeholder {
     display: flex;
     padding: 0.34rem;
 }
-
+.img-content{
+    display: flex;
+    align-items: center;
+    padding: .3rem;
+}
+.img-content-div{
+    position: relative;
+     margin-right: .3rem;
+}
+.img-content-div img{
+    width: 1.5rem;
+    height: 1.5rem;
+   
+}
+.img-content .del{
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 14px;
+    height: 15px;
+}
 .upload-img {
     width: 1.5rem;
     height: 1.5rem;
@@ -2285,12 +2314,6 @@ textarea::placeholder {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-.van-image__img {
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 5px;
 }
 
 .van-uploader__wrapper {
@@ -2466,4 +2489,20 @@ textarea::placeholder {
     text-align: center;
     font-size: 0.26rem;
     color: #6e6e6e;
+}
+.layui-form-checkbox[lay-skin=primary] i{
+    border-radius: 50% !important;
+}
+.layui-form-checked, .layui-form-checked:hover{
+    border-color: rgba(153, 153, 153, 1) !important;
+}
+.layui-form-checked[lay-skin=primary] i{
+    border-color: rgba(153, 153, 153, 1) !important;
+}
+.box-content{
+    background-color: #fff;
+}
+.box-content img{
+    width: 100%;
+    height: auto;
 }

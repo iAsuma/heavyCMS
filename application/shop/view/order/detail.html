@@ -15,8 +15,11 @@ body{background: #f8f8f8 !important;}
                 	{switch $order[0]['order_status']}
                 	{case 0}待付款{/case}
                 	{case 1}已付款{/case}
+                    {case 11}正在申请退款{/case}
                 	{case 2}卖家已发货{/case}
                 	{case 3}交易成功{/case}
+                    {case 31}正在申请退货{/case}
+                    {case 32}交易成功{/case}
                 	{case 4}订单已取消{/case}
                 	{case 5}退款中{/case}
                 	{case 6}已退款{/case}
@@ -65,7 +68,7 @@ body{background: #f8f8f8 !important;}
                     </div>
                     <div class="geren-daifukuan-content-word">
                         <div class="fs14 cl33">{$vo.goods_name}</div>
-                        <div class="fs12 cl66 mt10 over2">{$vo.goods_sku}</div>
+                        <div class="fs12 cl66 mt10 over">{$vo.goods_sku}</div>
                     </div>
                     <div class="geren-daifukuan-content-pri">
                         <div>
@@ -76,6 +79,9 @@ body{background: #f8f8f8 !important;}
                             <span class="fs12 cl66">x</span>
                             <span class="fs12 cl66">{$vo.goods_num}</span>
                         </div>
+                        {if in_array($order[0]['order_status'], [3,32])}
+                        <!-- <div class="geren-shenqingtuikuan-btn returnGoods">退货</div> -->
+                        {/if}
                     </div>
                 </div>
                 {/volist}
@@ -97,13 +103,13 @@ body{background: #f8f8f8 !important;}
             <div class="fs14 cl33">创建时间</div>
             <div class="fs14 cl33">{$order[0]['create_time']|date='Y-m-d H:i:s'}</div>
         </div>
-        {if in_array($order[0]['order_status'], [1,2,3,5,6])}
+        {if in_array($order[0]['order_status'], [1,2,3,5,6,11,31,32])}
         <div class="daifukuan-dingdanbiaohao mt0">
             <div class="fs14 cl33">支付时间</div>
             <div class="fs14 cl33">{$order[0]['pay_time']|date='Y-m-d H:i:s'}</div>
         </div>
         {/if}
-        {if in_array($order[0]['order_status'], [2,3,5,6])}
+        {if in_array($order[0]['order_status'], [2,3,5,6,31,32])}
         <div class="daifukuan-dingdanbiaohao mt0">
             <div class="fs14 cl33">发货时间</div>
             <div class="fs14 cl33">{$order[0]['delivery_time']|date='Y-m-d H:i:s'}</div>
@@ -117,7 +123,7 @@ body{background: #f8f8f8 !important;}
             <div class="fs14 cl33">{$order[0]['express_code']}</div>
         </div>
         {/if}
-        {if $order[0]['order_status'] == 3}
+        {if in_array($order[0]['order_status'], [3,31,32])}
         <div class="daifukuan-dingdanbiaohao mt0">
             <div class="fs14 cl33">成交时间</div>
             <div class="fs14 cl33">{$order[0]['complete_time']|date='Y-m-d H:i:s'}</div>
@@ -126,10 +132,11 @@ body{background: #f8f8f8 !important;}
 
         <!-- 按钮 -->
         <div class="d-daifukuan-btn-box fs0 pr10" data-status="{$order[0]['order_status']}">
-        	{if $order[0]['order_status'] == 0}<span>取消订单</span>{/if}
+        	{if $order[0]['order_status'] == 0}<span id="cancelOrder">取消订单</span>{/if}
         	{if $order[0]['order_status'] == 0}<span id="beginPay" data-from="{$Request.get.from}">付款</span>{/if}
-        	{if $order[0]['order_status'] == 3}<span>申请退款</span>{/if}
-        	{if $order[0]['order_status'] == 3}<span>评价</span>{/if}
+            {if $order[0]['order_status'] == 2}<span id="makeSure">确认收货</span>{/if}
+        	{if $order[0]['order_status'] == 3}<span id="reviews">评价</span>{/if}
+            {if $order[0]['order_status'] == 3}<span id="returnGoods">退货</span>{/if}
         </div>
     </div>
 </div>
@@ -180,7 +187,6 @@ function longPolling(idx) {
 
 function openPay(){
 	$.post('{:url(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
-        console.log(res)
 		if(res.code == 1){
 			wx.chooseWXPay({
 			  timestamp: res.result.timestamp,
@@ -200,6 +206,23 @@ function openPay(){
 		}
 	}, 'json')
 }
+
+function changeOrderStatus(status, callback) {
+    var idx = layer_loading();
+    $.post('{:url(\'User/changeOrderStatus\')}', {order_no: $('#orderBox').data('num'), status: status}, function(res){
+        if(res.code == 1){
+            if(typeof callback == 'function'){
+                callback()
+                layer.close(idx);
+            }else{
+                window.location.reload();
+            }
+        }else{
+            layer_msg('系统错误')
+            layer.close(idx);
+        }
+    }, 'json')
+}
 </script>
 <script type="text/javascript">
 if($('#beginPay').data('from')){
@@ -212,6 +235,29 @@ $(function() {
     $('#beginPay').on('click', function(){
     	openPay();
     })
+
+    $('#cancelOrder').on('click', function(){
+        layer_confirm('取消订单', function(){
+            changeOrderStatus(4)
+        }, ['是', '否'])
+    })
+
+    $('#makeSure').on('click', function(){
+        layer_confirm('确认收货', function(){
+            changeOrderStatus(3)
+        })
+    })
+
+    $('#reviews').on('click', function(){
+        window.location.href = '{:url(\'User/reviews\')}?no='+$('#orderBox').data('num');
+    })
+
+    $('#returnGoods').on('click', function(){
+        layer_confirm('若要退货请联系客服', function(idx){
+            layer.close(idx)
+        }, ['确定'])
+    })
+    
 })
 </script>
 {/block}

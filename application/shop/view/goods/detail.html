@@ -46,56 +46,36 @@ body{background: #f8f8f8 !important;}
             </div>
         </div>
         <!-- 商品详情 -->
-        <div class="mt10">
-            <ul class="home-detail-pinjia-box">
-                <li class="fs12 cl33 detailChange heng-active">
-                    <div class="heng-div">
-                        <span class="heng-span">商品详情</span></div>
-                </li>
-                <li class="fs12 cl33 detailChange" id="assess">
-                    <div class="heng-div"><span class="heng-span">商品评价</span></div>
-                </li>
-            </ul>
-            <div class="content-box detail-content fs15" id="homeDetailOne">{$info.description|raw}</div>
-            <div class="content-box" id="homeDetailTwo">
-                <div class="home-detail-box ">
-                    <div class="home-detail-box-top fs0 ">
-                        <div class="home-detail-box-top-left ">
-                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                            <div class="dsfx ml10 ">
-                                <span class="fs12 cl33 ">*****xxx</span>
-                                <div id="rate">
-                                    <van-rate v-model="readonly_star" readonly size="4" gutter="2 " /><span class="fs10 clb4 ml10 "><span>5</span>分</span>
+
+        <div class="mt10 fs14">
+                <van-tabs v-model="active" line-width="36" color="#4588F3" title-active-color="#4588F3">
+                    <van-tab title="商品详情"><div class="box-content">{$info.description|raw}</div></van-tab>
+                    <van-tab title="商品评价">
+                        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+                            <div class="home-detail-box" v-for="item in reviews">
+                                <div class="home-detail-box-top fs0">
+                                    <div class="home-detail-box-top-left">
+                                        <img :src="`${item.headimgurl}`" alt="">
+                                        <div class="dsfx ml10">
+                                            <span class="fs12 cl33">{{item.nickname}}</span>
+                                            <van-rate :value="`${item.stars}`" readonly size="15px"/><span class="fs10 clb4 ml10"><span>3</span>分</span>
+                                        </div>
+                                    </div>
+                                    <div class="fs12 cl6e">{{item.create_time}}</div>
                                 </div>
-
+                                <!-- 评价内容 -->
+                                <div class="fs0 tl home-detail-pinajiacontent">
+                                    <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">{{item.content}}</div>
+                                    <div class="home-detail-image-content tl">
+                                        <img :src="`__FILEROOT__/thumb${ii}`" alt="" v-for="ii in item.imgs" @click="previewImg(item.imgs)">
+                                    </div>
+                                </div>
+                                <van-image-preview :images="preImgs" v-model="imgPre"></van-image-preview>
                             </div>
-                        </div>
-                        <div class="fs12 cl6e ">2019-12-10</div>
-                    </div>
-                    <!-- 评价内容 -->
-                    <div class="fs0 tl home-detail-pinajiacontent ">
-                        <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价我的评价</div>
-                        <div class="home-detail-image-content tl ">
-                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                            <img src="/uploads/temp/touxiang.jpg " alt=" ">
-                        </div>
-                        <div class="home-detail-shangjiahuifu ">
-                            <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb ">商家回复</div>
-                            <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10 ">
-                                这个时刻，想用一句最恰当的话表达我的感谢与祝福变得如此的不容易。无须太多言语，一切尽在不言中，感谢亲的赞美。我们相信用心去做的事情总是会得到认可与支持的。祝您购物愉快
-                            </div>
-                        </div>
-                        <div class="home-detail-zhuijia fs0">
-                            <div class="fs14 fwb ">购买<span>3</span>天后追评</div>
-                            <div class="cl33 fs12 mt20 ">天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评天后追评</div>
-                        </div>
-                    </div>
-                </div>
+                        </van-list>
+                    </van-tab>
+                </van-tabs>
             </div>
-
-        </div>
         <div class="icontop">
             <img src="__MOD__/shop/images/top.png" />
         </div>
@@ -173,7 +153,6 @@ var vue = new Vue({
             data: {
                 current: 0,
                 done_attr: '',
-                readonly_star: 5, //评分的星星
                 shuxing: false, //属性框显示
                 buyNum: 1, //步进器 数量
                 maxbuy: 1,
@@ -184,7 +163,15 @@ var vue = new Vue({
                 attrSelected: [],
                 attr_selected_str: '',
                 goods_sku_id: '',
-                sureBtn: false
+                sureBtn: false,
+                active: 0,
+                loading: false,
+                finished: false,
+                reviews: [],
+                reviewsPage: 1,
+                reviewsPageLimit: 5,
+                imgPre: false,
+                preImgs: []
             },
             mounted(){
                 this.attr_len = this.good_attrs.length
@@ -237,6 +224,31 @@ var vue = new Vue({
                         window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
                     }
 
+                },
+                onLoad() {
+                    axios.post('{:url(\'getGoodsReviews\')}', {
+                        goods_id: this.goods_id,
+                        pageStart: this.reviewsPage,
+                        perpage: this.reviewsPageLimit
+                    }).then(res => {
+                        this.loading = false
+                        if (res.data.code == 1) {
+                            this.reviewsPage += 1;
+                            this.reviews = res.data.result
+                            if(res.data.result.length < this.reviewsPageLimit){
+                                this.finished = true;    
+                            }
+                        } else {
+                            this.finished = true;
+                        }
+                    });
+                },
+                previewImg(img){
+                    console.log(img)
+                    for (var i = 0; i < img.length; i++) {
+                        this.preImgs[i] = '__FILEROOT__'+img[i]
+                    }
+                    this.imgPre = true
                 }
             }
         });

@@ -57,12 +57,11 @@ class Upload
 	/**
      * 上传并裁剪图片，同时生成压缩图片
      * @access public
+     * @param  array      		$scale   尺寸
      * @param  string|bool      $autoname   生成文件名
-     * @param  boolean          $replace 同名文件是否覆盖
-     * @param  bool             $autoAppendExt     自动补充扩展名
      * @return false|File       false-失败 否则返回File实例
      */
-	public function action($file, $scale=[500, 500], $isGetThumbnail=false, $autoname = true)
+	public function action($file, $scale=[500, 500], $autoname = true)
 	{
 		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
 

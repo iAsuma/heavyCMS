@@ -39,7 +39,7 @@ class User extends Base
 	}
 
 	/**
-	* 订单数据相关
+	* 订单管理相关
 	*/
 	public function orderCount()
 	{
@@ -137,10 +137,12 @@ class User extends Base
 				'type' => 1,
 				'status' => 0
 			];
+
 			$isRefund = Db::table('shop_order_return')->insert($refund);
 			if(!$isRefund) return res_json(-2);
 		}else if($status == '12'){
 			$data['order_status'] = 1;
+
 			$del = Db::table('shop_order_return')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->delete();
 			if(!$del) return res_json(-3);
 		}else{
@@ -150,6 +152,89 @@ class User extends Base
 		$res = Db::table('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->update($data);
 		!$res && exit(res_json_native(-1));
 
+		return res_json(1);
+	}
+
+	public function refund()
+	{
+		return $this->fetch();
+	}
+
+	/**
+	* 评价
+	*/
+	public function reviews()
+	{
+		$orderNo = $this->request->get('no');
+
+		if(!$orderNo){
+			$this->redirect('/shop');
+		}
+
+		$where = [
+			'order_no' => $orderNo, 
+			'user_id' => $this->userId, 
+			'status' => 1,
+			'order_status' => 3
+		];
+		$order = Db::table('shop_order')->field('id')->where($where)->find();
+		if(!$order){
+			$this->redirect('/shop');
+		}
+
+		$this->assign('order', $order);
+		$this->assign('orderNo', $orderNo);
+		return $this->fetch();
+	}
+
+	public function uploadReviewsImg()
+	{
+		$file = app('upload')->file('image');
+		$info = app('upload')->action($file , [1000, 1000]);
+		
+		if($info){
+	        return res_json(1, $info);
+	    }else{
+	        return res_json(-1);
+	    }
+	}
+
+	public function makeReviews()
+	{
+		$post = $this->request->post();
+		$goods = Db::table('shop_order')->alias('o')->field('o.id,d.goods_id,d.goods_sku_id')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where(['o.id' => $post['order_id']])->select();
+
+		$data = [];
+
+		foreach ($goods as $v) {
+			$data[] = [
+				'content' => $post['content'],
+				'user_id' => $this->userId,
+				'imgs' => $post['imgs'],
+				'order_id' => $v['id'],
+				'goods_id' => $v['goods_id'],
+				'goods_sku_id' => $v['goods_sku_id'],
+				'stars' => $post['stars'],
+				'is_anonymous' => $post['is_anonymous'] ?? 0,
+				'create_time' => date('Y-m-d H:i:s')
+			];
+		}
+
+		Db::startTrans();
+
+		$res = Db::table('shop_goods_reviews')->insertAll($data);
+		if($res <  count($data)){
+			Db::rollback();
+			return res_json(-1);
+		}
+
+		$update = Db::table('shop_order')->where(['id' => $post['order_id']])->update(['order_status' => 32]);
+		if(!$update){
+			Db::rollback();
+			return res_json(-2);
+		}
+
+		Db::commit();
 		return res_json(1);
 	}
 

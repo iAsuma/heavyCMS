@@ -70,6 +70,12 @@ body{background: #f8f8f8 !important;}
                                         <img :src="`__FILEROOT__/thumb${ii}`" alt="" v-for="ii in item.imgs" @click="previewImg(item.imgs)">
                                     </div>
                                 </div>
+                                <div class="home-detail-shangjiahuifu" v-if="item.content2">
+                                    <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb">商家回复</div>
+                                    <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10">
+                                        {{item.content2}}
+                                    </div>
+                                </div>
                                 <van-image-preview :images="preImgs" v-model="imgPre"></van-image-preview>
                             </div>
                         </van-list>

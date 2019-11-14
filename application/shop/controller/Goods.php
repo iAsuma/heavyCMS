@@ -64,8 +64,12 @@ class Goods extends Base
 
 		$goods_id = $request->post('goods_id');
 
-		$table = Db::table('shop_goods_reviews')->field('goods_id,content,imgs,stars,user_id,create_time')->group('goods_id,user_id')->buildSql();
-		$list = Db::table($table)->alias('r')->field('u.nickname,u.headimgurl,r.*')->join('users u', 'r.user_id=u.id')->page($page, $limit)->where(['goods_id' => $goods_id])->select();
+		$table = Db::table('shop_goods_reviews')->field('goods_id,content,imgs,stars,user_id,create_time,order_id')->group('user_id,content')->where('user_id', '<>', 0)->buildSql();
+
+		$rightTable = Db::table('shop_goods_reviews')->field('content,goods_id,order_id')->where(['user_id' => 0])->buildSql();
+
+		$list = Db::table($table)->alias('r')->field('u.nickname,u.headimgurl,r.*,r2.content AS content2')->leftjoin('users u', 'r.user_id=u.id')->page($page, $limit)->where(['r.goods_id' => $goods_id])->leftjoin($rightTable.' r2', 'r.goods_id=r2.goods_id AND r.order_id=r2.order_id')->order('r.create_time', 'desc')->select();
+		
 		foreach ($list as &$v) {
 			$v['imgs'] = explode(',', $v['imgs']);
 			$v['create_time'] = date('Y-m-d', strtotime($v['create_time']));

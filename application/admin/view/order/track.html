@@ -1,23 +1,29 @@
-{extend name="public/base" /}
-{block name="css"}
-<link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
-{/block}
+{extend name="public/original" /}
 {block name="content"}
 <div class="admin-editpwd admin-add-team" style="padding: 64px 92px 54px 34px;">
     <ul class="layui-timeline">
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
-                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$info['create_time'])}</h3>
+                <h3 class="layui-timeline-title">{:date('Y年m月d日 H:i:s',$info['create_time'])}</h3>
                 <p>订单生成</p>
             </div>
         </li>
+        {if $info.order_status eq 4}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#x1005;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$info['complete_time'])}</h3>
+                <p>订单已取消</p>
+            </div>
+        </li>
+        {/if}
         {if $info.pay_time}
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
                 <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$info['pay_time'])}</h3>
-                <p>已支付</p>
+                <p>用户支付</p>
             </div>
         </li>
         {/if}
@@ -26,7 +32,7 @@
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
                 <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$info['delivery_time'])}</h3>
-                <p>已发货</p>
+                <p>订单发货</p>
             </div>
         </li>
         {/if}
@@ -39,22 +45,44 @@
             </div>
         </li>
         {/if}
-        {if $info.order_status eq 5}
+        {if $ret ?? ''}
+        {if $ret.status eq 0}
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
-                <div class="layui-timeline-title">退款中</div>
+                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$ret['create_time'])}</h3>
+                <div class="layui-timeline-title">用户发起退款</div>
             </div>
         </li>
-         {/if}
-        {if $info.order_status gt 2}
+        {/if}
+        {if $audit_time}
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$ret['audit_time'])}</h3>
+                <div class="layui-timeline-title">{if $ret.status eq -2}退款审核不通过{else/}退款审核通过{/if}</div>
+            </div>
+        </li>
+        {/if}
+        {if $ret.status eq 1}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#x1005;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$ret['complete_time'])}</h3>
+                <div class="layui-timeline-title">退款成功，订单关闭</div>
+            </div>
+        </li>
+        {/if}
+        {/if}
+        {if in_array($info['order_status'], [3,32])}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#x1005;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{:date('m月d日 H:i:s',$info['complete_time'])}</h3>
                 <div class="layui-timeline-title">订单已完成</div>
             </div>
         </li>
-         {/if}
+        {/if}
     </ul>
 
 </div>

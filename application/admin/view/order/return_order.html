@@ -12,24 +12,14 @@
             </div>
         </div>
         <div class="layui-inline">
-          <label class="layui-form-label">支付类型</label>
-          <div class="layui-input-block">
-              <select name="pay_type">
-                <option value="">请选择类型</option>
-                <option value="1">微信支付</option>
-                <option value="2">支付宝</option>
-                <option value="3">积分</option>
-                <option value="4">网银</option>
-              </select>
-          </div>
-        </div>
-        <div class="layui-inline">
           <label class="layui-form-label">订单状态</label>
           <div class="layui-input-block">
               <select name="order_status">
                 <option value="">请选择状态</option>
                 <option value="5">退款中</option>
                 <option value="6">已退款</option>
+                <option value="11">申请退款(未发货时)</option>
+                <option value="31">申请退货退款(已完成时)</option>
               </select>
           </div>
         </div>
@@ -51,9 +41,9 @@
 {block name="footjs"}
 <script type="text/html" id="optTpl">
   <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="detail">详情</a>
-  {{# if(d.order_status == 5){}}
-   <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="change">处理</a>
-  {{#}}}
+  {{# if(d.order_status == 11){ }}
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="change">审核退款</a>
+  {{# } }}
 </script>
 
 <script>
@@ -79,7 +69,10 @@
         }
       }
       ,cols: [[ //表头
-        {field: 'order_no', title: '订单编号'}
+        {field: 'return_order_no', title: '退货订单号', width: 210}
+        ,{field: 'order_no', title: '订单编号', width: 180}
+        ,{field: 'pay_time', title: '支付时间', width: 180, sort: true}
+        ,{field: 'create_time', title: '退款申请时间', width: 180, sort: true}
         ,{field: 'price', title: '订单价格'} 
         ,{field: 'pay_money', title: '实际支付'} 
         ,{field: 'pay_type', title: '支付类型',templet:function(d){
@@ -87,26 +80,23 @@
             switch(d.pay_type){
             case 1:  pay_type = '微信支付'; break;
             case 2:  pay_type = '支付宝'; break;
-            case 3:  pay_type = '积分'; break;
-            case 4:  pay_type = '网银'; break;
             default:;break;
           }
           return pay_type;
         }} 
-        ,{field: 'name', title: '用户姓名'} 
-        ,{field: 'receiver_name', title: '收货人姓名'} 
-        ,{field: 'receiver_phone', title: '收货人电话'} 
+        ,{field: 'nickname', title: '用户名'}
           ,{field: 'order_status', title: '订单状态', templet: function(d){
           var order_status = ''
           switch(d.order_status){
             case 5:  order_status = '退款中'; break;
             case 6:  order_status = '已退款'; break;
+            case 11:  order_status = '申请退款(未发货)'; break;
+            case 31:  order_status = '申请退货退款(已发货)'; break;
             default:;break;
           }
           return order_status;
         }}
-        ,{field: 'create_time', title: '订单生成时间', sort: true}
-        ,{title: '操作',toolbar: '#optTpl'}
+        ,{title: '操作',toolbar: '#optTpl', width: 150}
       ]]
     });
    
@@ -115,7 +105,6 @@
         $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
       }
     })
-
 
     //监听搜索
     form.on('submit(orderSearch)', function(data){
@@ -144,11 +133,10 @@
               });
           break;
           case 'change':
-              layer.confirm('金额是否已经退回？？', function(index){
-     
-                   $.post("{:url('Order/backMoney')}", {id:obj.data.id}, function(res){
+              layer.confirm('确认退款？', function(index){
+                   $.post("{:url('Order/backMoney')}", {order_no:obj.data.order_no}, function(res){
                       if(res.code == 1){
-                        layer.msg('退货已完成');
+                        layer.msg('审核成功');
                         table.reload('order'); //重载表格
                         layer.close(index); //再执行关闭 
                       }else{

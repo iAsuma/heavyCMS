@@ -84,4 +84,24 @@ class Loader
 
 		return [0, $result];
 	}
+
+	/**
+	 * 根据自有订单号退款
+	 */
+	public function refundByOrderNo(string $order_no, string $refundNumber, float $totalFee, float $refundFee, array $config = [])
+	{
+		$config = [
+                'cert_path' => $this->appConfig['cert_path'],
+                'key_path' => $this->appConfig['key_path']
+            ];
+        $app = $this->payment($config);
+        
+        $result = $app->refund->byOutTradeNumber($order_no, $refundNumber, $totalFee*100, $refundFee*100);
+
+        if(($result['return_code'] == 'SUCCESS' && $result['return_msg'] == 'OK' && $result['result_code'] == 'SUCCESS') || ($result['return_code'] == 'SUCCESS' && $result['return_msg'] == 'OK' && $result['err_code_des'] == '订单已全额退款')){
+			return [1, $result];
+		}
+		
+		return [0, $result];
+	}
 }

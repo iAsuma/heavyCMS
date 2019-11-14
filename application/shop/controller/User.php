@@ -131,16 +131,23 @@ class User extends Base
 			$data['status'] = $status;
 		}else if($status == '11'){
 			$data['order_status'] = $status;
+			$data['complete_time'] = NULL;
+			$order = Db::table('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->find();
 			$refund = [
+				'return_order_no' => '',
 				'order_no' => $orderNo,
+				'refund_fee' => $order['pay_money'],
 				'user_id' => $this->userId,
 				'create_time' => time(),
 				'type' => 1,
 				'status' => 0
 			];
 
-			$isRefund = Db::table('shop_order_return')->insert($refund);
-			if(!$isRefund) return res_json(-2);
+			$refundId = Db::table('shop_order_return')->insertGetId($refund);
+			if($refundId){
+				Db::table('shop_order_return')->where(['id' => $refundId])->update(['return_order_no' => $orderNo.str_pad($refundId, 4, 0, STR_PAD_LEFT)]);
+			}
+			if(!$refundId) return res_json(-2);
 		}else if($status == '12'){
 			$data['order_status'] = 1;
 

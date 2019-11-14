@@ -1,72 +1,72 @@
-{extend name="public/base" /}
+{extend name="public/original" /}
+{block name="title"}评价回复{/block}
 {block name="css"}
 <link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
 {/block}
 {block name="content"}
-<div class="layui-form admin-editpwd admin-add-team order-assess" style="padding: 64px 46px 54px 46px;" >
+<div class="layui-form order-assess" style="padding: 28px;" >
+    <div class="tc shop-access">4分大大是的是的 </div>
     <div id="rate"></div>
     <div class="receiver_assess">{$info.content}</div>
-    <div class="layui-form-item layui-form-text">
-        <label class="search-wrap-label" name="reply">商家回复</label>
-        <div class=" form-textarea">
+    <div class="layui-form-item ">
+        <label class="search-wrap-label" name="reply">回复</label>
+        <div class="form-textarea">
+            {if $hasRe}
+            <textarea class="layui-textarea" name="recomment" readonly="">{$hasRe.content}</textarea>
+            {else /}
             <textarea placeholder="请输入回复内容，最多不能超过200字" class="layui-textarea" name="recomment" ></textarea>
+            {/if}
         </div>
     </div>
      <div class="layui-form-item layui-hide">
-        <input type="hidden" name="id" value="{$info.id}">
+        <input type="hidden" name="order_id" value="{$info.order_id}">
+        <input type="hidden" name="order_no" value="{$order_no}">
         <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
-        <input type="button" lay-submit lay-filter="submit" id="submit" value="确认">
+        <input type="button" lay-submit lay-filter="submit" id="submit" value="确认" {if $hasRe}disabled{/if}>
     </div>
 </div>
 {/block}
 {block name="footjs"}
 <script>
-$(function () {
-    var no = window.localStorage.getItem("order_no");
-    var stars = "{$info.stars}";
-    layui.config({
-        base: "js/"
-    }).use(['rate', 'layer','form'], function () {
-        var rate = layui.rate,
-        form = layui.form;
-        layer = parent.layer === undefined ? layui.layer : parent.layer,
-        
-        //渲染评分
-        rate.render({
-            elem: '#rate',
-            value:stars,
-            half:true,
-            readonly:true,
-            setText:function (value) {
-                var arrs = {
-                    '1': '极差'
-                    ,'2': '差'
-                    ,'3': '中等'
-                    ,'4': '好'
-                    ,'5': '极好'
-                };
-                this.span.text(arrs[value] || ( value + "星"));
-            }
-        });
-           
-          //监听提交
-        form.on('submit(submit)', function(data){
-          var field = data.field; //获取提交的字段
-          var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
-     
-          //提交 Ajax 成功后，关闭当前弹层并重载表格
-          $.post("{:url('recomment')}", data.field, function(res){
-            if(res.code == 1){
-              parent.layer.msg('评论成功');
-              parent.layer.close(index); //再执行关闭 
-            }else{
-              layer.msg(res.result, {icon: 5});
-            }
-          },'json');
-        });
+var stars = "{$info.stars}";
+layui.use(['rate', 'layer','form'], function () {
+    var rate = layui.rate,
+    form = layui.form;
+    layer = parent.layer === undefined ? layui.layer : parent.layer,
+    
+    //渲染评分
+    rate.render({
+        elem: '#rate',
+        value: stars,
+        readonly: true,
+        setText:function (value) {
+            var arrs = {
+              '1': '极差'
+              ,'2': '不满意'
+              ,'3': '一般'
+              ,'4': '满意'
+              ,'5': '非常满意'
+            };
+            $('.shop-access').html(value + '分，'+ arrs[value]);
+        }
+    });
+       
+      //监听提交
+    form.on('submit(submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+ 
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      $.post("{:url('recomment')}", data.field, function(res){
+        if(res.code == 1){
+          parent.layer.msg('评论成功');
+          parent.layer.close(index); //再执行关闭 
+        }else{
+          layer.msg(res.result, {icon: 5});
+        }
+      },'json');
+    });
 
-    })
 })
-
 </script>
 {/block}

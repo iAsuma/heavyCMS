@@ -33,7 +33,7 @@
     <input type="hidden" name="imgs" value="">
     <input type="hidden" name="order_id" value="{$order.id}">
     <input type="hidden" name="stars" value="0">
-    <div class="geren-pingjia-bottom-btn" lay-submit lay-filter="done" id="done">提交</div>
+    <button class="geren-pingjia-bottom-btn" lay-submit lay-filter="done" id="done">提交</button>
 </div>
 </form>
 {/block}
@@ -67,7 +67,7 @@ layui.use(['rate', 'form', 'upload'], function() {
 		    };
 		    $('#starText').html(value + '分，'+ arrs[value]);
 		    $('input[name=stars]').val(value)
-		 }
+		}
     });
 
     var uploadInst = upload.render({

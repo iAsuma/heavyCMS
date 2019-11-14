@@ -5,7 +5,7 @@
   <div class="layui-card">
     <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
       <div class="layui-form-item asuma-form-item">
-        <blockquote class="layui-elem-quote">列表默认显示<span style="color: #F78400;font-weight: bold;"> 待发货 </span>订单，退货订单请至退货订单列表查看</blockquote>
+        <blockquote class="layui-elem-quote">列表默认显示<span style="color: #F78400;font-weight: bold;"> 待发货 </span>订单；退货以及退款订单请至退货/退款管理列表查看</blockquote>
 
         <div class="layui-inline">
             <label class="layui-form-label">订单编号</label>
@@ -31,8 +31,7 @@
                 <option value="1" selected="">待发货</option>
                 <option value="2">待收货</option>
                 <option value="3">已完成</option>
-                <option value="4">已取消</option>
-                <option value="0">待付款</option>
+                <option value="dai">待付款</option>
               </select>
           </div>
         </div>
@@ -57,7 +56,10 @@
 </script>
 
 <script type="text/html" id="optTpl">
-  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="detail">详情</a>
+  <button class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="detail">详情</button>
+  {{# if(d.order_status == 1){ }}
+  <button class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="delivery">发货</button>
+  {{# } }}
 </script>
 
 <script>
@@ -84,8 +86,9 @@
         }
       }
       ,cols: [[ //表头
-        {field: 'create_time', title: '订单生成时间', sort: true}
-        ,{field: 'order_no', title: '订单编号'}
+        {field: 'create_time', title: '订单时间', sort: true, width: 180, fixed: 'left'}
+        ,{field: 'pay_time', title: '支付时间', sort: true, width: 180, fixed: 'left'}
+        ,{field: 'order_no', title: '订单编号', width: 180, fixed: 'left'}
         ,{field: 'price', title: '订单价格'} 
         ,{field: 'pay_money', title: '实际支付'} 
         ,{field: 'pay_type', title: '支付类型',templet:function(d){
@@ -103,7 +106,7 @@
         ,{field: 'order_status', title: '订单状态', templet: function(d){
           var order_status = ''
           switch(d.order_status){
-            case 0:  order_status = '未付款' ;break;
+            case 0:  order_status = '待付款' ;break;
             case 1:  order_status = '待发货'; break;
             case 11:  order_status = '申请退款'; break;
             case 2:  order_status = '待收货'; break;
@@ -117,7 +120,7 @@
           }
           return order_status;
         }}
-        ,{title: '操作',toolbar: '#optTpl'}
+        ,{title: '操作',toolbar: '#optTpl', fixed: 'right'}
       ]]
     });
    
@@ -165,6 +168,38 @@
                 }
               });
               layer.full(d_index);
+          break;
+          case 'delivery':
+                layer.open({
+                  type: 2
+                  ,title: '订单发货: '+ obj.data.order_no
+                  ,content: '{:url(\'delivery\')}'
+                  ,area: ['420px', '280px']
+                  ,btn: ['确定', '取消']
+                  ,yes: function(index, layero){
+                    var iframeWindow = window['layui-layer-iframe'+ index]
+                    ,submitID = 'asuma-admin-submit'
+                    ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                      var field = data.field;
+                      field.order_no = obj.data.order_no
+                      
+                      $.post('{:url(\'makeDelivery\')}', field, function(res){
+                        if(res.code == 1){
+                          layer.msg('发货成功', {icon: 1}, function(){
+                            table.reload('order');
+                            layer.close(index);
+                          });
+                        }else{
+                          layer.msg('操作失败', {icon: 5});
+                        }
+                      }, 'json')
+                    });
+                    submit.trigger('click');
+                  }
+                });
           break;
           case 'del':
               layer.confirm('确定删除？？', function(index){

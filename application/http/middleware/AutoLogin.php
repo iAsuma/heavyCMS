@@ -43,6 +43,10 @@ class AutoLogin
 
             //登录业务逻辑
             if($request->InApp == 'WeChat'){
+                if(Session::get('wapUser.wx_openid') == ''){
+                    return $next($request);
+                }
+                
                 $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
                 $user = Db::table('users')->where($where)->where('status', '=', 1)->find();
 

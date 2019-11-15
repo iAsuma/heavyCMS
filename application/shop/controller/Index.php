@@ -73,6 +73,9 @@ class Index extends Base
 	public function getAnyBanner()
 	{
 		$banner = $this->getBanners();
+		if(empty($banner)){
+			return '';
+		}
 		
 		$rand = rand(0, count($banner)-1);
 		return $banner[$rand];

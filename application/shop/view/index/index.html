@@ -9,7 +9,7 @@ body{background: #f8f8f8 !important;}
 {block name="content"}
 <div id="app">
     <div class="home-swiper-box">
-        {if count($banner) <= 1}
+        {if count($banner) == 1}
         <div id="slide" class="slide" class="index-slide">
             {if $banner[0]['landing_url']}
             <div class="img oneslide"><a href="{$vo.landing_url}"><img src="__FILEROOT__{$banner[0]['img']}" /></a></div>

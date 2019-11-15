@@ -117,7 +117,7 @@
 
       return false;
     });
-    
+
     table.on('tool(order)', function(obj){
         switch(obj.event){
           case 'detail':
@@ -134,11 +134,13 @@
           break;
           case 'change':
               layer.confirm('确认退款？', function(index){
-                   $.post("{:url('Order/backMoney')}", {order_no:obj.data.order_no}, function(res){
+                    var load = layer.msg('正在查询退款状态', {icon: 16, shade: 0.01, time:0});
+                    $.post("{:url('Order/backMoney')}", {order_no:obj.data.order_no}, function(res){
                       if(res.code == 1){
                         layer.msg('审核成功');
                         table.reload('order'); //重载表格
-                        layer.close(index); //再执行关闭 
+                        layer.close(load);
+                        layer.close(index);
                       }else{
                         layer.msg(res.result, {icon: 5});
                       }

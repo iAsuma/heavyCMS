@@ -16,7 +16,7 @@
                   <th width="100px;">图片</th>
                   <th width="100px;">库存</th>
                   <th width="80px;">市场价</th>
-                  <th width="80px;">活动价</th>
+                  <th width="80px;">售卖价</th>
               </tr>
           </thead>
           <tbody id="trnum">
@@ -24,9 +24,9 @@
               <tr data-id="{$vo.id}" class="gattr">
                   <td style="white-space:normal !important;">{$vo.skus}</td>
                   <td><img src="__FILEROOT__/thumb{$vo.sku_img}" alt="" width="30px" height="30px" /></td>
-                  <td><input type="text" required="required" value="{$vo.stocks}" min="0" class="sold layui-input"/></td>
-                  <td><input type="text" required="required" value="{$vo.market_price}" min="0.0"class="market_price layui-input"/></td>
-                  <td><input type="text" required="required" value="{$vo.price}" class="price layui-input" min="0.0" step="0.1" /></td>
+                  <td><input type="text" required="required" lay-verify="number" value="{$vo.stocks}" min="0" class="sold layui-input"/></td>
+                  <td><input type="text" required="required" lay-verify="price" value="{$vo.market_price}" min="0.0"class="market_price layui-input"/></td>
+                  <td><input type="text" required="required" lay-verify="price" value="{$vo.price}" class="price layui-input" min="0.0" step="0.1" /></td>
               </tr>
               {/volist}
           </tbody>
@@ -50,17 +50,18 @@
         soldlist[i] = $('.sold').eq(i).val();
     }
 
-    $('.sold').keyup(function(){
-        var sold = $(this).val();
-        if (isNaN(sold) && sold) {
-            layer.msg("必须是数字");
-            return false;
-        }
-    })
-
   layui.use(['form'], function(){
     var form = layui.form;
     var flag = true;
+
+    form.verify({
+      price: function(value, item){
+        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+        if(!reg.test(value)){
+          return '请输入正确的价格';
+        }
+      }
+    })
     //监听提交
     if(flag == true){
         form.on('submit(submit)', function(data){
@@ -83,7 +84,6 @@
                 } 
             }
 
-            //提交 Ajax 成功后，关闭当前弹层并重载表格
             $.post("{:url('addsold')}",{idlist:idlist,soldlist:soldlist_new,market_price:market_price,pricelist:pricelist}, function(d){
               flag = false;
               if(d.code == 1){

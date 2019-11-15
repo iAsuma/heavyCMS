@@ -172,6 +172,7 @@ class Order extends Base
             }
 
             // 发起微信退款            
+            $refund = Db::table('shop_order_return')->where('order_no', '=', $order_no)->find();
             $result = WeChat::refundByOrderNo($order_no, $refund['return_order_no'], $refund['refund_fee'], $refund['refund_fee']);
             if(!$result[0]){
                 Db::rollback();

@@ -7,7 +7,6 @@
 
 namespace app\http\middleware;
 use Session;
-use think\Db;
 use wechat\facade\Loader as WeChat;
 
 class InAppCheck

@@ -50,9 +50,32 @@ class AutoLogin
                 $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
                 $user = Db::table('users')->where($where)->where('status', '=', 1)->find();
 
-                //定期修改头像,防止微信头像失效
-                $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
-                $user && Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
+                if(!$user){
+                    //微信自动注册
+                    $data = [
+                        'nickname' => Session::get('wapUser.wx_user_info')['nickname'],
+                        'create_time' => date('Y-m-d H:i:s'),
+                        'gender' => (int)Session::get('wapUser.wx_user_info')['sex'],
+                        'country' => Session::get('wapUser.wx_user_info')['country'],
+                        'province' => Session::get('wapUser.wx_user_info')['province'],
+                        'city' => Session::get('wapUser.wx_user_info')['city'],
+                        'status' => 1,
+                        'headimgurl' => Session::get('wapUser.wx_user_info')['headimgurl'],
+                        'wx_openid' => Session::get('wapUser.wx_openid')
+                    ];
+
+                    $userid = Db::table('users')->insertGetId($data);
+
+                    $user = [
+                        'id' => $userid,
+                        'nickname' => $data['nickname'],
+                        'headimgurl' => $data['headimgurl']
+                    ];
+                }else{
+                    //定期修改头像,防止微信头像失效
+                    $head_img = Session::get('wapUser.wx_user_info')['headimgurl'];
+                    Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
+                }
             }else{
                 if($request->isAjax() || $request->isPost()){
                     header('Ajax-Mark: redirect');
@@ -63,29 +86,9 @@ class AutoLogin
                 exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
             }
             
-            if($user){
-                Session::set('wapUser.id', $user['id']);
-                Session::set('wapUser.name', $user['nickname']);
-                Session::set('wapUser.headimgurl', $user['headimgurl']);
-            }else{
-                $data = [
-                    'nickname' => Session::get('wapUser.wx_user_info')['nickname'],
-                    'create_time' => date('Y-m-d H:i:s'),
-                    'gender' => (int)Session::get('wapUser.wx_user_info')['sex'],
-                    'country' => Session::get('wapUser.wx_user_info')['country'],
-                    'province' => Session::get('wapUser.wx_user_info')['province'],
-                    'city' => Session::get('wapUser.wx_user_info')['city'],
-                    'status' => 1,
-                    'headimgurl' => Session::get('wapUser.wx_user_info')['headimgurl'],
-                    'wx_openid' => Session::get('wapUser.wx_openid')
-                ];
-
-                $userid = Db::table('users')->insertGetId($data);
-
-                Session::set('wapUser.id', $userid);
-                Session::set('wapUser.name', $data['nickname']);
-                Session::set('wapUser.headimgurl', $data['headimgurl']);
-            }
+            Session::set('wapUser.id', $user['id']);
+            Session::set('wapUser.name', $user['nickname']);
+            Session::set('wapUser.headimgurl', $user['headimgurl']);
     	}else{
             if(Session::has('from_redirect')){
                 Session::delete('from_redirect');

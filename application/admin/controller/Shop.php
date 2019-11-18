@@ -527,7 +527,7 @@ class Shop extends Base
         return res_json(-2, '请勿重复提交'); 
     }
 
-    public function detail()
+    public function recoDetail()
     {      
         $reco_id = (int)$this->request->get('id');
         $this->assign('reco_id', $reco_id);
@@ -541,19 +541,34 @@ class Shop extends Base
         $info = Db::table('shop_goods g')->field('g.id,g.goods_name,s.sku_img,s.price,s.market_price,s.goods_id')->leftJoin("(select min(price) price,market_price,goods_id,sku_img from shop_goods_sku GROUP BY goods_id) s",'s.goods_id=g.id')->where('g.id','in',$str)->select();
         $count = count($info);
         $this->assign('count', $count);
-        isset($info) && $this->assign('info', $info);
+        $this->assign('info', $info);
         return $this->fetch();
     }
 
+    public function recoDel(Request $request)
+    {
+        $recoId = $request->post('id');
+        Db::startTrans();
 
-    public function detaildel(Request $request)
+        $res1 = Db::table('shop_reco_place')->where(['id' => $recoId])->delete();
+        $res2 = Db::table('shop_reco_goods')->where(['rec_id'=>$recoId])->delete();
+        if($res1 && $res2){
+            Db::commit();
+            return res_json(1);
+        }
+
+        Db::rollback();
+        return res_json(-1);
+    }
+
+    public function recoGoodsDel(Request $request)
     {
         
         $gid = $request->post('gid');
         $rid = $request->post('rid');
         if (Db::table('shop_reco_goods') ->where(['goods_id'=>$gid,'rec_id'=>$rid]) -> delete()) { 
             Hook::listen('admin_log', ['首页管理', '删除了推荐位的商品']);
-            return res_json(1); 
+            return res_json(1);
         } else {
             return res_json(-1);
         }

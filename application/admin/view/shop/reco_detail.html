@@ -64,7 +64,7 @@
         var gid=$(this).attr("data-id");  
                  
          layer.confirm('确定删除？？', function(index){
-             $.post("{:url('Shop/detaildel')}", {gid:gid,rid:recoid}, function(res){
+             $.post("{:url('Shop/recoGoodsDel')}", {gid:gid,rid:recoid}, function(res){
                 if(res.code == 1){
                   layer.msg('删除成功');
                   layer.close(index); //再执行关闭 

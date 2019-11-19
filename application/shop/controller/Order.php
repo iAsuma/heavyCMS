@@ -231,7 +231,9 @@ class Order extends Base
 		$orderDetail = Db::table('shop_order_detail')->where('order_no', '=', $no)->select();
 
 		$this->assign('order', [$orderBase, $orderDetail]);
-		$this->assign('payJsConfig', $this->payJsConfig());
+		if($orderBase['order_status'] == 0 && $this->request->InApp == 'WeChat'){
+			$this->assign('payJsConfig', $this->payJsConfig());
+		}
 		return $this->fetch();
 	}
 

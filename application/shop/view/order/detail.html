@@ -152,10 +152,11 @@ body{background: #f8f8f8 !important;}
 <script type="text/javascript" src="__JS__/mylayer/mylayer.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	if($('#beginPay').parent('div').data('status') == '0'){
-		var wxConfig = JSON.parse('{$payJsConfig}'.replace(/&quot;/g, "\""));
-		wx.config(wxConfig)
-	}
+	var payJsConfig = '{$payJsConfig ?? ""}'
+    if($('#beginPay').parent('div').data('status') == '0' && payJsConfig){
+        var wxConfig = JSON.parse(payJsConfig.replace(/&quot;/g, "\""));
+        wx.config(wxConfig)
+    }
 </script>
 <script type="text/javascript">
 var loadingIdx = null;

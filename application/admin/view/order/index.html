@@ -93,10 +93,13 @@
         ,{field: 'pay_money', title: '实际支付'} 
         ,{field: 'pay_type', title: '支付类型',templet:function(d){
           var pay_type='';
+          if(d.order_status != 0 && d.order_status !=4){
             switch(d.pay_type){
-            case 1:  pay_type = '微信支付'; break;
-            case 2:  pay_type = '支付宝'; break;
-            default: pay_type = '其他';break;
+              case 1:  pay_type = '微信支付'; break;
+              case 2:  pay_type = '支付宝'; break;
+              case 3:  pay_type = '积分'; break;
+              default: pay_type = '其他';break;
+            }
           }
           return pay_type;
         }} 

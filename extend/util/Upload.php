@@ -61,7 +61,7 @@ class Upload
      * @param  string|bool      $autoname   生成文件名
      * @return false|File       false-失败 否则返回File实例
      */
-	public function action($file, $scale=[500, 500], $autoname = true)
+	public function action($file, $scale=[800, 800], $autoname = true)
 	{
 		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
 
@@ -110,7 +110,7 @@ class Upload
 			}
 
 			$thumb_path = $env_path.$thumb_child_path.$savename;
-			$image->thumb(100, 100, \think\Image::THUMB_CENTER)->save($thumb_path);
+			$image->thumb(300, 300, \think\Image::THUMB_CENTER)->save($thumb_path);
 
 			if(file_exists($crop_path) && file_exists($thumb_path)){
 				unset($info);

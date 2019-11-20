@@ -271,7 +271,7 @@ class Goods extends Base
 				$result = false;
 				foreach ($skus as $k=>$v) {
 					$sku = json_encode($v, JSON_UNESCAPED_UNICODE);
-					$mark = Db::name('shop_goods_sku')->where(['sku' => $sku])->find();
+					$mark = Db::name('shop_goods_sku')->where(['goods_id' => $request->post('gid'), 'sku' => $sku])->find();
 
 					if($mark){
 						$skusArr = [
@@ -281,7 +281,7 @@ class Goods extends Base
 							'stocks' => $skus_detail[$k]['stock'],
 						];
 
-                		$result = Db::name('shop_goods_sku')->where(['sku' => $sku])->update($skusArr);
+                		$result = Db::name('shop_goods_sku')->where(['goods_id' => $request->post('gid'), 'sku' => $sku])->update($skusArr);
 					}else{
 						$skusArr = [
 							'goods_id' => $request->post('gid'),

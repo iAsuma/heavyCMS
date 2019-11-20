@@ -123,10 +123,10 @@ class Goods extends Base
 
 	public function pictureList()
 	{
-		$get = $this->request->get();
+		$post = $this->request->post();
 
-        $page = $get['page'] ?? 1;
-        $limit = $get['limit'] ?? 16;
+        $page = $post['page'] ?? 1;
+        $limit = $post['limit'] ?? 16;
         
         $count = Db::table('shop_goods_pics')->count();
         $list = Db::table('shop_goods_pics')->page($page, $limit)->order('id', 'desc')->select();

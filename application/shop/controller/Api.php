@@ -44,6 +44,11 @@ class Api
 		            foreach ($detail as $v) {
 		            	$change = Db::table('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['stocks' => Db::raw('stocks-'.$v['goods_num'])]);
 		            	!$change && i_log('商品sku：'.$v['goods_sku_id'].'库存扣减失败');
+
+		            	$sku = Db::table('shop_goods_sku')->field('id,stocks')->where('id', '=', $v['goods_sku_id'])->find();
+		            	if($sku['stocks'] < 1){
+		            		Db::table('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['is_sold' => 0]);
+		            	}
 		            }
 
 		            return true;

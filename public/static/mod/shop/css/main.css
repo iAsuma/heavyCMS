@@ -1498,6 +1498,11 @@ padding-bottom: 1.1rem;
     border-bottom: 1px solid rgba(197, 197, 197, .2);
 }
 
+.wode-mid-mid-box-item img{
+    width: .4rem;
+    height: .4rem;
+}
+
 /*收货地址*/
 
 #shouHuoDiZhi {

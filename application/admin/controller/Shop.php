@@ -607,7 +607,7 @@ class Shop extends Base
         $formWhere = $this->parseWhere($where);
         $countQuery = Db::table('shop_goods')->where($formWhere);
 
-        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
+        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
 
         $count = $countQuery->count();
         $data = $query->select();

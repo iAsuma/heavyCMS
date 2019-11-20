@@ -53,7 +53,7 @@ class Order extends Base
         $formWhere = $this->parseWhere($where);
 
         $countQuery = Db::table('shop_order')->alias('o')->where($formWhere);
-        $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %h:%i:%s") pay_time,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %h:%i:%s") AS create_time')->where($formWhere)->page($page, $limit);
+        $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") pay_time,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit);
 
         if($get['order_status'] == 1){
             $query->order('o.pay_time', 'DESC');
@@ -144,7 +144,7 @@ class Order extends Base
 
         $count = Db::table('shop_order_return')->alias('r')->join('shop_order o', 'r.order_no=o.order_no')->where($fromWhere)->count();
 
-        $list = Db::table('shop_order_return')->alias('r')->field('r.return_order_no,FROM_UNIXTIME(r.create_time, "%Y-%m-%d %h:%i:%s") AS create_time,o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.order_status,u.nickname,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %h:%i:%s") AS pay_time')->join('shop_order o', 'r.order_no=o.order_no')->leftJoin('users u','u.id = r.user_id')->where($fromWhere)->page($page, $limit)->order('r.id', 'desc')->select();
+        $list = Db::table('shop_order_return')->alias('r')->field('r.return_order_no,FROM_UNIXTIME(r.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.order_status,u.nickname,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") AS pay_time')->join('shop_order o', 'r.order_no=o.order_no')->leftJoin('users u','u.id = r.user_id')->where($fromWhere)->page($page, $limit)->order('r.id', 'desc')->select();
  
         return table_json($list, $count);
     }

@@ -159,7 +159,7 @@ class Shop extends Base
                     'name' => $request->post('name')
                 ];
                 if($post['pid'] > 0 && $request->post('image')){
-                    $img = app('upload')->base64ToThumbnailImage($request->post('image'), [100, 100]);
+                    $img = app('upload')->base64ToThumbnailImage($request->post('image'), [200, 200]);
                     $data['main_img'] = $img[1];
                 }
                

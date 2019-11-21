@@ -124,7 +124,7 @@ class Index extends Base
 			$where[] =  ['g.goods_name', 'LIKE', '%'.$words.'%'];
 		}
 
-		$query = Db::table('shop_goods')->alias('g')->field('g.id goods_id,g.goods_name,min(s.price) price,s.sku_img,CASE WHEN o.buy IS NULL THEN 0 ELSE o.buy END buy')->join('shop_goods_sku s', 'g.id=s.goods_id')->leftjoin('(SELECT goods_id,count(goods_id) AS buy FROM shop_order_detail GROUP BY goods_id) o', 'g.id=o.goods_id')->where($where)->group('g.id');
+		$query = Db::table('shop_goods')->alias('g')->field('g.id goods_id,g.goods_name,min(s.price) price,s.sku_img,CASE WHEN o.buy IS NULL THEN 0 ELSE o.buy END buy')->join('shop_goods_sku s', 'g.id=s.goods_id')->leftjoin('(SELECT a.goods_id,count(a.goods_id) AS buy FROM shop_order_detail a LEFT JOIN shop_order b ON a.order_no=b.order_no WHERE b.order_status IN (1,2,3,5,6,11,31,32) GROUP BY goods_id) o', 'g.id=o.goods_id')->where($where)->group('g.id');
 
 		if($type == 'sell'){
 			$query->order('buy', 'desc');

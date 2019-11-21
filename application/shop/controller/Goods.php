@@ -33,7 +33,8 @@ class Goods extends Base
 		$info['main_img'] = explode(',', $info['goods_imgs']);
 		$info['imgcount'] = count($info['main_img']);
 
-		$info['sold'] = Db::table('shop_order_detail')->alias('a')->leftjoin('shop_order b', 'a.order_no=b.order_no')->where(['a.user_id' => $this->userId, 'a.goods_id' => $id])->where('b.order_status', 'IN', '1,2,3,5,6')->count();
+		$time = strtotime(date('Y-m-01 00:00:00'));
+		$info['sold'] = Db::table('shop_order_detail')->alias('a')->leftjoin('shop_order b', 'a.order_no=b.order_no')->where(['a.goods_id' => $id])->where('a.create_time', '>=', $time)->where('b.order_status', 'IN', '1,2,3,5,6,11,31,32')->count();
 
 		$info['collectd'] = $this->isCollected($id);
 		

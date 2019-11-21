@@ -530,18 +530,17 @@ class Shop extends Base
     public function recoDetail()
     {      
         $reco_id = (int)$this->request->get('id');
-        $this->assign('reco_id', $reco_id);
+        
+        $where = [
+            // 'g.status' => 1,
+            // 'g.is_sold' => 1,
+            'a.rec_id' => $reco_id
+        ];
 
-        $reco = Db::table('shop_reco_goods')->field('goods_id')->where(['rec_id' => $reco_id])->select();
-        $str = '';
-        foreach ($reco as $k => $v) {
-            $str .= $v['goods_id'].',';
-        }
-        $str = rtrim($str,',');
-        $info = Db::table('shop_goods g')->field('g.id,g.goods_name,s.sku_img,s.price,s.market_price,s.goods_id')->leftJoin("(select min(price) price,market_price,goods_id,sku_img from shop_goods_sku GROUP BY goods_id) s",'s.goods_id=g.id')->where('g.id','in',$str)->select();
-        $count = count($info);
-        $this->assign('count', $count);
+        $info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->where("(SELECT count(*) FROM shop_reco_goods WHERE a.rec_id=rec_id AND a.create_time<create_time) < 6")->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where($where)->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
+
         $this->assign('info', $info);
+        $this->assign('reco_id', $reco_id);
         return $this->fetch();
     }
 

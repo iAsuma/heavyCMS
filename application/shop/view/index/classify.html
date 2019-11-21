@@ -33,9 +33,9 @@ function listHtml(name, data){
 
     if(data[0].img){
         if(data[0].landing_url){
-            html += '<div class="fenlei-content-right-img fs0"><a href="'+data[0].landing_url+'"><img src="__FILEROOT__'+data[0].img+'" alt=""></a></div>';
+            html += '<div class="fenlei-content-right-img fs0"><a href="'+data[0].landing_url+'"><img src="__FILEROOT__/thumb'+data[0].img+'" alt=""></a></div>';
         }else{
-            html += '<div class="fenlei-content-right-img fs0"><img src="__FILEROOT__'+data[0].img+'" alt=""></div>';
+            html += '<div class="fenlei-content-right-img fs0"><img src="__FILEROOT__/thumb'+data[0].img+'" alt=""></div>';
         }
     }
 

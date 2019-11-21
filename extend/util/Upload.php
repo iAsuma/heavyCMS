@@ -225,4 +225,64 @@ class Upload
 
 		return [$thumb_path, $thumb_child_path.$file_name, $file_name];
 	}
+
+	/**
+     * base64信息转为缩略图片 生成两张 临时使用方法
+     * @access public
+     * @param  string      $base64Str 图片base
+     */
+	public function base64ToImage4Banner($base64Str, $scale=[150, 150], $thumbType = \think\Image::THUMB_CENTER)
+	{
+		$env_path = Request::env('FILE_ROOT_PATH').Request::env('FILE_UPLOAD_PATH');
+
+		if($env_path){
+			$this->file_path = $env_path;
+		}
+
+		if(!is_dir($this->file_path) && !mkdir($this->file_path, 0777, true)){
+			throw new \think\Exception("文件目录没有权限");
+		}
+
+		list($type, $data) = explode(',', $base64Str);
+		$ext = str_replace(['data:image/', ';base64'], '', $type);
+		$ext == 'jpeg' && $ext = 'jpg';
+
+		$child_path = DIRECTORY_SEPARATOR.date('Ymd').DIRECTORY_SEPARATOR;
+		$file_name = md5(microtime(true).rand(1000, 9999)).'.'.$ext;
+
+		if(!file_exists($this->file_path.$child_path)){
+			@mkdir($this->file_path.$child_path, 0777, true);
+		}
+		
+		$full_path = $this->file_path.$child_path.$file_name;
+		$result = file_put_contents($full_path, base64_decode($data));
+
+		if(!$result){
+			return false;
+		}
+
+		$image = \think\Image::open($full_path);
+		$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
+
+		if(!file_exists($this->file_path.$thumb_child_path)){
+			@mkdir($this->file_path.$thumb_child_path, 0777, true);
+		}
+		
+		$file_name = 't'.$file_name;
+		$main_path = $this->file_path.$child_path.$file_name;
+		if($thumbType !== false){
+			$image->thumb($scale[0], $scale[1], $thumbType)->save($main_path);
+			$image->thumb(480, 183, $thumbType)->save($this->file_path.$thumb_child_path.$file_name);
+		}else{
+			$image->thumb($scale[0], $scale[1])->save($main_path);
+		}
+
+		if(file_exists($main_path)){
+			@unlink($full_path);
+		}else{
+			return false;
+		}
+
+		return [$main_path, $child_path.$file_name, $file_name];
+	}
 }

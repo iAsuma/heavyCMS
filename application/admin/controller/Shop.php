@@ -314,7 +314,7 @@ class Shop extends Base
                 return res_json(-3, $validate->getError());
             }
     
-            $image = app('upload')->base64ToThumbnailImage($request->post('image'), [640, 320]);
+            $image = app('upload')->base64ToImage4Banner($request->post('image'), [640, 320]);
       
             try {
                 $data = [
@@ -370,7 +370,7 @@ class Shop extends Base
                 ];
 
                 if($request->post('image')){
-                    $image = app('upload')->base64ToThumbnailImage($request->post('image'), [600, 340]);
+                    $image = app('upload')->base64ToImage4Banner($request->post('image'), [600, 340]);
                     $data['img'] = $image[1] ;
                 }
                 $result = Db::table('shop_banner')->where('id', (int)$post['id'])->update($data);

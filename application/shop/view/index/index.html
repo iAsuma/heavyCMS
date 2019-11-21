@@ -8,6 +8,12 @@ body{background: #f8f8f8 !important;}
 {/block}
 {block name="content"}
 <div id="app">
+    <div class="home-top-search-box">
+        <div class="search-box">
+            <img src="/static/mod/shop/images/search.png " alt=" ">
+            <span>搜索商品</span>
+        </div>
+    </div>
     <div class="home-swiper-box">
         {if count($banner) == 1}
         <div id="slide" class="slide" class="index-slide">
@@ -86,4 +92,9 @@ body{background: #f8f8f8 !important;}
 {block name="footjs"}
 <script type="text/javascript" src="__MOD__/shop/js/slide.js"></script>
 <!-- <script type="text/javascript" src="__MOD__/shop/js/time.js"></script> -->
+<script type="text/javascript">
+    $('.search-box').on('click', function(){
+        window.location.href = '{:url(\'Index/classify\')}?from=index';
+    })
+</script>
 {/block}

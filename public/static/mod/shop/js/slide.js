@@ -1,5 +1,5 @@
 var autoLb = true; //autoLb=true为开启自动轮播
-var autoLbtime = 3; //autoLbtime为轮播间隔时间（单位秒）
+var autoLbtime = 5; //autoLbtime为轮播间隔时间（单位秒）
 var touch = true; //touch=true为开启触摸滑动
 var slideBt = true; //slideBt=true为开启滚动按钮
 

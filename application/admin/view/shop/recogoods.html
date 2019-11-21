@@ -1,5 +1,11 @@
 {extend name="public/base" /}
 {block name="title"}推荐位商品列表{/block}
+{block name="css"}
+<style type="text/css">
+tbody .layui-table-cell{height:50px;line-height:50px;}
+tbody .layui-table-cell img{width: auto;height: 50px}
+</style>
+{/block}
 {block name="content"}
 <div class="layui-fluid">   
   <div class="layui-card">
@@ -75,7 +81,7 @@
       ,cols: [[ //表头
         {field: 'goods_name', title: '商品名称'}
         ,{field: 'imgs', title: '图片', templet: function(d){
-          return '<img src="__FILEROOT__'+d.imgs+'"';
+          return '<img src="__FILEROOT__/thumb'+d.imgs+'"';
         }}
         ,{field: 'classfy', title: '所属分类'}  
           ,{field: 'post_type', title: '邮寄方式', templet: function(d){

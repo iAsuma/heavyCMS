@@ -55,6 +55,7 @@ class Index extends Base
 	{
 		$levelOne = Db::table('shop_classification')->where(['pid' => 0])->select();
 
+		$this->assign('from', $this->request->get('from') ?? '');
 		$this->assign('levelOne', $levelOne);
 		return $this->fetch();
 	}

@@ -114,7 +114,7 @@ body{background: #f8f8f8 !important;}
     </div>
 
     <!-- 选择商品属性 -->
-    <van-popup v-model="shuxing" class="bugbox" position="bottom" :style="{ height: '80%' }">
+    <van-popup v-model="shuxing" class="bugbox" position="bottom">
         <div class="home-detail-pop-box">
             <div class="home-detail-pop-box-top">
                 <img src="__FILEROOT__/thumb{$info['main_img'][0]}" alt="" class="sku_img">
@@ -136,7 +136,7 @@ body{background: #f8f8f8 !important;}
                 
             </div>
             <img src="__MOD__/shop/images/close.png" alt="" class="home-detail-close-btn" @click="shuxing = false">
-            <div class="dfbtc mt20">
+            <div class="dfbtc gmsl mt20">
                 <div class="cl33 fwb fs14">购买数量</div>
                 <div>
                     <van-stepper v-model="buyNum" :max="maxbuy"/>
@@ -189,6 +189,15 @@ var vue = new Vue({
                 openBuy(mark){
                     this.shuxing = true
                     this.mark = mark
+
+                    //当属性只有一组时默认选中
+                    if(this.attr_len == 1){
+                        setTimeout(function(){
+                            $('.home-detail-shuxing-btn').each(function(i,v){
+                                $(v).click();  
+                            })
+                        }, 100)
+                    }
                 },
                 sureSelect(){
                     var mark = this.mark

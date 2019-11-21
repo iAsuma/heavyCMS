@@ -71,6 +71,11 @@ $(function() {
     var _id = $('.fenlei-content-left').find('li:eq(0)').data('id')
     var _name = $('.fenlei-content-left').find('li:eq(0)').data('name')
 
+    var from = '{$from}'
+    if(from == 'index'){
+        $('.fenlei-search').trigger("click").focus();
+    }
+
     $('.classSel').on('click', function(){
         var _this = $(this)
         var id = _this.data('id')

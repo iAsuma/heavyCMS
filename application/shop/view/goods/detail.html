@@ -143,7 +143,9 @@ body{background: #f8f8f8 !important;}
                 </div>
             </div>
         </div>
-        <div class="huowubtn" @click="sureSelect()">确定</div>
+        <div class="huowubtn huowubtn-no" v-if="outSold">已下架</div>
+        <div class="huowubtn" @click="sureSelect()" v-else-if="sureBtn">确定</div>
+        <div class="huowubtn huowubtn-no" v-else-if="!sureBtn">库存不足</div>
     </van-popup>
 </div>
 {/block}
@@ -170,6 +172,7 @@ var vue = new Vue({
                 attr_selected_str: '',
                 goods_sku_id: '',
                 sureBtn: false,
+                outSold: false,
                 active: 0,
                 loading: false,
                 finished: false,
@@ -322,7 +325,14 @@ $(function() {
                     $('.sku_price').html(res.result.price)
                     $('.sku_stock').html(res.result.stocks)
                     vue.maxbuy = res.result.stocks
-                    if(res.result.stocks > 1){
+
+                    if(res.result.is_sold != 1){
+                        vue.outSold = true
+                    }else{
+                        vue.outSold = false
+                    }
+                    
+                    if(res.result.stocks >= 1){
                         vue.sureBtn = true;
                     }else{
                         vue.sureBtn = false;

@@ -25,7 +25,7 @@ class Goods extends Base
 		$info = Db::table('shop_goods')->alias('g')->field('g.*,s.price,s.market_price,s.stocks')->join('(SELECT a.*,b.market_price,b.stocks FROM (SELECT goods_id,MIN(price) as price FROM shop_goods_sku WHERE status = 1 AND is_sold = 1 GROUP BY goods_id)a,shop_goods_sku b WHERE a.price=b.price AND a.goods_id=b.goods_id) s', 'g.id=s.goods_id')->where($where)->find();
 
 		if(empty($info)){
-			return $this->fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在']);
+			return $this->fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在或已下架']);
 		}
 
 		$info['attrs'] = json_decode($info['goods_sku_attributes'], true);
@@ -37,22 +37,6 @@ class Goods extends Base
 		$info['sold'] = Db::table('shop_order_detail')->alias('a')->leftjoin('shop_order b', 'a.order_no=b.order_no')->where(['a.goods_id' => $id])->where('a.create_time', '>=', $time)->where('b.order_status', 'IN', '1,2,3,5,6,11,31,32')->count();
 
 		$info['collectd'] = $this->isCollected($id);
-
-		// dump($info['goods_sku_attributes']);
-		// $attrs = Db::table('shop_goods_sku')->field('id,sku')->where(['goods_id' => $id])->select();
-		// $arr = [];
-
-		// foreach ($attrs as $k=>$v) {
-		// 	$sku = json_decode($v['sku'], true);
-		// 	foreach ($sku as $vv) {
-		// 		$arr[$vv['title']][] = $vv['attr'];
-		// 		$new[$vv['title']] = array_unique($arr[$vv['title']]);
-		// 	}
-		// }
-
-		// dump($arr);
-		// dump($new);
-		// dump($attrs);die;
 		
 		$this->assign('info', $info);
 		return $this->fetch();
@@ -63,7 +47,7 @@ class Goods extends Base
 		$goods_id = $request->post('goods_id');
 		$attrs = $request->post('attrs');
 		
-		$query = Db::table('shop_goods_sku')->field('id,price,stocks,sku_img')->where('goods_id', '=', $goods_id);
+		$query = Db::table('shop_goods_sku')->field('id,price,stocks,sku_img,is_sold')->where('goods_id', '=', $goods_id);
 
 		foreach ($attrs as $v) {
 			$query->where('sku', 'LIKE', '%"'.$v.'"%');

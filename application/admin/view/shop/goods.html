@@ -130,7 +130,6 @@ tbody .layui-table-cell img{width: auto;height: 50px}
     //监听搜索
     form.on('submit(goodsSearch)', function(data){
       let field = data.field;
-      console.log(field);
       //执行重载
       tableIns.reload({
         where: field
@@ -141,7 +140,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
     });
     
     
-      form.on('switch(optstatus)', function(obj){
+    form.on('switch(optstatus)', function(obj){
       var wish = obj.elem.checked
       var id = obj.value
       $.post($('#statusTpl').data('url'),{id:id, is_sold: wish}, function(res){

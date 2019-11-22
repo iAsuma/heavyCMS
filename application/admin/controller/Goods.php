@@ -186,7 +186,7 @@ class Goods extends Base
 		$info['goodsImgArr'] = explode(',', $info['goods_imgs']);
 		$info['goods_attrs'] = json_decode($info['goods_sku_attributes'], true);
 
-		$skus = Db::table('shop_goods_sku')->field('sku,price,market_price,sku_img,stocks')->where(['goods_id' => (int)$id,
+		$skus = Db::table('shop_goods_sku')->field('id,sku,price,market_price,sku_img,stocks')->where(['goods_id' => (int)$id,
 			'status' => 1])->select();
 
 		foreach ($info['goods_attrs'] as $v) {
@@ -196,6 +196,7 @@ class Goods extends Base
 
 		$skus_arr_json = [];
 		$skus_val = [];
+		
 		foreach ($skus as $v) {
 			$skus_arr_json[] = json_decode($v['sku'], true);
 			$skus_val[] = [
@@ -218,6 +219,7 @@ class Goods extends Base
 
 	public function modify(Request $request)
 	{
+		dump($request->post());die;
 		if(checkFormToken($request->post())){
             $validate = \think\Validate::make([
                 'goods_name' => 'require|max:150',

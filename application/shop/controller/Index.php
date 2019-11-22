@@ -31,7 +31,12 @@ class Index extends Base
 	/*推荐位*/
 	public function recommended()
 	{
-		$info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->where("(SELECT count(*) FROM shop_reco_goods WHERE a.rec_id=rec_id AND a.create_time<create_time) < 6")->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where('d.name', '<>', '限时抢购')->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
+		$goodsTable = Db::table('shop_goods')->alias('g')->field('g.id AS goods_id,g.goods_name,s.price,s.market_price,s.sku_img')->join('(SELECT sku1.*,sku2.market_price,sku2.stocks,sku2.sku_img FROM (SELECT goods_id,MIN(price) as price FROM shop_goods_sku WHERE status = 1 AND is_sold = 1 GROUP BY goods_id)sku1,shop_goods_sku sku2 WHERE sku1.price=sku2.price AND sku1.goods_id=sku2.goods_id) s', 'g.id=s.goods_id')->where([
+			'g.status' => 1,
+			'g.is_sold' => 1
+		])->buildSql();
+
+		$info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->where("(SELECT count(*) FROM shop_reco_goods WHERE a.rec_id=rec_id AND a.create_time<create_time) < 6")->leftjoin($goodsTable. ' c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where('d.name', '<>', '限时抢购')->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
 
 		$rec = [];
 
@@ -45,7 +50,12 @@ class Index extends Base
 	/*限时抢购*/
 	public function flashSale()
 	{
-		$info = Db::table('shop_reco_goods')->field('c.*,b.name rec_name')->alias('a')->leftjoin('shop_reco_place b', 'b.id=a.rec_id')->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->where('b.name', '=', '限时抢购')->order('a.create_time', 'desc')->limit(3)->select();
+		$goodsTable = Db::table('shop_goods')->alias('g')->field('g.id AS goods_id,g.goods_name,s.price,s.market_price,s.sku_img')->join('(SELECT sku1.*,sku2.market_price,sku2.stocks,sku2.sku_img FROM (SELECT goods_id,MIN(price) as price FROM shop_goods_sku WHERE status = 1 AND is_sold = 1 GROUP BY goods_id)sku1,shop_goods_sku sku2 WHERE sku1.price=sku2.price AND sku1.goods_id=sku2.goods_id) s', 'g.id=s.goods_id')->where([
+			'g.status' => 1,
+			'g.is_sold' => 1
+		])->buildSql();
+
+		$info = Db::table('shop_reco_goods')->field('c.*,b.name rec_name')->alias('a')->leftjoin('shop_reco_place b', 'b.id=a.rec_id')->leftjoin($goodsTable.' c', 'a.goods_id=c.goods_id')->where('b.name', '=', '限时抢购')->order('a.create_time', 'desc')->limit(3)->select();
 
 		return $info;
 	}

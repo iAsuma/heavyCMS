@@ -2477,7 +2477,7 @@ textarea::placeholder {
 
 #nav a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #474D5A;
 }
 
 .bot {
@@ -2563,3 +2563,4 @@ textarea::placeholder {
 .home-top-search-box .search-box img{width: .3rem;height: .3rem;vertical-align: middle;margin-right: .05rem}
 .home-top-search-box .search-box span{font-size: .28rem;vertical-align: middle;color: #9c9c9c}
 #nav>.bot-a>.bot>div{font-weight: bold;}
+.huowubtn-no{background: linear-gradient(-43deg, rgb(81, 82, 84), rgb(202, 204, 207));}

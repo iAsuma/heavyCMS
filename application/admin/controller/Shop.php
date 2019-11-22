@@ -49,17 +49,17 @@ class Shop extends Base
 
     public function del(Request $request)
     {
-        
         $id = $request->post('id');
-        $data['status'] = -1 ;
-    
-        if (Db::table('shop_goods') ->where('id', '=', $id) -> update($data)) { 
+        $del = Db::table('shop_goods')->where('id', '=', $id)->update(['status' => -1]);
+
+        Db::table('shop_goods_sku')->where('goods_id', '=', $id)->update(['status' => -1]);
+
+        if ($del) { 
             Hook::listen('admin_log', ['商品管理', '删除了商品']);
             return res_json(1); 
         } else {
-            return res_json(-1);
+            return res_json(-1, '系统错误');
         }
-      
     }
 
      /**

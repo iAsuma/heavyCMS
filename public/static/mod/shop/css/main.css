@@ -2535,10 +2535,10 @@ textarea::placeholder {
 }
 
 .dropload-down {
-    padding-top: .3rem;
     text-align: center;
     font-size: 0.26rem;
     color: #6e6e6e;
+    margin-bottom: .3rem;
 }
 .layui-form-checkbox[lay-skin=primary] i{
     border-radius: 50% !important;

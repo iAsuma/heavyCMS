@@ -219,7 +219,6 @@ class Goods extends Base
 
 	public function modify(Request $request)
 	{
-		dump($request->post());die;
 		if(checkFormToken($request->post())){
             $validate = \think\Validate::make([
                 'goods_name' => 'require|max:150',
@@ -248,13 +247,11 @@ class Goods extends Base
 					$attr[] = [$k, $v];
 				}
 
-				$now_time = time();
                 $data = [
                     'goods_name' => $request->post('goods_name'),
                     'classification_id' => $request->post('classification'),
                     'goods_sku_attributes' => json_encode($attr, JSON_UNESCAPED_UNICODE),
                     'introduction' => $request->post('introduction'),
-                    'create_time' => $now_time,
                     'is_sold' => (int)$request->post('is_sold'),
                     'goods_imgs' => $request->post('goods_imgs'),
                     'description' => $request->post('description'),
@@ -294,7 +291,7 @@ class Goods extends Base
 							'sku_img' => $skus_detail[$k]['img'] ?? '',
 							'stocks' => $skus_detail[$k]['stock'],
 							'status' => 1,
-							'create_time' => $now_time
+							'create_time' => time()
 						];
 
 						$result = Db::name('shop_goods_sku')->insert($skusArr);

@@ -693,5 +693,111 @@ class Shop extends Base
         
     }
 
+    public function goodsSku()
+    {
+        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
 
+        $tree = new \util\Tree($classifyArr);
+        $classify = $tree->leaf();
+        
+        $this->assign('classify', $classify);
+        return $this->fetch();
+    }
+
+    public function goodsSkuList()
+    {
+        $get = $this->request->get();
+        $page = $get['page'] ?? 1;
+        $limit = $get['limit'] ?? 10;
+        
+        $where = [
+             ['g.status', '<>', '-1']
+            ,['g.goods_name', 'LIKE', $get['goods_name'] ?? '']
+            ,['g.classification_id', '=', $get['class_id'] ?? '']
+        ];
+
+        if(isset($get['is_sold'])){
+            if($get['is_sold'] == 1){
+                $where[] = ['s.is_sold', '=', 1];
+                $where[] = ['g.is_sold', '=', 1];
+            }else if($get['is_sold'] === '0'){
+                $where[] = ['s.is_sold|g.is_sold', '=', 0];
+            }
+        }
+ 
+        $formWhere = $this->parseWhere($where);
+        $count = Db::table('shop_goods_sku')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($formWhere)->count();
+
+        $data =Db::table('shop_goods_sku')->alias('s')->field('s.*,g.goods_name,c.name cname,cc.name ccname,g.is_sold main_sold')->leftjoin('shop_goods g', 's.goods_id=g.id')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
+     
+        return table_json($data, $count);
+    }
+
+    public function changeSkuSold()
+    {
+        $id = (int)$this->request->post('id');
+
+         switch ($this->request->post('is_sold')) {
+            case 'true':
+                $sold = 1;
+                break;
+            case 'false':
+                $sold = 0;
+                break;
+            default:
+                break;
+        }
+
+        $id && $res = Db::name('shop_goods_sku')->where('id', '=', $id)->update(['is_sold' => $sold]);
+        !$res && exit(json(['code' => -1, 'result' => '失败']));
+
+        return json(['code' => 1, 'result' => '成功']);
+    }
+
+    public function skuSet()
+    {
+        $id = $this->request->get('id');
+        $skuInfo = Db::table('shop_goods_sku')->where(['id' => (int)$id])->field('id,stocks,price,market_price')->find();
+
+        $this->assign('sku', $skuInfo);
+        return $this->fetch();
+    }
+
+    public function modifySku()
+    {
+        $post = $this->request->post();
+
+        $data = [
+            'price' => (float)$post['price'],
+            'market_price' => (float)$post['market_price'],
+            'stocks' => (int)$post['stocks']
+        ];
+
+        $res = Db::table('shop_goods_sku')->where(['id' => (int)$post['sku_id']])->update($data);
+        !$res && exit(res_json_native(-1, '系统错误'));
+
+        return res_json(1);
+    }
+
+    public function skuDel()
+    {
+        $sku_id = (int)$this->request->post('id');
+        // $del = Db::table('shop_goods_sku')->where(['id' => $sku_id])->update(['status' => -1]);
+        // dump($del);
+
+        $skuInfo = Db::table('shop_goods_sku')->alias('s')->field('s.id AS sku_id,s.goods_id,s.sku,g.goods_sku_attributes')->join('shop_goods g', 's.goods_id=g.id')->where(['s.id' => $sku_id])->find();
+        dump($skuInfo);
+
+        $skuS = Db::table('shop_goods_sku')->where(['goods_id' => $skuInfo['goods_id']])->count();
+        // if(1 == count($skuS)){
+            //若果只有一个SKU直接删除商品
+            // Db::table('shop_goods')->where(['id' => $skuInfo['goods_id']])->update(['status' => -1]);
+        // }else{
+            $sku = json_decode($skuInfo['sku'], true);
+            $skuArr = json_decode($skuInfo['goods_sku_attributes'], true);
+            
+            dump($sku);
+            dump($skuArr);
+        // }
+    }
 }

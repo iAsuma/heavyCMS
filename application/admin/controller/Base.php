@@ -1,10 +1,14 @@
 <?php
-
 namespace app\admin\controller;
 
 use think\Controller;
 use PHPExcel;
 use PHPExcel_IOFactory;
+
+/**
+ * 业务基类
+ * @author asuma(lishuaiqiu) <sqiu_li@163.com>
+ */
 class Base extends Controller
 {
     protected $uid = NULL;

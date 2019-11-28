@@ -1,6 +1,10 @@
 <?php
 namespace app\admin\controller;
 use auth\facade\Permissions;
+/**
+ * 首页
+ * @author asuma(lishuaiqiu) <sqiu_li@163.com>
+ */
 
 class Index
 {

@@ -4,7 +4,10 @@ namespace app\admin\controller;
 use think\Request;
 use Db;
 use think\facade\Hook;
-
+/**
+ * 权限基础控制器
+ * @author asuma(lishuaiqiu) <sqiu_li@163.com>
+ */
 class AuthSet extends Base
 {
     public function admins()

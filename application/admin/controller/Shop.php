@@ -246,7 +246,7 @@ class Shop extends Base
     {
         $id = (int)$this->request->post('id');
 
-         switch ($this->request->post('is_sold')) {
+        switch ($this->request->post('is_sold')) {
             case 'true':
                 $sold = 1;
                 break;
@@ -259,6 +259,12 @@ class Shop extends Base
 
         $id && $res = Db::name('shop_goods')->where('id', '=', $id)->update(['is_sold' => $sold]);
         !$res && exit(json(['code' => -1, 'result' => '失败']));
+
+        $count = Db::table('shop_goods_sku')->where(['goods_id' => $id, 'status' => 1])->count();
+        if($count == 1){
+            //同时上下架sku
+            Db::table('shop_goods_sku')->where(['goods_id' => $id])->update(['is_sold' => $sold]);
+        }
 
         return json(['code' => 1, 'result' => '成功']);
     }
@@ -736,8 +742,9 @@ class Shop extends Base
     public function changeSkuSold()
     {
         $id = (int)$this->request->post('id');
+        $goods_id = (int)$this->request->post('goods_id');
 
-         switch ($this->request->post('is_sold')) {
+        switch ($this->request->post('is_sold')) {
             case 'true':
                 $sold = 1;
                 break;
@@ -746,6 +753,12 @@ class Shop extends Base
                 break;
             default:
                 break;
+        }
+
+        $count = Db::table('shop_goods_sku')->where(['goods_id' => $goods_id, 'status' => 1, 'is_sold'=> 1])->count();
+        if($count == 1){
+            //同时上下架商品
+            Db::table('shop_goods')->where(['id' => $goods_id])->update(['is_sold' => $sold]);
         }
 
         $id && $res = Db::name('shop_goods_sku')->where('id', '=', $id)->update(['is_sold' => $sold]);

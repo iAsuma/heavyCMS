@@ -65,7 +65,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
   {{# if(d.main_sold != 1){ }}
   已下架
   {{# }else{ }}
-  <input type="checkbox" name="is_sold" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="optstatus" {{d.is_sold == 1 ? 'checked' : ''}}>
+  <input type="checkbox" name="is_sold" value="{{d.id}}" data-gid="{{d.goods_id}}" lay-skin="switch" lay-text="是|否" lay-filter="optstatus" {{d.is_sold == 1 ? 'checked' : ''}}>
   {{# } }}
 </script>
 
@@ -143,7 +143,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
     form.on('switch(optstatus)', function(obj){
       var wish = obj.elem.checked
       var id = obj.value
-      $.post($('#statusTpl').data('url'),{id:id, is_sold: wish}, function(res){
+      $.post($('#statusTpl').data('url'),{id:id, is_sold: wish, goods_id: $(obj.elem).data('gid')}, function(res){
         if(res.code != 1){
           layer.tips(res.result, obj.othis, {tips:1});
           obj.elem.checked = !wish;

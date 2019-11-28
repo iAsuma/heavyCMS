@@ -44,7 +44,8 @@ class AutoLogin
             //登录业务逻辑
             if($request->InApp == 'WeChat'){
                 if(Session::get('wapUser.wx_openid') == ''){
-                    return $next($request);
+                    goto redirect;
+                    // return $next($request);
                 }
                 
                 $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
@@ -77,6 +78,7 @@ class AutoLogin
                     Db::name('users')->where('status', '=' , '1')->where($where)->update(['headimgurl' => $head_img]);
                 }
             }else{
+                redirect:
                 if($request->isAjax() || $request->isPost()){
                     header('Ajax-Mark: redirect');
                     header("Redirect-Path: ".Url::build($this->redirect_url));

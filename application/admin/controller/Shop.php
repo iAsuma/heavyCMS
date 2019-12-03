@@ -287,6 +287,7 @@ class Shop extends Base
         $limit = $get['limit'] ?? 10;
         
         $where = [
+            ['status', '=', 1],
             ['title', 'LIKE', $get['title'] ?? '']
         ];
  
@@ -399,7 +400,8 @@ class Shop extends Base
     {
         
         $id = $request->post('id');
-        if (Db::table('shop_banner') ->where('id', '=', $id) -> delete()) { 
+         $data = ['status' => -1];
+        if (Db::table('shop_banner') ->where('id', '=', $id) -> update($data)) { 
             Hook::listen('admin_log', ['首页管理', '删除了轮播图']);
             return res_json(1); 
         } else {

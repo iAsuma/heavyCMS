@@ -23,7 +23,7 @@ class Index extends Base
 	/*轮播图*/
 	public function getBanners()
 	{
-		$banner = Db::table('shop_banner')->field('img,landing_url')->order(['sorted', 'id'=>'desc'])->limit(5)->select();
+		$banner = Db::table('shop_banner')->field('img,landing_url')->where(['status' => 1])->order(['sorted', 'id'=>'desc'])->limit(5)->select();
 
 		return $banner;
 	}

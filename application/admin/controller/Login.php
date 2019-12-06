@@ -9,6 +9,10 @@ class Login
 {
     public function index(Request $request)
     {
+        if(app('register')->isLogined()){
+            //如果登录不再重复登录
+            return redirect('/admin');
+        }
         return view();
     }
 

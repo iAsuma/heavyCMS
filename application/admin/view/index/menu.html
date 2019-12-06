@@ -12,8 +12,9 @@
           <i class="fa {$a.icon}"></i>
           <cite>{$a.title}</cite>
         </a>
+        {if $a.child ?? ''}
         <dl class="layui-nav-child">
-          {volist name=":$a.child ?? '' " id="b" key="k"}
+          {volist name="$a.child" id="b" key="k"}
           {if $b.type ==3}
           <dd {if $i == 1 and $k == 1}class="layui-this"{/if}>
           <a lay-href="{:url($b.name)}">{$b.title}</a>
@@ -30,6 +31,7 @@
           {/if}
           {/volist}
         </dl>
+        {/if}
       </li>
       {/volist}
     </ul>

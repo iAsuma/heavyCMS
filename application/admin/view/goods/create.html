@@ -56,13 +56,13 @@
                 <div id="add-box">
                     <div class="add-box-item">
                         <div class="add-box-item-thead">
-                            <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善属性项">
+                            <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善规格项">
                             <i class="layui-icon layui-icon-close delBig"></i>
                         </div>
                         <div class="add-box-item-th-box">
                             <div class="add-box-item-th bp" >
                                 <div class="add-box-item-th-item">
-                                    <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善属性项">
+                                    <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善规格项">
                                     <i class="layui-icon layui-icon-close delParam"></i>
                                 </div>
                             </div>
@@ -132,13 +132,13 @@
 
     var _html = '<div class="add-box-item">'
                     +'<div class="add-box-item-thead">'
-                        +'<input type="text" class="layui-input big_input" lay-verify="required" lay-reqText="请完善属性项">'
+                        +'<input type="text" class="layui-input big_input" lay-verify="required" lay-reqText="请完善规格项">'
                         +'<i class="layui-icon layui-icon-close delBig"></i>'
                     +'</div>'
                     +'<div class="add-box-item-th-box">'
                         +'<div class="add-box-item-th bp">'
                             +'<div class="add-box-item-th-item">'
-                                +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善属性项">'
+                                +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善规格项">'
                                 +'<i class="layui-icon layui-icon-close delParam"></i>'
                             +'</div>'
                         +'</div>'
@@ -154,12 +154,12 @@
     var len = itemBox.children('.add-box-item-th-item').length
     
     if(len >= 8){
-      layer.msg('最多只能添加8个属性')
+      layer.msg('最多只能添加8个规格')
       return false;
     }
 
     var _html = '<div class="add-box-item-th-item">'
-                  +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善属性项">'
+                  +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善规格项">'
                   +'<i class="layui-icon layui-icon-close delParam"></i>'
                +'</div>';
 
@@ -212,17 +212,17 @@
 
     var needTd = '<td class="up-img">'
                   +'<img src="[imgurl]" alt="">'
-                  +'<input type="hidden" value="[imgurl]" lay-verify="required" lay-reqText="请完善属性项的图片">'
+                  +'<input type="hidden" value="[imgurl]" lay-verify="required" lay-reqText="请完善规格项的图片">'
                   +'<button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>'
                 +'</td>'
                 +'<td>'
-                  +'<input type="text" class="layui-input edit-input stockIpt" value="[stock]" lay-verify="required" lay-reqText="请完善属性项的库存">'
+                  +'<input type="text" class="layui-input edit-input stockIpt" value="[stock]" lay-verify="required" lay-reqText="请完善规格项的库存">'
                 +'</td>'
                 +'<td>'
-                  +'<input type="text" class="layui-input edit-input marketIpt" value="[market]" lay-verify="required" lay-reqText="请完善属性项的市场价">'
+                  +'<input type="text" class="layui-input edit-input marketIpt" value="[market]" lay-verify="required" lay-reqText="请完善规格项的市场价">'
                 +'</td>'
                 +'<td>'
-                  +'<input type="text" class="layui-input edit-input priceIpt" value="[price]" lay-verify="required" lay-reqText="请完善属性项的售卖价">'
+                  +'<input type="text" class="layui-input edit-input priceIpt" value="[price]" lay-verify="required" lay-reqText="请完善规格项的售卖价">'
                 +'</td>';
     var madingData = calcDescartes(preData);
     var initVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : ''
@@ -509,7 +509,7 @@ layui.config({
     $('input[name=goods_imgs]').val(imgs);
   })
 
-  /*** 属性操作区域方法 ***/
+  /*** 规格操作区域方法 ***/
 
   $('#addBigParam').on('click', function(){
       var f_obj = $('.add-box-item').find('.add-box-item-thead')
@@ -535,7 +535,7 @@ layui.config({
       })
 
       if(c_return == true){
-        layer.msg('请先完善已有的参数的属性')
+        layer.msg('请先完善已有的参数的规格')
         return false;
       }
 
@@ -598,7 +598,7 @@ layui.config({
       // })
 
       // if(isReturn == true){
-      //   layer.msg('请先完善前面的属性');
+      //   layer.msg('请先完善前面的规格');
       //   return false;
       // } 
 
@@ -611,7 +611,7 @@ layui.config({
     var f_len = $('.add-box-item').length
 
     if(len <= 1 && f_len <= 1){
-      layer.msg('当前参数至少保留1个属性');
+      layer.msg('当前参数至少保留1个规格');
       return false;
     }
 
@@ -781,7 +781,7 @@ layui.config({
     }
 
     if(field.goods_skus == ''){
-      layer.msg('请添加商品属性', {icon: 5});
+      layer.msg('请添加商品规格', {icon: 5});
       return false;
     }
 

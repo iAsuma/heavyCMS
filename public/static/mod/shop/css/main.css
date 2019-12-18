@@ -2565,3 +2565,7 @@ textarea::placeholder {
 .home-top-search-box .search-box span{font-size: .28rem;vertical-align: middle;color: #9c9c9c}
 #nav>.bot-a>.bot>div{font-weight: bold;}
 .huowubtn-no{background: linear-gradient(-43deg, rgb(81, 82, 84), rgb(202, 204, 207));}
+
+.top-img-r-msg .type1{margin-top: .05rem;color: #fff;font-size: .24rem;margin-left: 0.3rem;}
+    .top-img-r-msg .type2{margin-left: .3rem;margin-top: .1rem}
+    .top-img-r-msg .type2 span{background:#3f67fcb8;color: #fff;border-radius: 1rem;padding:.05rem .1rem;margin-right: .1rem;font-size: .2rem;}

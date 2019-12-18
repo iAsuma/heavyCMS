@@ -92,6 +92,36 @@ class Index extends Base
 		return $banner[$rand];
 	}
 
+	public function classify2()
+	{
+		$levelOne = Db::table('shop_classification')->where(['pid' => 0])->select();
+		
+		$this->assign('from', $this->request->get('from') ?? '');
+		$this->assign('levelOne', $levelOne);
+		return $this->fetch();
+	}
+
+	public function getSecondClass2()
+	{
+		$banner = $this->getAnyBanner();
+
+		$pid = (int)$this->request->post('id');
+
+		$query = 'SELECT a.*,b.pid FROM ( SELECT g.id,g.goods_name,g.classification_id,g.goods_imgs,c.name FROM shop_goods g LEFT JOIN shop_classification c ON g.classification_id=c.id WHERE g.status=1 AND g.is_sold = 1 ORDER BY g.id DESC) a LEFT JOIN shop_classification b ON a.classification_id=b.id WHERE (SELECT count(*) FROM (SELECT g.id,g.goods_name,g.classification_id,g.goods_imgs,c.name FROM shop_goods g LEFT JOIN shop_classification c ON g.classification_id=c.id WHERE g.status=1 AND g.is_sold = 1)x WHERE a.classification_id=classification_id AND a.id < id) < 6 AND b.pid='.$pid;
+
+		$goods6 = Db::query($query);
+		$list = [];
+		
+		foreach ($goods6 as &$v) {
+			$imgs = explode(',', $v['goods_imgs']);
+			$v['main_img'] = $imgs[0];
+			$list[$v['name']][0] = $v['classification_id'];
+			$list[$v['name']][1][] = $v;
+		}
+
+		return res_json(1, [$banner, $list]);
+	}
+
 	/*搜索*/
 	public function search()
 	{

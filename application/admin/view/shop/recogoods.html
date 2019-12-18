@@ -110,7 +110,6 @@ tbody .layui-table-cell img{width: auto;height: 50px}
     //监听搜索
     form.on('submit(goodsSearch)', function(data){
       let field = data.field;
-      console.log(field);
       //执行重载
       tableIns.reload({
         where: field
@@ -125,10 +124,9 @@ tbody .layui-table-cell img{width: auto;height: 50px}
         switch(obj.event){
           case 'add':   
              $.post("{:url('Shop/addrecogoods')}", {gid:obj.data.id,rid:"{$rid}"}, function(res){
-                if(res==1){
+                if(res.code == 1){
                   layer.msg('添加成功');
                   window.parent.location.reload();//再执行关闭 
-                  
                 }else{
                   layer.msg('添加失败', {icon: 5});
                    window.parent.location.reload();//再执行关闭 

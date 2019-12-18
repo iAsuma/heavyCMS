@@ -36,7 +36,7 @@ class Index extends Base
 			'g.is_sold' => 1
 		])->buildSql();
 
-		$info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->where("(SELECT count(*) FROM shop_reco_goods WHERE a.rec_id=rec_id AND a.create_time<create_time) < 6")->leftjoin($goodsTable. ' c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where('d.name', '<>', '限时抢购')->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
+		$info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->leftjoin($goodsTable. ' c', 'a.goods_id=c.goods_id')->where("(SELECT count(*) FROM shop_reco_goods WHERE a.rec_id=rec_id AND a.create_time<create_time) < 6")->where('c.goods_id', 'NOT NULL')->where('d.name', '<>', '限时抢购')->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
 
 		$rec = [];
 

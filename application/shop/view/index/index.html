@@ -4,6 +4,8 @@
 <style type="text/css">
 body{background: #f8f8f8 !important;}
 .oneslide{width: 93%!important;left: 3%!important;}
+.all-goods-btn{font-size: 0;}
+.all-goods-btn button{width:calc(100% - 2rem);margin:0 1rem;background:linear-gradient(129deg, rgba(252, 118, 19, 1), rgba(255, 168, 76, 1));color: #fff;height: .8rem;line-height: .8rem;border-radius: .5rem;outline: none;border:none;font-size: .28rem;font-weight: bold;margin-top: .2rem}
 </style>
 {/block}
 {block name="content"}
@@ -18,7 +20,7 @@ body{background: #f8f8f8 !important;}
         {if count($banner) == 1}
         <div id="slide" class="slide" class="index-slide">
             {if $banner[0]['landing_url']}
-            <div class="img oneslide"><a href="{$vo.landing_url}"><img src="__FILEROOT__{$banner[0]['img']}" /></a></div>
+            <div class="img oneslide"><a href="{$banner[0]['landing_url']}"><img src="__FILEROOT__{$banner[0]['img']}" /></a></div>
             {else/}
             <div class="img oneslide"><img src="__FILEROOT__{$banner[0]['img']}" /></div>
             {/if}
@@ -37,6 +39,9 @@ body{background: #f8f8f8 !important;}
         {/if}
     </div>
     <div class="home-content">
+        <!-- <div class="all-goods-btn">
+            <button onclick="javascript:window.location.href='{:url(\'search\')}';">全部商品</button>
+        </div> -->
         <div class="home-content-xianshi">
         	<!-- 抢购 -->
             {if $flashSale}

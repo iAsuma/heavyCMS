@@ -2,16 +2,9 @@
 iAsuma/layui-tp51-admin(又名QingCMS，轻CMS) 
 ===============
 
- 使用本框架需提前准备以下环境：
+基础权限框架由asuma编写
 
- + php7.0以上
- + Mysql5.7以上
- + Redis
-
-## 安装教程
-
-安装使用教程移步至github
-
-~~~
-https://github.com/iAsuma/layui-tp51-admin.git
-~~~
+git主页
+```
+https://github.com/iAsuma
+```

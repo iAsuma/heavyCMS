@@ -1,5 +1,5 @@
 
-iAsuma/layui-tp51-admin(又名QingCMS，轻CMS) 
+iAsuma/layui-tp51-admin
 ===============
 
 基础权限框架由asuma编写

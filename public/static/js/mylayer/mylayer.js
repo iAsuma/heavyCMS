@@ -9,6 +9,18 @@ function layer_msg(msg) {
 	return index;
 }
 
+function layer_msg_call(msg, callback, param) {
+	var index = layer.open({
+		content: msg
+		,className: 'layer-msg'
+		,shade: false
+		,time: param.time ? param.time : 3
+		,end: callback
+	});
+
+	return index;
+}
+
 function layer_loading(msg) {
 	var index = layer.open({
 	    type: 2

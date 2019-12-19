@@ -178,7 +178,9 @@ function longPolling(idx) {
             if(res.code == 1){
                 console.log('支付成功')
                 layer.close(idx);
-                window.location.reload();
+                layer_msg_call('支付成功', function(){
+                    window.location.reload();
+                }, {time: 1});
             }else if(res.code == 2){
             	console.log('正在支付')
             	longajax = setTimeout(function() {

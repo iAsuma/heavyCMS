@@ -680,7 +680,7 @@ layui.config({
             ,size: 900
             ,done: function(res){
               if(res.code == 1){
-                var imgHtml = makeImgHtml(res.result[1])
+                var imgHtml = makeImgHtml(res.result[0])
                 $('#pics-content').prepend(imgHtml);
               }
               

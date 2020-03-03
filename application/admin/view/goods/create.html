@@ -360,6 +360,9 @@ layui.config({
   ,flow = layui.flow
   ,imgBox;
 
+  var _default = '<img src="__MOD__/shop/images/goodsdefault.jpg">'
+  ue.setContent(_default);
+
   /*上传主图*/
   $('#openUploadMain').on('click', function(){
     var selectImgs = $('input[name=goods_imgs]').val()
@@ -681,7 +684,7 @@ layui.config({
             ,size: 900
             ,done: function(res){
               if(res.code == 1){
-                var imgHtml = makeImgHtml(res.result[1])
+                var imgHtml = makeImgHtml(res.result[0])
                 $('#pics-content').prepend(imgHtml);
               }
               

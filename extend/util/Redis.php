@@ -5,7 +5,7 @@ use Exception;
 /**
  * Redis 连接
  * @author li shuaiqiu(asuma)
- * @version beta 1.3 自动获取redis方法(重写了redis的部分方法)
+ * @version beta 1.4 自动获取redis方法(重写了redis的部分方法)
  */
 class Redis{
 	static private $_connect; //redis实例对象
@@ -79,22 +79,23 @@ class Redis{
 	static public function __callStatic($name, $args)
 	{
 		try {
-			$newargs = &$args;
-			!empty($newargs) && $newargs[0] = self::$config['prefix'].$newargs[0];
-
 			self::connection();
+
+			$newargs = &$args;
+			!empty($newargs) && is_string($newargs[0]) && $newargs[0] = self::$config['prefix'].$newargs[0];
+			
 			$result = call_user_func_array(array(self::$_connect, $name), $args);
 
-			if(!$result){
+			if(false === $result){
 				//当调用的redis方法第一个参数并不为redis-key的情况，取消掉默认key命名前缀再次查询结果
 				//一般情况下，不会进入此处判断
 				$newargs[0] = str_replace(self::$config['prefix'], '', $newargs[0]);
 				$result = call_user_func_array(array(self::$_connect, $name), $args);
 			}
 			
-			return !$result ? false : $result;	
+			return $result;	
 		} catch (Exception $e) {
-			i_log('redis调用错误或方法不存在');
+			i_log('redis调用错误或方法不存在：'.$name);
 			return false;
 		}
 	}

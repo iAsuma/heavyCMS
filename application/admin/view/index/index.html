@@ -70,6 +70,7 @@
     if(typeof tabPre != 'undefined' && tabPre.tabId){
       setTimeout(function(){
         layui.index.openTabsPage(tabPre.tabId, tabPre.tabName)
+        $('#LAY-system-side-menu>li').find('a[lay-href="'+tabPre.tabId+'"]').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed')
       },200)
     }
 

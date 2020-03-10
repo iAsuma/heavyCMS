@@ -1,0 +1,11 @@
+{extend name="index@public/base" /}
+{block name="title"}新闻详情{/block}
+{block name="content"}
+<div class="newsDetial">
+    <p class="news-detial-title c33 fs16 bold mgb15">{$info.title}</p>
+    <p class="news-detial-time c99 fs12 mgb15">{$info.create_time|date='Y-m-d'}</p>
+    <div class="news-detial-cont fs14">
+        {$info.content|raw}
+    </div>
+</div>
+{/block}

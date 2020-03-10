@@ -1,0 +1,52 @@
+{extend name="public/original" /}
+{block name="title"}添加栏目{/block}
+{block name="css"}
+<style type="text/css">
+  .layui-input-inline{width: 260px !important;}
+</style>
+{/block}
+{block name="content"}
+<div class="layui-form" lay-filter="filter-form-auth" id="form-auth" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">栏目名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" lay-verify="required" placeholder="请输入栏目名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+          <input type="checkbox"  name="status" checked="" lay-skin="switch" lay-text="显示|隐藏" value="1">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+        <input type="button" lay-submit lay-filter="submit" id="submit" value="确认">
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+  layui.use(['form'], function(){
+    var form = layui.form;
+    //监听提交
+    form.on('submit(submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+ 
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      $.post("{:url('addColumn')}", data.field, function(res){
+        if(res.code == 1){
+          parent.layer.msg('添加成功');
+          parent.layui.table.reload('column'); //重载表格
+          parent.layer.close(index); //再执行关闭 
+        }else{
+          layer.msg(res.result, {icon: 5});
+        }
+      },'json');
+    });
+  })
+</script>
+{/block}

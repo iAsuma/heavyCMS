@@ -39,6 +39,7 @@ return [
         '__CSS__' => '/static/css',
         '__THIRD__' => '/static/third',
         '__MOD__' => '/static/mod',
+        '__MODSTATIC__' => '/static/mod',
         '__FILEROOT__' => Env::get('FILE_UPLOAD_PATH')
     ]
 ];

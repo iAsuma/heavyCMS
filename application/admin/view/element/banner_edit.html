@@ -1,0 +1,88 @@
+{extend name="public/original" /}
+{block name="title"}编辑轮播图{/block}
+{block name="content"}
+<div class="layui-form" lay-filter="filter-form-auth" id="form-auth" style="padding: 20px 30px 0 0;">
+     
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <img style="width: auto;height: 150px;border: none;" id="img" {notempty name="$info.img"}src="__FILEROOT__{$info.img}"{/notempty}>
+        
+        <input type="hidden" name="image" class="layui-input" style="position: absolute;left: 0;top: 0;" readOnly>
+       
+    </div>
+      
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+          <a class="layui-btn layui-btn-asuma" style="width: 150px;" id="image" style="float: left;"><i class="layui-icon">&#xe67c;</i>上传图片</a>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$info.title}" lay-verify="required"  autocomplete="off" placeholder="请输入分类名称" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+          <label class="layui-form-label">着陆页地址</label>
+          <div class="layui-input-block">
+             <input type="text" name="landing_url" value="{$info.landing_url}"  autocomplete="off" class="layui-input" >
+           
+          </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="hidden" name="id" value="{$info.id}">
+        <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+        <input type="button" lay-submit lay-filter="submit" id="submit" value="确认">
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+ layui.use(['form','upload'], function(){
+    var upload = layui.upload,
+     form = layui.form;
+
+           //普通图片上传
+    var uploadInst=upload.render({
+        elem:'#image'
+        ,url:'{:url("admin/index/layuiUpload")}' //文件上传接口
+        ,ext:'jpg|png|gif'
+       ,area:'100px'
+        ,drag:true
+        //载入前配置
+        ,before:function(){
+            loading=layer.load(2);
+        }
+        ,choose: function(obj){
+          //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+          obj.preview(function(index, file, result){
+             layer.close(loading);
+             // console.log(result); //得到文件base64编码，比如图片s
+             $('input[name=image]').val(result);
+             $('#img').attr('src',result);
+          });
+        }
+        ,error:function(){
+           // 请求异常回调
+        }
+    });
+
+    form.on('submit(submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+
+      $.post("{:url('editBanner')}", data.field, function(res){
+        if(res.code == 1){
+          parent.layer.msg('修改成功');
+          parent.layui.table.reload('banner'); //重载表格
+          parent.layer.close(index); //再执行关闭 
+        }else{
+          layer.msg(res.result, {icon: 5});
+        }
+      },'json');
+    });
+
+ })
+</script>
+{/block}

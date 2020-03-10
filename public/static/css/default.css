@@ -42,4 +42,8 @@
 .asuma-btn-container-excel .layui-btn{margin-bottom: 0}
 .asuma-btn-container-excel>button:first-child{background-color: #F78400;}
 
+/*返回列表按钮*/
+.asuma-btn-header{margin-right: 10px;border:none;padding-left: 0;margin-left: 0}
+.asuma-btn-header .layui-icon{line-height: 30px;position: static;}
+
 .layui-side-menu .layui-nav .layui-nav-item .fa{position: absolute;left: 20px;top: 40%;}

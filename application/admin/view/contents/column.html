@@ -1,0 +1,181 @@
+{extend name="public/base" /}
+{block name="title"}栏目管理{/block}
+{block name="content"}
+<div class="layui-fluid">   
+  <div class="layui-card">
+    <form class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+        <div class="layui-form-item asuma-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">栏目名称</label>
+              <div class="layui-input-block">
+                <input type="text" name="name" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-inline">
+              <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" lay-submit lay-filter="columnSearch">
+                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+              </button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
+          <!-- <button class="layui-btn layui-btn-danger layuiadmin-btn-role" id="delAll">删除</button> -->
+        </div>
+        <table id="column" lay-filter="column"></table>  
+    </div>    
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="statusTpl" data-url="{:url('changeColumnStatus')}">
+  <input type="checkbox" name="status" value="{{d.id}}" title="开启" lay-filter="optstatus" {{d.status == 1 ? 'checked' : ''}}>
+</script>
+
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="del***">删除</a>
+</script>
+
+<script>
+  layui.use(['table','form','upload'], function(){
+    
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,upload = layui.upload;
+
+   var tableIns =  table.render({
+      elem: '#column'
+      ,url: "{:url('Contents/columnList')}" //数据接口
+      ,page: true //开启分页
+      ,limit:10
+      ,limits:[10,25,50]
+      ,done:function (res, curr, count) {
+        if(count <= this.limit){
+          $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+        }
+      }
+      ,cols: [[ //表头
+        {type: "checkbox",fixed: "left"}
+        ,{field: 'id', title: 'ID',  sort: true, width:65}
+        ,{field: 'name', title: '名称'}
+        ,{field: 'status', title: '状态', templet: '#statusTpl'}
+        ,{title: '操作',toolbar: '#optTpl'}
+      ]]
+    });
+    
+    //监听搜索
+    form.on('submit(columnSearch)', function(data){
+      let field = data.field;
+      tableIns.reload({
+        where: field
+        ,page:{curr:1}
+      });
+      return false;
+    });
+
+
+    table.on('sort(column)',function(obj){
+      if(tableIns.config.page.count <= tableIns.config.page.limit){
+        $('.layui-table-page').addClass('layui-hide');//总条数小于每页限制条数时隐藏分页
+      }
+    })
+    
+    form.on('checkbox(optstatus)', function(obj){
+      var wish = obj.elem.checked
+      var id = obj.value
+      $.post($('#statusTpl').data('url'),{id:id, status: wish}, function(res){
+        if(res.code != 1){
+          layer.tips(res.result, obj.othis, {tips:1});
+          obj.elem.checked = !wish;
+          form.render('checkbox');
+        }
+      }, 'json')
+    })
+      
+    $('#add').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '添加栏目'
+          ,content: "{:url('columnAdd')}"
+          ,maxmin: true
+          ,area: ['40%', '30%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            submit.click();
+          }
+        });
+    });
+
+    $('#delAll').on('click', function () {
+        var checkStatus = table.checkStatus('column')
+        ,checkData = checkStatus.data; //得到选中的数据
+
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+        var str = '';
+          $.each(checkData, function(i,val){      
+          str += val.id + ",";
+        
+        })
+          str=str.substring(0,str.length-1);
+
+        layer.confirm('确定删除吗？', function(index) {
+           $.post("{:url('Contents/columnDel')}", {id:str}, function(res){
+              if(res.code == 1){
+                layer.msg('删除成功');
+                table.reload('column'); //重载表格
+                layer.close(index); //再执行关闭 
+              }else{
+                layer.msg(res.result, {icon: 5});
+              }
+            },'json');
+        });
+
+    });
+
+    table.on('tool(column)', function(obj){
+        switch(obj.event){
+          case 'edit':
+              layer.open({
+                  type: 2
+                  ,title: '编辑栏目'
+                  ,content: "{:url('columnEdit')}?id="+obj.data.id
+                  ,maxmin: true
+                  ,area: ['40%', '30%']
+                  ,btn: ['确定', '取消']
+                  ,success: function (layero, index) {
+                     layero.find('input[name=id]').val(obj.data.id)
+                  }
+                  ,yes: function(index, layero){
+                    var submit = layero.find('iframe').contents().find("#submit");
+                    submit.click();
+                  }
+              });
+              break;
+          case 'del':
+              layer.confirm('确定删除？？', function(index){
+                  $.post("{:url('Contents/columnDel')}", {id:obj.data.id}, function(res){
+                    if(res.code == 1){
+                      layer.msg('删除成功');
+                      table.reload('column'); //重载表格
+                      layer.close(index); //再执行关闭 
+                    }else{
+                      layer.msg(res.result, {icon: 5});
+                    }
+                  },'json');
+
+                }); 
+              break;
+        };
+    });
+
+  });
+</script>
+{/block}

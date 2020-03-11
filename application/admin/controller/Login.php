@@ -13,7 +13,7 @@ class Login
             //如果登录不再重复登录
             return redirect('/admin');
         }
-        return view();
+        return view('theme1');
     }
 
     public function checkLogin(Request $request)

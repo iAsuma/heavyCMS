@@ -48,10 +48,10 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,theme: {
       //内置主题配色方案
       color: [{
-        main: '#20222A'
-        ,logo: '#F78400'
-        ,selected: '#F78400'
-        ,alias: 'default-red' //橙色
+        main: '#20222A' //主题色
+        // ,logo: '#054575'
+        ,selected: '#1163C6' //选中色
+        ,alias: 'my-default' //默认别名
       },{
         main: '#20222A' //主题色
         ,selected: '#009688' //选中色

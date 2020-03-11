@@ -410,8 +410,8 @@
     <?php } ?>
 
     <div class="copyright">
-        <a title="阿斯玛的博客" href="http://www.udzan.com">阿斯玛的udzanPro</a> 
-        <span>V1.0.0</span> 
+        <a title="阿斯玛的博客" href="http://echo.udzan.com">阿斯玛</a> 
+        <span>V1.6.0</span> 
         <span>让美好变得更好</span>
         <span>Time: <?php echo date('Y-m-d H:i:s') ?></span>
     </div>

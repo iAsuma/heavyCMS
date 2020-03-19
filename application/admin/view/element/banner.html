@@ -162,7 +162,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('Shop/bannerDel')}", {id:obj.data.id}, function(res){
+                   $.post("{:url('bannerDel')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('banner'); //重载表格

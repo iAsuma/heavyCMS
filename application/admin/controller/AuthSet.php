@@ -365,6 +365,7 @@ class AuthSet extends Base
                 Hook::listen('admin_log', ['权限', '添加了角色组'.$data['title']]);
             }
             
+            \think\facade\Cache::clear('auth_rule');
             \think\facade\Cache::clear('admin_role'); //清除规则缓存，让列表实时生效
             destroyFormToken($post);
             return res_json(1);

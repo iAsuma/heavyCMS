@@ -306,3 +306,22 @@ function round2($num = 0)
 {
     return sprintf("%01.2f", $num);
 }
+
+/**
+* 截取内容前N张图片（默认截取前三张）
+*/
+function catchImg($content, $num = 3){
+    $imgHtmlReg = '/<img.*\>/isU';
+    preg_match_all($imgHtmlReg, $content, $imgHtmlArr);
+    
+    $imgSum = count($imgHtmlArr[0]);
+    if($imgSum < 1){
+        return '';
+    }
+    for ($i=0; $i < $imgSum && $i < $num; $i++) { 
+        preg_match('/src="(.*)"/isU', $imgHtmlArr[0][$i], $match);
+        $finalImg[] = $match[1];
+    }
+    
+    return json_encode($finalImg, JSON_UNESCAPED_SLASHES);
+}

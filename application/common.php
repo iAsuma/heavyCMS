@@ -318,8 +318,16 @@ function catchImg($content, $num = 3){
     if($imgSum < 1){
         return '';
     }
+
+    $finalImg = [];
     for ($i=0; $i < $imgSum && $i < $num; $i++) { 
         preg_match('/src="(.*)"/isU', $imgHtmlArr[0][$i], $match);
+
+        //过滤百度UEditor中默认的文件类型图片
+        if(false !== strpos($match[1], 'fileTypeImages')){
+            continue;
+        }
+
         $finalImg[] = $match[1];
     }
     

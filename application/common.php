@@ -313,7 +313,7 @@ function round2($num = 0)
 function catchImg($content, $num = 3){
     $imgHtmlReg = '/<img.*\>/isU';
     preg_match_all($imgHtmlReg, $content, $imgHtmlArr);
-    
+
     $imgSum = count($imgHtmlArr[0]);
     if($imgSum < 1){
         return '';
@@ -323,13 +323,27 @@ function catchImg($content, $num = 3){
     for ($i=0; $i < $imgSum && $i < $num; $i++) { 
         preg_match('/src="(.*)"/isU', $imgHtmlArr[0][$i], $match);
 
-        //过滤百度UEditor中默认的文件类型图片
-        if(false !== strpos($match[1], 'fileTypeImages')){
+        //过滤百度UEditor中默认的图片
+        if(false === strpos($match[1], env('UEDITOR_UPLOAD_PATH'))){
+            continue;
+        }
+
+        //过滤img标签width属性小于50的图片
+        preg_match('/width="(.*)"/isU', $imgHtmlArr[0][$i], $width);
+        if($width && $width[1] < 50){
+            continue;
+        }
+
+        //过滤img标签height属性小于50的图片
+        preg_match('/height="(.*)"/isU', $imgHtmlArr[0][$i], $height);
+        if($height && $height[1] < 50){
             continue;
         }
 
         $finalImg[] = $match[1];
     }
-    
+
+    if(empty($finalImg)) return '';
+
     return json_encode($finalImg, JSON_UNESCAPED_SLASHES);
 }

@@ -262,15 +262,15 @@ class Upload
 		}
 
 		$image = \think\Image::open($full_path);
-		$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
-
-		if(!file_exists($this->file_path.$thumb_child_path)){
-			@mkdir($this->file_path.$thumb_child_path, 0777, true);
-		}
 		
 		$file_name = 't'.$file_name;
 		$main_path = $this->file_path.$child_path.$file_name;
 		if($thumbType !== false){
+			$thumb_child_path = DIRECTORY_SEPARATOR.'thumb'.$child_path;
+			if(!file_exists($this->file_path.$thumb_child_path)){
+				@mkdir($this->file_path.$thumb_child_path, 0777, true);
+			}
+
 			$image->thumb($scale[0], $scale[1], $thumbType)->save($main_path);
 			$image->thumb(480, 183, $thumbType)->save($this->file_path.$thumb_child_path.$file_name);
 		}else{

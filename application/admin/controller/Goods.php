@@ -139,7 +139,7 @@ class Goods extends Base
 	public function uploadMainImg()
 	{
 	    $file = app('upload')->file('image');
-	    $info = app('upload')->action($file);
+	    $info = app('upload')->action($file, [800, 800], true, \think\Image::THUMB_SCALING);
 
 	    !$info && exit(res_json_native(-1, '上传失败'));
 

@@ -50,7 +50,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">角色</label>
       <div class="layui-input-block">
-        <select name="roles" lay-verType="tips" lay-verify="required" xm-select="roleSel" xm-select-skin="bigyellow" xm-select-max="4">
+        <select name="roles" lay-verType="tips" lay-verify="required" xm-select="roleSel" xm-select-skin="bigyellow" xm-select-max="4" {if request()->uid != 1}disabled{/if}>
           <option value="">最多选四个</option>
           {volist name="roles" id="vo"}
           <option value="{$vo.id}" {if $vo.id == 1}disabled{/if} {if in_array($vo.id, $hasrole)}selected{/if} >{$vo.title}</option>

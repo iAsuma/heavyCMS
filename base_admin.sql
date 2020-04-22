@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : localhost
 Source Server Version : 50726
 Source Host           : localhost:3306
-Source Database       : qing_cms
+Source Database       : base_admin
 
 Target Server Type    : MYSQL
 Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2020-03-10 16:24:17
+Date: 2020-04-22 15:11:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -32,13 +32,14 @@ CREATE TABLE `admin_user` (
   `create_by` int(11) DEFAULT NULL COMMENT '创建人id',
   `remark` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_user
 -- ----------------------------
 INSERT INTO `admin_user` VALUES ('1', '管理员', 'admin', '', '', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', '1556601911', '0', '');
 INSERT INTO `admin_user` VALUES ('2', '阿斯玛', 'asuma', '', 'sqiu_li@163.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', null, null, null);
+INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', '1587537661', '1', null);
 
 -- ----------------------------
 -- Table structure for application_config
@@ -116,7 +117,7 @@ CREATE TABLE `auth_group` (
 -- Records of auth_group
 -- ----------------------------
 INSERT INTO `auth_group` VALUES ('1', '超级管理员', '1', 'all', '最高管理员权限，拥有所有权限');
-INSERT INTO `auth_group` VALUES ('2', '管理员', '1', '1,2,3,4,5', '拥有除权限管理、操作日志外的所有权限');
+INSERT INTO `auth_group` VALUES ('2', '管理员', '1', '1,2,3,4,5,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,33,37,38,39,40,41,42,43,44,45', '拥有除权限管理、操作日志外的所有权限');
 
 -- ----------------------------
 -- Table structure for auth_group_access
@@ -135,6 +136,7 @@ CREATE TABLE `auth_group_access` (
 -- ----------------------------
 INSERT INTO `auth_group_access` VALUES ('1', '1');
 INSERT INTO `auth_group_access` VALUES ('2', '2');
+INSERT INTO `auth_group_access` VALUES ('3', '2');
 
 -- ----------------------------
 -- Table structure for auth_rule
@@ -156,7 +158,7 @@ CREATE TABLE `auth_rule` (
   `remark` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of auth_rule
@@ -190,6 +192,10 @@ INSERT INTO `auth_rule` VALUES ('38', 'Contents/articles', '文章管理', '3', 
 INSERT INTO `auth_rule` VALUES ('39', 'Contents/column', '栏目管理', '3', '1', '', '0', '37', '1', '1', 'fa-circle-thin', '0', '');
 INSERT INTO `auth_rule` VALUES ('40', 'Element', '组件管理', '1', '1', '', '0', '0', '1', '1', 'fa-cube', '0', '');
 INSERT INTO `auth_rule` VALUES ('41', 'Element/banner', '轮播图', '3', '1', '', '0', '40', '1', '1', 'fa-circle-thin', '0', '');
+INSERT INTO `auth_rule` VALUES ('42', 'AuthSet/adminEdit', '添加/编辑管理员', '3', '1', '', '0', '3', '1', '0', '', '0', '');
+INSERT INTO `auth_rule` VALUES ('43', 'AuthSet/changeAdminStatus', '修改管理员状态', '3', '1', '', '99', '3', '2', '0', 'fa-circle-thin', '0', '');
+INSERT INTO `auth_rule` VALUES ('44', 'AuthSet/roleAdd', '添加/编辑角色', '3', '1', '', '0', '3', '1', '0', 'fa-circle-thin', '0', '');
+INSERT INTO `auth_rule` VALUES ('45', 'AuthSet/changeRoleStatus', '修改角色状态', '3', '1', '', '99', '3', '2', '0', 'fa-circle-thin', '0', '');
 
 -- ----------------------------
 -- Table structure for banners
@@ -222,11 +228,21 @@ CREATE TABLE `operation_log` (
   `record_time` datetime NOT NULL,
   `behavior_user` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of operation_log
 -- ----------------------------
+INSERT INTO `operation_log` VALUES ('1', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:16:39', 'admin');
+INSERT INTO `operation_log` VALUES ('2', 'AuthSet/pulladmin', '权限', '添加了管理员test', '127.0.0.1', '2020-04-22 14:41:01', 'admin');
+INSERT INTO `operation_log` VALUES ('3', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:41:26', 'admin');
+INSERT INTO `operation_log` VALUES ('4', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:41:39', 'test');
+INSERT INTO `operation_log` VALUES ('5', 'AuthSet/updateadmin', '权限', '修改了管理员test的信息', '127.0.0.1', '2020-04-22 14:49:13', 'test');
+INSERT INTO `operation_log` VALUES ('6', 'AuthSet/changeadminstatus', '权限', '冻结了管理员asuma的账号', '127.0.0.1', '2020-04-22 14:54:30', 'test');
+INSERT INTO `operation_log` VALUES ('7', 'AuthSet/changeadminstatus', '权限', '开启了管理员asuma的账号', '127.0.0.1', '2020-04-22 14:54:31', 'test');
+INSERT INTO `operation_log` VALUES ('8', 'AuthSet/changerolestatus', '权限', '关闭了角色组管理员', '127.0.0.1', '2020-04-22 14:59:27', 'test');
+INSERT INTO `operation_log` VALUES ('9', 'AuthSet/changerolestatus', '权限', '开启了角色组管理员', '127.0.0.1', '2020-04-22 14:59:28', 'test');
+INSERT INTO `operation_log` VALUES ('10', 'AuthSet/addnewrole', '权限', '修改了角色组管理员的信息', '127.0.0.1', '2020-04-22 15:01:49', 'admin');
 
 -- ----------------------------
 -- Table structure for shop_banner

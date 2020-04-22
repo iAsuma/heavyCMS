@@ -586,6 +586,7 @@ padding-bottom: 1.1rem;
 .home-detail-swiper-box .van-swipe .swiperimg {
     height: 7rem;
     width: 100%;
+    object-fit: scale-down;
 }
 
 .home-detail-mid {
@@ -1118,6 +1119,7 @@ padding-bottom: 1.1rem;
 .fenleilist-content-item-img img {
     width: 3.4rem;
     height: 3.4rem;
+    object-fit: scale-down;
 }
 
 .fenleilist-content-item-des {

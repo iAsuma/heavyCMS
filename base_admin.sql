@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2020-04-22 15:11:10
+Date: 2020-04-22 15:12:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -39,7 +39,7 @@ CREATE TABLE `admin_user` (
 -- ----------------------------
 INSERT INTO `admin_user` VALUES ('1', '管理员', 'admin', '', '', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', '1556601911', '0', '');
 INSERT INTO `admin_user` VALUES ('2', '阿斯玛', 'asuma', '', 'sqiu_li@163.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', null, null, null);
-INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', '1587537661', '1', null);
+INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '-1', '1587537661', '1', null);
 
 -- ----------------------------
 -- Table structure for application_config
@@ -228,7 +228,7 @@ CREATE TABLE `operation_log` (
   `record_time` datetime NOT NULL,
   `behavior_user` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of operation_log
@@ -243,6 +243,7 @@ INSERT INTO `operation_log` VALUES ('7', 'AuthSet/changeadminstatus', '权限', 
 INSERT INTO `operation_log` VALUES ('8', 'AuthSet/changerolestatus', '权限', '关闭了角色组管理员', '127.0.0.1', '2020-04-22 14:59:27', 'test');
 INSERT INTO `operation_log` VALUES ('9', 'AuthSet/changerolestatus', '权限', '开启了角色组管理员', '127.0.0.1', '2020-04-22 14:59:28', 'test');
 INSERT INTO `operation_log` VALUES ('10', 'AuthSet/addnewrole', '权限', '修改了角色组管理员的信息', '127.0.0.1', '2020-04-22 15:01:49', 'admin');
+INSERT INTO `operation_log` VALUES ('11', 'AuthSet/changeadminstatus', '权限', '删除了管理员test', '127.0.0.1', '2020-04-22 15:12:47', 'admin');
 
 -- ----------------------------
 -- Table structure for shop_banner

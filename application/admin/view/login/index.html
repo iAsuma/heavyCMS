@@ -86,8 +86,12 @@
           $.post("{:url('checkLogin')}", data.field, function(res){
             if(res.code == 1){
               window.location.replace('/admin')
+            }else if(res.code == -2 ||res.code == -3){
+              slider.reset()
+              layer.msg('用户名或密码错误', {icon: 5}); 
             }else{
-              layer.msg(res.result, {icon: 5});
+              slider.reset()
+                layer.msg(res.result, {icon: 5});
             }
           }, 'json');
         }else{

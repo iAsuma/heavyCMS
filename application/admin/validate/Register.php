@@ -17,7 +17,7 @@ class Register extends Validate
         'loginname' => 'require|alphaDash|length:3,16',
         'phone' => 'mobile',
         'email' => 'email',
-        'password' => 'require|length:6,12',
+        'password' => 'require|alphaNum|length:6,12',
         'repassword' => 'require|confirm:password',
         'remark' => 'length:2,250'
     ];
@@ -36,6 +36,7 @@ class Register extends Validate
         'phone.mobile' => '手机格式不正确',
         'email.email' => '邮箱格式不正确',
         'password.require' => '密码为必填项',
+        'password.alphaNum' => '密码只能为数字和字母',
         'password.length' => '密码长度为6到12位',
         'repassword.require' => '请再次输入密码',
         'repassword.confirm' => '两次输入密码不一致',

@@ -1,10 +1,15 @@
 layui.use(['form'], function(){
 	var form = layui.form
 	form.verify({
-	  pass: [
-	    /^[\S]{6,12}$/
-	    ,'密码必须6到12位，且不能出现空格'
-	  ]
+	  pass: function(value){
+	  	if(!/^[\S]{6,12}$/.test(value)){
+	  		return '密码必须6到12位，且不能出现空格'
+	  	}
+
+	  	if(/^\d+\d+\d$/.test(value)){
+	      return '密码不能全为数字';
+	    }
+	  }
 	  ,repass:function(value){
 	  	if(value == ''){
 	  		return '请输入确认密码'

@@ -49,6 +49,13 @@ class Contents extends Base
 		return $this->fetch();
 	}
 
+	public function articlesAdd2()
+	{
+		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
+		$this->assign('column', $column);
+		return $this->fetch();
+	}
+
 	public function addArticles(Request $request)
 	{
 		if(checkFormToken($request->post())){

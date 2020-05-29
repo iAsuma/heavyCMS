@@ -1,0 +1,13 @@
+.show-in-phone{display: flex;align-items: flex-start;}
+.phone-input-box{flex: 1;}
+.phoneBox{width: 375px;height: 812px;background: url(./phoneImg.PNG) no-repeat center;background-size: 100% 100%;display: flex;flex-direction: column;padding:60px 25px 24px 22px;box-sizing: border-box;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;position: relative;}
+.phoneBox .top-img-box{padding:5px 15px ; height: auto;display: flex;align-items: center;justify-content: space-between;}
+.phoneBox .top-img-box img{width: 15px;height: 15px;}
+.phoneBox .top-img-box p{font-size:16px;color: #000;}
+.phoneBox .phone-scroll-box{flex: 1;overflow-y: auto;background: #fff; scrollbar-width: none;padding: 10px;box-sizing: border-box;position: relative;border-bottom-left-radius: 36px;border-bottom-right-radius: 36px;}
+.phoneBox::before{content: '';position: absolute;bottom: -20px; width:70%;height: 5px;border-radius: 8px; background-color: #000; left: 33.33%;bottom: 30px;width: 33.33%;z-index:99}
+.phoneBox .phone-scroll-box .title{font-size: 18px;font-weight: bold;color: #333;}
+.phoneBox .phone-scroll-box .author span:first-child{margin-right: 10px;color:#187abb ;}
+.phoneBox .phone-scroll-box .mt10{margin-top: 10px;}
+.phoneBox .phone-scroll-box::-webkit-scrollbar{display: none;}
+.phoneBox .content-box img{width: 100%;}

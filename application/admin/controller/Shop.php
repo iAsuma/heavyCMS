@@ -327,7 +327,8 @@ class Shop extends Base
                 $data = [
                     'title' => $request->post('title'),
                     'landing_url' => $request->post('landing_url'),
-                    'img' => $image[1]
+                    'img' => $image[1],
+                    'status' => 1
                 ];
 
                 $result = Db::table('shop_banner') -> insert($data);

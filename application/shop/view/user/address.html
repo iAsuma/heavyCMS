@@ -33,9 +33,14 @@
     })
 
     $('.address-item').on('click', function(){
-        if($(this).data('order')){
-            var param = $(this).data('order').replace('_00_', '_'+$(this).data('id')+'_')
-            var url = "{:url('Order/preSure')}?buy="+param
+        var order = $(this).data('order')
+        if(order){
+            var id = $(this).data('id')
+            var orderArr = order.split('_')
+            orderArr[2] = id
+            // var param = $(this).data('order').replace('_00_', '_'+$(this).data('id')+'_')
+            
+            var url = "{:url('Order/preSure')}?buy="+orderArr.join('_')
             window.location.replace(url);
         }
     })

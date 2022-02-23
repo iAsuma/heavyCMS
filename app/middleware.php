@@ -1,7 +1,7 @@
 <?php
 // 全局中间件定义文件
 return [
-    'InAppCheck'
+//    'InAppCheck'
     // 全局请求缓存
     // \think\middleware\CheckRequestCache::class,
     // 多语言加载

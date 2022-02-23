@@ -1,5 +1,5 @@
 <?php
 return [
-    'BackAuthLogin',
-    'LogAuto'
+//    'BackAuthLogin',
+//    'LogAuto'
 ];

@@ -7,7 +7,7 @@ use think\Facade;
 class Register extends Facade
 {
 	
-	protected static function getFacadeClass()
+	protected static function getFacadeClass(): string
     {
     	return 'register';
     }

@@ -5,9 +5,9 @@ class Index
 {
     public function index()
     {
-        if(!request()->isMobile()){
-            return redirect('/admin');
-        }
+//        if(!request()->isMobile()){
+//            return redirect('/admin');
+//        }
     	echo "<h3>nothing here</h3>";
     }
     

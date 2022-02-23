@@ -9,6 +9,7 @@ return [
     'app_host'         => env('app.host', ''),
     // 应用的命名空间
     'app_namespace'    => '',
+    'app_express'    =>    true,
     // 是否启用路由
     'with_route'       => true,
     // 默认应用
@@ -24,8 +25,8 @@ return [
     'deny_app_list'    => [],
 
     // 异常页面的模板文件
-    //'exception_tmpl'   => app()->getThinkPath() . 'tpl/think_exception.tpl',
-    'exception_tmpl'         => Env::get('root_path') . 'public/tpl/think_exception.tpl',
+    'exception_tmpl'   => app()->getThinkPath() . 'tpl/think_exception.tpl',
+//    'exception_tmpl'         => Env::get('root_path') . 'public/tpl/think_exception.tpl',
 
     // 错误显示信息,非调试模式有效
     'error_message'    => '网站出错啦! 意不意外，惊不惊喜(～o￣3￣)～',

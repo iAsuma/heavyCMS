@@ -1,0 +1,21 @@
+{extend name="public/base" /}
+{block name="title"}udzanPro - 基于layuiAdmin的通用后台管理系统{/block}
+{block name="css"}
+<style type="text/css">
+.asuma-admin-tips{padding-left: 15px;}
+.layui-icon{font-size: 25px;}
+.layui-text{font-size: 20px;display: inline-block;margin-left: 5px;}
+</style>
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+  <div class="asuma-admin-tips">
+    <i class="layui-icon" face>&{$icon};</i>
+    
+    <div class="layui-text">
+      {$error}
+    </div>
+    
+  </div>
+</div>
+{/block}

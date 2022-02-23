@@ -1,0 +1,172 @@
+{extend name="public/base" /}
+{block name="title"}购物车{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="content"}
+<div id="gouWu" v-cloak>
+    <div class="gouwu-guanli cb" @click="glstateChange">{{glstate ? "完成" : "管理"}} </div>
+    <van-checkbox-group v-model="result" ref="checkboxGroup">
+        <div v-for="(item,index) in cart_list" class="gouwu-item-box">
+            <van-checkbox :name="index" ref="checkboxes" checked-color="#FF5B05" disabled v-if="item.stocks < 1 && !glstate"></van-checkbox>
+            <van-checkbox :name="index" ref="checkboxes" checked-color="#FF5B05" v-else></van-checkbox>
+
+            <div class="gouwu-item fs0">
+                <img :src="`__FILEROOT__/thumb${item.goods_img}`" alt="">
+                <div class="gouwu-item-right">
+                    <div class="gouwu-item-right-top over2">{{item.goods_name}}
+                        <div class="gouwu-item-right-top-des">
+                            {{item.goods_sku}}
+                        </div>
+                    </div>
+                    <div class="gouwu-item-right-bot">
+                        <span class="clog fs10">￥<span class="fs14 fwb">{{item.price}}</span></span>
+                        <span v-if="item.stocks < 1" class="fs14 cl6e">
+                            库存不足
+                        </span>
+                        <span v-else>
+                            <van-stepper v-model="item.goods_num" :max="item.stocks" integer input-width="40px" button-size="20px" @change="bugNumChange(index)"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </van-checkbox-group>
+    <div class="gouwu-jiesuan-box">
+        <div class="gouwu-jiesuan-box-left">
+            <van-checkbox v-model="quanxuan" checked-color="#FF5B05" @change="togglequanxuan">全选</van-checkbox>
+            <div v-show = "!glstate"  class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            </div>
+        </div>
+        <div v-show = "!glstate" class="gouwu-jiesuan-btn" @click="sub()">结算({{result.length}})</div>
+        <div v-show = "glstate" class="gouwu-del-btn" @click="del()">删除({{result.length}})</div>
+    </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
+<script>
+// 在 #app 标签下渲染一个按钮组件
+
+
+new Vue({
+    el: '#gouWu',
+    data: {
+        result: [],
+        cart_list: eval('{$cart|json_encode}'.replace(/&quot;/g, "\"")),
+        quanxuan: false,
+        glstate: false,
+        hasSelected: []
+    },
+    methods: {
+        sub() {
+            if(this.hasSelected.length < 1){
+                vant.Toast.fail('请选择商品');
+                return false;
+            }
+
+            var param = ''
+            for(let i =0; i< this.hasSelected.length; i++){
+                param += this.hasSelected[i].id + '.' + this.hasSelected[i].goods_id + '.' + this.hasSelected[i].goods_sku_id + '.' +this.hasSelected[i].goods_num + '-'
+            }
+            
+            let time = Date.parse(new Date()).toString().slice(0, -3);
+            let buy =  2 + '_' + time + '_' + '00' + '_' + param.slice(0, -1)
+            
+            window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
+        },
+        del(){
+            var hasSelected = this.hasSelected
+            var hasLen = hasSelected.length
+            if(hasLen < 1){
+                return false;
+            }
+
+            vant.Dialog.confirm({
+              message: '即将删除'+hasLen+'件商品',
+              beforeClose: function(action, done){
+                if(action == 'confirm'){
+                    var cart_ids = ''
+                    for(let i =0; i< hasLen; i++){
+                        cart_ids += hasSelected[i].id + ','
+                    }
+                    cart_ids = cart_ids.slice(0, -1)
+
+                    axios.post('{:url(\'delGoodsInCart\')}', {
+                        cart_ids: cart_ids
+                    }).then(res => {
+                        done();
+                        if (res.data.code == 1) {
+                            vant.Toast.success('删除成功');
+                            setTimeout(function() {
+                                window.location.reload()
+                            }, 500);
+                        } else {
+                            vant.Toast.fail('删除失败');
+                        }
+                    });
+                }else{
+                    done();
+                }
+              }
+            }).catch(() => {
+              // on cancel
+            });
+        },
+        glstateChange(){
+            this.glstate = !this.glstate
+            this.$refs.checkboxGroup.toggleAll(false);
+            this.quanxuan = false
+        },
+        /*是否全选*/
+        togglequanxuan(value) {
+            if (value) {
+                this.$refs.checkboxGroup.toggleAll(true);
+                if(!this.glstate){
+                    for(var i =0; i < this.cart_list.length; i++){
+                        if(this.cart_list[i].stocks < 1){
+                            this.$refs.checkboxes[i].toggle(false)
+                        }
+                    }
+                }
+            } else {
+                this.$refs.checkboxGroup.toggleAll(false);
+            }
+        },
+        bugNumChange(index){
+            vant.Toast.loading({ forbidClick: true });
+            
+            axios.post('{:url(\'changeStock\')}', {
+                cart_id: this.cart_list[index].id,
+                goods_num: this.cart_list[index].goods_num
+            }).then(res => {
+                vant.Toast.clear();
+                if (res.data.code != 1) {
+                    vant.Toast.fail('修改失败');
+                    setTimeout(function() {
+                        window.location.reload()
+                    }, 500);
+                }
+            });
+        }
+    },
+    computed: {
+        total() {
+            let allprice = 0;
+            this.hasSelected = []
+            for (let i = 0; i < this.result.length; i++) {
+                allprice += this.cart_list[this.result[i]].price * this.cart_list[this.result[i]].goods_num
+                this.hasSelected[i] = this.cart_list[this.result[i]]
+            }
+            return allprice.toFixed(2);
+        }
+
+    }
+});
+</script>
+{/block}

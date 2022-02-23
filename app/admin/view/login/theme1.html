@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>登入-企业服务通用平台</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="__THIRD__/layuiadmin/layui/css/layui.css" media="all">
+	<!--图标-->
+	<link rel="stylesheet" type="text/css" href="__MODSTATIC__/admin/login/theme1/css/font-awesome.min.css">
+	<!--布局框架-->
+	<link rel="stylesheet" type="text/css" href="__MODSTATIC__/admin/login/theme1/css/util.css">
+	<!--主要样式-->
+	<link rel="stylesheet" type="text/css" href="__MODSTATIC__/admin/login/theme1/css/main.css">
+</head>
+<body>
+
+<div class="login">
+	<div class="container-login100">
+		<div class="wrap-login100">
+			<div class="login100-pic js-tilt" data-tilt>
+				<img src="__IMAGE__/02.png" alt="IMG">
+			</div>
+
+			<form class="login100-form validate-form layui-form">
+				<span class="login100-form-title">
+					企业服务通用平台
+				</span>
+
+				<div class="wrap-input100 validate-input">
+					<input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户名/手机号/邮箱" class="input100">
+					<span class="focus-input100"></span>
+					<span class="symbol-input100">
+						<i class="layui-icon layui-icon-username" style=""></i>
+					</span>
+				</div>
+
+				<div class="wrap-input100 validate-input">
+					<input type="password" name="password" id="LAY-user-login-password" lay-verify="required|pass" placeholder="密码" class="input100">
+					<span class="focus-input100"></span>
+					<span class="symbol-input100">
+						<i class="layui-icon layui-icon-password" style=""></i>
+					</span>
+				</div>
+
+				<div class="wrap-input100 validate-input">
+					<div class="input100 slider-box"><div id="slider"></div></div>
+				</div>
+				
+				<div class="container-login100-form-btn">
+					<button type="button" class="login100-form-btn" lay-submit lay-filter="admin-login-submit">登 入</button>
+				</div>
+
+				<div class="text-center p-t-12">
+					<!-- <a class="txt2" href="javascript:">
+						忘记密码？
+					</a> -->
+				</div>
+
+				<div class="text-center p-t-136">
+					<a class="txt2" href="#">
+							© 2019 微金提供技术支持
+					</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script src="__THIRD__/layuiadmin/layui/layui.js"></script>
+<script>
+  layui.config({
+    base: '__JS__/layuiext/' //静态资源所在路径
+  }).use(['form', 'sliderVerify'], function(){
+    var form = layui.form
+    ,sliderVerify = layui.sliderVerify
+    ,$ = layui.jquery   
+    ,slider = sliderVerify.render({
+      elem: '#slider',
+      isAutoVerify:true
+    })
+
+    form.verify({
+      pass:[
+        /^[\S]{6,12}$/
+        ,'密码必须6到12位，且不能出现空格'
+      ]
+    })
+
+    form.on('submit(admin-login-submit)', function(data){
+      if(slider.isOk()){
+          $.post("{:url('checkLogin')}", data.field, function(res){
+            if(res.code == 1){
+              window.location.replace('/admin')
+            }else if(res.code == -2 ||res.code == -3){
+            	slider.reset()
+            	layer.msg('用户名或密码错误', {icon: 5});	
+            }else{
+            	slider.reset()
+              	layer.msg(res.result, {icon: 5});
+            }
+          }, 'json');
+        }else{
+          layer.msg("请先通过滑块验证", {icon: 5});
+        }
+      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
+          
+  });
+
+</script>
+</body>
+</html>

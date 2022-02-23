@@ -6,5 +6,5 @@
 
 作者主页
 ```
-https://echo.udzan.com
+https://iasuma.github.io/
 ```

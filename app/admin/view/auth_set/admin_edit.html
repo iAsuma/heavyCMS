@@ -1,0 +1,77 @@
+{extend name="public/original" /}
+{block name="title"}添加管理员{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__JS__/layuiext/formSelects/formSelects-v4.css">
+<link rel="stylesheet" type="text/css" href="__CSS__/formSelects.css">
+<style type="text/css">
+  .xm-select-tips{display: none;}
+</style>
+{/block}
+{block name="content"}
+<div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">登录名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="loginname" lay-verType="tips" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" value="{$admin.login_name ?? ''}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">姓名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="truename" lay-verType="tips" placeholder="请输入姓名" autocomplete="off" class="layui-input" value="{$admin.name ?? ''}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">手机</label>
+      <div class="layui-input-inline">
+        <input type="text" name="phone" lay-verType="tips" lay-verify="adminPhone" placeholder="请输入号码" autocomplete="off" class="layui-input" value="{$admin.phone ?? ''}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-inline">
+        <input type="text" name="email" lay-verType="tips" lay-verify="adminEmail" placeholder="请输入邮箱" autocomplete="off" class="layui-input" value="{$admin.email ?? ''}">
+      </div>
+    </div>
+    {if ($admin.id ?? '') != 1}
+    <div class="layui-form-item">
+      {if $admin.id ?? ''}
+      <label class="layui-form-label">重置密码</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" lay-filter="switch" name="isReSetPwd" lay-skin="switch" lay-text="是|否" value="1">
+      </div>
+      {else /}
+      <label class="layui-form-label">密码</label>
+      <div class="layui-input-inline">
+        <input type="text" name="password" placeholder="默认：{:config('this.admin_init_pwd')}" class="layui-input" disabled="">
+      </div>
+      {/if}
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">角色</label>
+      <div class="layui-input-block">
+        <select name="roles" lay-verType="tips" lay-verify="required" xm-select="roleSel" xm-select-skin="bigyellow" xm-select-max="4" {if request()->uid != 1}disabled{/if}>
+          <option value="">最多选四个</option>
+          {volist name="roles" id="vo"}
+          <option value="{$vo.id}" {if $vo.id == 1}disabled{/if} {if in_array($vo.id, $hasrole)}selected{/if} >{$vo.title}</option>
+          {/volist}
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" lay-filter="switch" name="status" lay-skin="switch" lay-text="正常|待审核" value="1" {if isset($admin.status) && $admin.status==1 }checked=""{/if}>
+      </div>
+    </div>
+    {/if}
+    <div class="layui-form-item layui-hide">
+      <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+      <input type="hidden" name="admin_id" value="{$admin.id ?? ''}">
+      <input type="button" lay-submit lay-filter="asuma-admin-submit" id="asuma-admin-submit" value="确认">
+    </div>
+  </div>
+{/block}
+{block name="footjs"}
+<script type="text/javascript" src="__STATIC__/mod/admin/authset/admin_add.js" id="adminadd" data-path="__JS__"></script>
+{/block}

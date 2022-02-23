@@ -1,0 +1,224 @@
+{extend name="public/base" /}
+{block name="title"}订单详情{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MOD__/admin/order/order.css">
+{/block}
+{block name="content"}
+<div class="layui-card detail-container" id="pr" >
+  <div class="layui-card-body">
+    <div class="order-detail-box">
+        <div class="order-detail">
+            <div class="status-dis">
+                
+                <div class="dsflex">
+                    {if $order.order_status eq 3 || $order.order_status eq 32}
+                      <i class="layui-icon layui-icon-ok-circle order-status-icon-ok"></i>
+                      {else/}
+                      <i class="layui-icon layui-icon-log order-status-icon-other"></i>
+                    {/if}
+                    <span class="top_span">当前订单状态：
+                    {switch order.order_status}
+                        {case 0}未付款{/case}
+                        {case 1}待发货{/case}
+                        {case 11}用户申请退款{/case}
+                        {case 2}待收货{/case}
+                        {case 3}已完成{/case}
+                        {case 31}申请退货{/case}
+                        {case 32}已完成{/case}
+                        {case 4}已取消{/case} 
+                        {case 5}退款中{/case}
+                        {case 6}已退款{/case}
+                        {default /}异常订单
+                    {/switch}
+                    </span>
+                </div>
+                {if $order.order_status eq 3}
+                <a class="layui-btn layui-btn-primary layui-btn-radius not_assess">订单未评价</a>
+                {/if}
+                {if $order.order_status eq 32}
+                <a class="layui-btn layui-btn-primary layui-btn-radius assess">订单已评价</a>
+                {/if}
+                <a class="layui-btn layui-btn-primary layui-btn-radius track" >订单追踪</a>
+                {if $order.order_status eq 1}
+                <a class="layui-btn layui-btn-primary layui-btn-radius print" onclick=preview(1)>打印</a>
+                {/if}
+            </div>
+            <!--startprint1-->
+            <div class="table-lable">
+                基本信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>订单编号</th>
+                    <th>用户账号</th>
+                    <th>支付方式</th>
+                    <th>订单时间</th>
+                    {if $order.order_status != 0 && $order.order_status != 4}
+                    <th>支付时间</th>
+                    {/if}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$order.order_no}</td>
+                    <td>{$order.nickname}</td>
+                    <td>
+                        {switch order.pay_type}
+                            {case 1}微信支付{/case}
+                            {case 2}支付宝{/case}
+                            {default /}其他
+                        {/switch}
+                   
+                    </td>
+                    <td>{$order.create_time|date='Y-m-d H:i:s'}</td>
+                    {if $order.order_status != 0 && $order.order_status != 4}
+                    <td>{$order.pay_time|date='Y-m-d H:i:s'}</td>
+                    {/if}
+                </tr>
+                </tbody>
+            </table>
+            <div class="table-lable">
+                收货人信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>收货人</th>
+                    <th>手机号码</th>
+                    <th>收货地址</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$order.receiver_name}</td>
+                    <td>{$order.receiver_phone}</td>
+                    <td>{$order.receiver_address}</td>
+                </tr>
+                </tbody>
+            </table>
+            {if in_array($order['order_status'], [2,3,32])}
+            <div class="table-lable">
+                物流信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>物流公司</th>
+                    <th>运单号码</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$order.express_company}</td>
+                    <td>{$order.express_code}</td>
+                </tr>
+                </tbody>
+            </table>
+            {/if}
+            <div class="table-lable">
+                商品信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>单价</th>
+                    <th>规格</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {volist name="detail" id="vo"}
+                        <tr >
+                            <td>{$vo.goods_name}</td>
+                            <td>{$vo.unit_price}</td>
+                            <td>{$vo.goods_sku}</td>
+                            <td>{$vo.goods_num}</td>
+                            <td>{$vo.goods_num * $vo.unit_price|round2}</td>
+                        </tr>
+                    {/volist}
+                </tbody>
+            </table>
+            <div style="text-align: right">合计：<span id="total" style="color: red">{$order.price-$order.freight|round2}</span></div>
+            <div class="table-lable">
+                费用信息
+            </div>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>商品合计</th>
+                    <th>运费</th>
+                    <th>订单价格</th>
+                    <th>实际支付金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <td>{$order.price-$order.freight|round2}</td>
+                    <td>{$order.freight|round2}</td>
+                    <td>{$order.price|round2}</td>
+                    <td>{$order.pay_money|round2}</td>
+                </tr>
+                </tbody>
+            </table>
+            <!--endprint1-->
+        </div>
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+    function preview(oper){
+        if (oper < 10){
+            bdhtml=window.document.body.innerHTML;//获取当前页的html代码
+            sprnstr="<!--startprint"+oper+"-->";//设置打印开始区域
+            eprnstr="<!--endprint"+oper+"-->";//设置打印结束区域
+            prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+18); //从开始代码向后取html
+            prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));//从结束代码向前取html
+            window.document.body.innerHTML=prnhtml;
+            window.print();
+            window.document.body.innerHTML=bdhtml;
+        } else {
+            window.print();
+        }
+    }
+</script>
+<script>
+  layui.use(['form'], function(){
+    var form = layui.form;
+    var id = "{$order.id}";
+    var order_no = "{$order.order_no}"
+    $('.assess').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '订单评价'
+          ,content: "{:url('reviews')}?id="+id+"&order_no="+order_no
+          ,area: ['500px', '450px']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#submit");
+            if(submit.attr('disabled') == 'disabled'){
+                layer.close(index)
+            }else{
+                submit.click();
+            }
+          }
+        });
+    });
+
+    $('.track').on('click', function () {
+         layer.open({
+          type: 2
+          ,title: '订单追踪'
+          ,content: "{:url('track')}?id="+id
+          ,maxmin: true
+          ,area: ['35%', '70%']
+        });
+    });
+    
+  })
+</script>
+{/block}

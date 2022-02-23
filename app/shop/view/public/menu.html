@@ -1,0 +1,65 @@
+<div id="nav">
+    {eq name="$Request.controller.'/'.$Request.action" value="Index/index"}
+    <div class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/shangchengb.png" alt />
+            <div class="fs12 clbb ">商城</div>
+        </div>
+    </div>
+    {else /}
+    <a href="/shop" class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/shangcheng.png" alt />
+            <div class="fs12">商城</div>
+        </div>
+    </a>
+    {/eq}
+
+    {eq name="$Request.controller.'/'.$Request.action" value="Index/classify"}
+    <div class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/fenleib.png" alt />
+            <div class="fs12 clbb">分类</div>
+        </div>
+    </div>
+    {else /}
+    <a href="{:url('Index/classify')}" class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/fenlei.png" alt />
+            <div class="fs12">分类</div>
+        </div>
+    </a>
+    {/eq}
+
+    {eq name="$Request.controller.'/'.$Request.action" value="Cart/index"}
+    <div class="bot-a">
+       <div class="bot">
+            <img src="__MOD__/shop/images/gouwucheb.png" alt />
+            <div class="fs12 clbb">购物车</div>
+        </div> 
+    </div>
+    {else /}
+    <a href="{:url('Cart/index')}" class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/gouwuche.png" alt />
+            <div class="fs12">购物车</div>
+        </div>
+    </a>
+    {/eq}
+    
+    {eq name="$Request.controller.'/'.$Request.action" value="User/index"}
+    <div class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/wodeb.png" alt />
+            <div class="fs12 clbb">我的</div>
+        </div>
+    </div>
+    {else /}
+    <a href="{:url('User/index')}" class="bot-a">
+        <div class="bot">
+            <img src="__MOD__/shop/images/wode.png" alt />
+            <div class="fs12">我的</div>
+        </div>
+    </a>
+    {/eq}
+</div>

@@ -1,0 +1,141 @@
+{extend name="public/base" /}
+{block name="title"}添加文章{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MODSTATIC__/admin/contents/some.css">
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+
+        <div class="layui-card-header"><a href="javascript:history.back(-1)" class="layui-btn asuma-btn-header layui-btn-primary layui-btn-sm"><i class="layui-icon layui-icon-left"></i>返回</a>添加文章</div>
+        <div class="layui-card-body show-in-phone" pad15>
+          <div class="phoneBox">
+              <div class="top-img-box">
+                <img src="__MODSTATIC__/admin/contents/close.png">
+                <p>文章内容</p>
+                <img src="__MODSTATIC__/admin/contents/more.png">
+              </div>
+              <div class="phone-scroll-box">
+                <p class="title mt10 preTitle">标题</p>
+                <!-- <p class="author mt10">
+                  <span >作者作者作者作者作者作者作者</span>
+                  <span>2020-05-29</span>
+                </p> -->
+                <p class="time mt10">{:date('Y-m-d')}</p>
+                <div class="content-box mt10">
+                  内容
+                </div>
+              </div>
+          </div>
+
+          <form class="layui-form phone-input-box" lay-filter="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" lay-verify="required" value="" placeholder="请输入标题" autocomplete="off" class="layui-input ">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">文章内容</label>
+              <div class="layui-input-block">
+                {include file="public/ueditor" name="content" content=''}
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">所属栏目</label>
+              <div class="layui-input-block" style="z-index: 1001;">
+                <select name="column"  lay-verify="required" >
+                  <option value="">请选择</option>
+                  {volist name="column" id="vo"}
+                    <option value="{$vo.id}" >{$vo.name}</option>
+                  {/volist}
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">发布人/作者</label>
+                <div class="layui-input-block">
+                    <input type="text" name="author" lay-verify="required" value="{$Request.param.uname}" placeholder="请输入发布人" autocomplete="off" class="layui-input ">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">摘要</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sub_title" lay-verify="required" value="" placeholder="请输入发布人" autocomplete="off" class="layui-input ">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox"  name="status" checked="" lay-skin="switch" lay-text="发布|隐藏" value="1">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+                <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:url('addArticles')}">添加</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footjs"}
+<script>
+  layui.use(['form'], function(){
+    var form = layui.form;
+
+    UE.getEditor('editorContainer').addListener('blur', function(editor){
+      if($('input[name=sub_title]').val() == ''){
+        var content = ue.getContentTxt()
+        $('input[name=sub_title]').val(content.slice(0,197) + '...')
+      }
+    });
+
+    UE.getEditor('editorContainer').addListener('contentChange', function(editor){
+      var content = ue.getContent()
+        $('.content-box').html(content)
+        if(content.indexOf('loadingclass') != -1){
+          setTimeout(function(){
+            $('.content-box').html(ue.getContent())
+          }, 1000)
+        }
+    });
+
+    
+
+    $('input[name=title]').on('input', function(){
+      var _value = $(this).val()
+      $('.preTitle').html(_value)
+    })
+
+    form.on('submit(setmyinfo)', function(obj){
+      var url = $(obj.elem).data('url')
+      var field = obj.field
+      $.post(url, field, function(res){
+        if(res.code == 1){
+          layer.msg('添加成功', {icon: 1}, function(){
+            window.history.back(-1);
+          })
+        }else{
+          layer.msg(res.result, {icon: 5});
+        }
+      }, 'json')
+
+      return false;
+    })
+
+  })
+</script>
+{/block}

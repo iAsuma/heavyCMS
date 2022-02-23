@@ -1,0 +1,31 @@
+<div class="box">
+    <div class="box1">
+        <div class="box1-top">
+            <div>图片库</div>
+            <div class="layui-form-mid layui-word-aux">点击图片选择</div>
+        </div>
+        <div class="box1-content" id="pics-content">
+        </div>
+        <div class="box1-bot">
+            <button type="button" class="layui-btn layui-btn-asuma" id="uploadMain">本地上传</button>
+        </div>
+    </div>
+    <div class="box2">
+        <div class="box1-top">
+            <div>已选</div>
+            <div class="layui-form-mid layui-word-aux">点击图片取消</div>
+        </div>
+        <div class="box1-content" id="done-dist" data-max="{$max|default=5}">
+            {foreach $imgArr as $v}
+            <div class="box1-image-item right_item">
+                <div class="box1-image-item-content">
+                    <img src="__FILEROOT__/thumb{$v}" alt="">
+                </div>
+            </div>
+            {/foreach}
+        </div>
+        <div class="box1-bot">
+            <button type="button" class="layui-btn layui-btn-asuma" id="sureSelect" data-idx="{$idx}">确认</button>
+        </div>
+    </div>
+</div>

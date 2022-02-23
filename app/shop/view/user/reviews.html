@@ -1,0 +1,147 @@
+{extend name="public/base" /}
+{block name="title"}评价{/block}
+{block name="css"}
+<link rel="stylesheet" href="__THIRD__/layuiadmin/layui/css/layui.css" media="all">
+<link rel="stylesheet" type="text/css" href="__JS__/mylayer/mylayer.css">
+{/block}
+{block name="content"}
+<form class="layui-form">
+<div class="geren-pingjia-sec">
+    <div class="dffccb">
+        <div class="fs14 cl33 tc mr10" id="starText">快来评价吧</div>
+        <div class="fs0 dsflex" id="rate"></div>
+    </div>
+
+    <div class="fs0">
+        <textarea name="content" placeholder="亲，对我们的商品与服务等还满意吗?" rows="14" class="fs14 cl66 geren-pingjia-sec-texarea" lay-filter="required"></textarea>
+    </div>
+</div>
+<div class="img-content" id="imgBigBox">
+	
+</div>
+<div class="geren-pingjia-three">
+	<div class="fs0 geren-pingjia-three-imgbox" id="uploadBtn" data-num="{$orderNo}">
+        <img src="__MOD__/shop/images/upload.png" alt class="upload-img" />
+    </div>
+    <div class="fs0 tl geren-pingjia-three-right ml10">
+        <div class="fs15 cl33 ls10">上传图片</div>
+        <div class="fs12 ls10 clb4 mt10">内容丰富的评价可以成为优质评价哦</div>
+    </div>
+</div>
+<div class="geren-pingjia-bottom fs0 tl">
+    <div><input type="checkbox" lay-skin="primary" name="is_anonymous" title="匿名提交" value="1"></div>
+    <input type="hidden" name="imgs" value="">
+    <input type="hidden" name="order_id" value="{$order.id}">
+    <input type="hidden" name="stars" value="0">
+    <button class="geren-pingjia-bottom-btn" lay-submit lay-filter="done" id="done">提交</button>
+</div>
+</form>
+{/block}
+{block name="footjs"}
+<script src="__THIRD__/layuiadmin/layui/layui.js"></script>
+<script type="text/javascript">
+function imgHtml(src){
+	var img =   '<div class="img-content-div">'
+				 	+'<img src="'+src+'" alt class="upload-img" />'
+					+'<img src="__MOD__/shop/images/del.png" alt class="del" />'
+			    +'</div>';
+    return img;
+}
+</script>
+<script type="text/javascript">
+layui.use(['rate', 'form', 'upload'], function() {
+    var rate = layui.rate
+    ,form = layui.form
+    ,upload = layui.upload;
+
+    var ins2 = rate.render({
+        elem: '#rate' //绑定元素
+        ,text: true //开启文本
+        ,choose: function(value){
+		    var arrs = {
+		      '1': '极差'
+		      ,'2': '不满意'
+		      ,'3': '一般'
+		      ,'4': '好'
+		      ,'5': '非常满意'
+		    };
+		    $('#starText').html(value + '分，'+ arrs[value]);
+		    $('input[name=stars]').val(value)
+		}
+    });
+
+    var uploadInst = upload.render({
+	    elem: '#uploadBtn' 
+	    ,url: '{:url(\'uploadReviewsImg\')}'
+	    ,multiple: true
+	    ,number: 3
+	    ,auto: false
+	    ,field: 'image'
+	    ,choose: function(obj){
+	    	var files = this.files = obj.pushFile();
+	    	this.imgUrl = []
+		    obj.preview(function(index, file, result){
+		    	if(Object.keys(files).length > 3){
+		    		delete files[index];
+		    		layer.msg('最多只能上传三张图片')
+		    		return false;
+		    	}else{
+		    		$('#imgBigBox').append(imgHtml(result))	
+		    	}
+		    });
+	    }
+	    ,done: function(res){
+		    if(res.code == 1){
+		    	this.imgUrl.push(res.result[0])
+		    }
+		}
+		,allDone: function(obj){
+			var imgs = this.imgUrl.join(',')
+			$('input[name=imgs]').val(imgs)
+			this.files = null
+			$('#done').click();
+		}
+	});
+
+    $('.del').on('click', function(){
+		$(this).parent('div').remove()
+	})
+
+    var canClick = true;
+    form.on('submit(done)', function(data){
+    	var fields = data.field
+		if(fields.stars < 1){
+			layer.msg('请评分')
+			return false;
+		}
+
+		if(fields.content == '' || fields.content == null){
+			layer.msg('请输入评价内容')
+			return false;
+		}
+
+		if(canClick == false){
+			layer.msg('请勿重复点击')
+			return false;
+		}
+
+		var layIdx = layer.load()
+		if(typeof uploadInst.config.files == 'undefined' || uploadInst.config.files == null){
+			$.post('{:url(\'makeReviews\')}', fields, function(res){
+				if(res.code == 1){
+					layer.close(layIdx)
+					layer.msg('评价成功', {icon: 1}, function(){
+						window.history.go(-1)
+					});
+				}
+				canClick = true
+			})	
+		}else{
+			uploadInst.upload();
+		}
+		
+	  return false; 
+	});
+});
+</script>
+{/block}

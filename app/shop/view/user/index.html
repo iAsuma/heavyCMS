@@ -1,0 +1,89 @@
+{extend name="public/base" /}
+{block name="title"}我的{/block}
+{block name="content"}
+<div id="woDe" class="fs0">
+    <div class="wode-top">
+        <div class="wode-top-img">
+            <img src="{:session('wapUser.headimgurl')}" alt="">
+            <div class="top-img-r-msg">
+                <p class="fs20 cw ml15">{:session('wapUser.name')}</p>
+                <!-- 显示ID -->
+                <!-- <div class="type1"><span>ID:</span><span>123456789</span></div> -->
+                <!-- 显示标签 -->
+                <div class="type2"><span>标签1</span><span>标签2</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="wode-mid-box">
+        <div class="wode-mid-dingdan">
+            <div class="wode-mid-dingdan-top">
+                <div class="fs15 cl33">我的订单</div>
+                <a href="{:url('order')}"><div class="fs13 cl6e">查看全部订单</div></a>
+            </div>
+
+            <div class="wode-mid-dingdan-mid">
+                <a href="{:url('order')}?o=0">
+                <div class="wode-mid-dingdan-mid-item fs10">
+                    <div class="wode-mid-dingdan-mid-item-imgbox">
+                        <img src="__MOD__/shop/images/daifukuan.png" alt="">
+                        {if $report.nopay}
+                        <span class="wode-msg">{$report.nopay}</span>
+                        {/if}
+                    </div>
+                    <div class="fs13 cl6e">待付款</div>
+                </div>
+                </a>
+
+                <a href="{:url('order')}?o=1">
+                <div class="wode-mid-dingdan-mid-item fs10">
+                    <div class="wode-mid-dingdan-mid-item-imgbox">
+                        <img src="__MOD__/shop/images/daifahuo.png" alt="">
+                        {if $report.nosend}
+                        <span class="wode-msg">{$report.nosend}</span>
+                        {/if}
+                    </div>
+                    <div class="fs13 cl6e">待发货</div>
+                </div>
+                </a>
+
+                <a href="{:url('order')}?o=2">
+                <div class="wode-mid-dingdan-mid-item fs10">
+                    <div class="">
+                        <img src="__MOD__/shop/images/daishouhuo.png" alt="">
+                        {if $report.noget}
+                        <span class="wode-msg">{$report.noget}</span>
+                        {/if}
+                    </div>
+                    <div class="fs13 cl6e">待收货</div>
+                </div>
+                </a>
+                
+            </div>
+        </div>
+        <div class="wode-mid-mid-box">
+            <a href="{:url('address')}">
+            <div class="wode-mid-mid-box-item">
+                <div class="dsflex">
+                    <img src="__MOD__/shop/images/address.png" alt="">
+                    <div class="fs15 cl33 ml10">收货地址</div>
+                </div>
+
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
+            </a>
+            <a href="{:url('collect')}">
+            <div class="wode-mid-mid-box-item bbn">
+                <div class="dsflex">
+                    <img src="__MOD__/shop/images/shoucang.png" alt="">
+                    <div class="fs15 cl33 ml10">我的收藏</div>
+                </div>
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
+            </a>
+        </div>
+    </div>
+
+
+</div>
+{include file="public/menu" /}
+{/block}

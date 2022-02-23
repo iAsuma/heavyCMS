@@ -1,0 +1,272 @@
+{extend name="public/base" /}
+{block name="title"}结算{/block}
+{block name="css"}
+<style type="text/css">
+body{background: #f8f8f8 !important;}
+</style>
+<link rel="stylesheet" type="text/css" href="__JS__/mylayer/mylayer.css">
+{/block}
+{block name="content"}
+<div id="dfkDetail">
+    <div class="geren-daifukuan-detail fs0">
+        <div class="geren-daifukuan-detail-top">
+            <div class="fs0 geren-daifukuan-detail-top-left">
+                <span class="fs16 cw fwb">
+                	{switch $order[0]['order_status']}
+                	{case 0}待付款{/case}
+                	{case 1}已付款{/case}
+                    {case 11}正在申请退款{/case}
+                	{case 2}卖家已发货{/case}
+                	{case 3}交易成功{/case}
+                    {case 31}正在申请退货{/case}
+                    {case 32}交易成功{/case}
+                	{case 4}订单已取消{/case}
+                	{case 5}退款中{/case}
+                	{case 6}已退款{/case}
+                	{default /}异常订单
+                	{/switch}
+                </span>
+            </div>
+            <div class="dfbtc">
+            	{switch $order[0]['order_status']}
+            	{case 0}
+            	<!-- <span class="fs10 cw">剩余时间：</span>
+                <div class="cw fs10">
+                    <span id="xiaoshi"></span>时
+                    <span id="fen"></span>分
+                </div> -->
+            	{/case}
+            	{case 1}<span class="fs10 cw">等待卖家发货</span>{/case}
+            	{case 2}<span class="fs10 cw">等待收货</span>{/case}
+            	{case 3}<span class="fs10 cw">快去给商品评价吧</span>{/case}
+            	{case 5}<span class="fs10 cw">等待卖家退款</span>{/case}
+            	{case 6}<span class="fs10 cw">款项已退</span>{/case}
+            	{/switch}
+            </div>
+        </div>
+        <div class="geren-daifukuan-detail-sec fs0">
+            <div>
+                <img src="__MOD__/shop/images/marker-b.png" alt class="geren-daifukuan-detail-sec-img" />
+            </div>
+            <div class="geren-daifukuan-detail-sec-word">
+                <div class="fs14 cl33">
+                    <span> 收货人：<span>{$order[0]['receiver_name']}</span></span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                    <span>电话：<span>{$order[0]['receiver_phone']}</span></span>
+                </div>
+                <div class="fs14 cl33 mt10">地址：
+                    <span class="over">{$order[0]['receiver_address']}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="geren-daifukuan-detail-thr">
+            <div class="geren-daifukuan-box">
+            	{volist name="$order[1]" id="vo"}
+                <div class="geren-daifukuan-content tl fs0">
+                    <div>
+                        <img src="__FILEROOT__/thumb{$vo.goods_img}" alt='' />
+                    </div>
+                    <div class="geren-daifukuan-content-word">
+                        <div class="fs14 cl33">{$vo.goods_name}</div>
+                        <div class="fs12 cl66 mt10 over">{$vo.goods_sku}</div>
+                    </div>
+                    <div class="geren-daifukuan-content-pri">
+                        <div>
+                            <span class="fs10 cl33">¥</span>
+                            <span class="fs14 cl33">{$vo.unit_price}</span>
+                        </div>
+                        <div>
+                            <span class="fs12 cl66">x</span>
+                            <span class="fs12 cl66">{$vo.goods_num}</span>
+                        </div>
+                        {if in_array($order[0]['order_status'], [3,32])}
+                        <!-- <div class="geren-shenqingtuikuan-btn returnGoods">退货</div> -->
+                        {/if}
+                    </div>
+                </div>
+                {/volist}
+                <div class="fs12 cl33 dfbtc mt40">
+                    <span>运费</span>
+                    <span>¥<span>{$order[0]['freight']}</span></span>
+                </div>
+                <div class="fs12 cl33 dfbtc mt10">
+                    <span class="fs14">合计</span>
+                    <span class="fs12">¥<span class="fs14">{$order[0]['price']}</span></span>
+                </div>
+                {if $order[0]['order_status'] !=0 && $order[0]['order_status'] != 4}
+                <div class="fs12 cl33 dfbtc mt10">
+                    <span class="fs14">实际支付</span>
+                    <span class="fs12 cloy">¥<span class="fs14">{$order[0]['pay_money']}</span></span>
+                </div>
+                {/if}
+            </div>
+        </div>
+        <div class="daifukuan-dingdanbiaohao" id="orderBox" data-num="{$order[0]['order_no']}">
+            <div class="fs14 cl33">订单编号</div>
+            <div class="fs14 cl33">{$order[0]['order_no']}</div>
+        </div>
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">创建时间</div>
+            <div class="fs14 cl33">{$order[0]['create_time']|date='Y-m-d H:i:s'}</div>
+        </div>
+        {if in_array($order[0]['order_status'], [1,2,3,5,6,11,31,32])}
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">支付时间</div>
+            <div class="fs14 cl33">{$order[0]['pay_time']|date='Y-m-d H:i:s'}</div>
+        </div>
+        {/if}
+        {if in_array($order[0]['order_status'], [2,3,5,6,31,32])}
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">发货时间</div>
+            <div class="fs14 cl33">{$order[0]['delivery_time']|date='Y-m-d H:i:s'}</div>
+        </div>
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">物流公司</div>
+            <div class="fs14 cl33">{$order[0]['express_company']}</div>
+        </div>
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">物流单号</div>
+            <div class="fs14 cl33">{$order[0]['express_code']}</div>
+        </div>
+        {/if}
+        {if in_array($order[0]['order_status'], [3,31,32])}
+        <div class="daifukuan-dingdanbiaohao mt0">
+            <div class="fs14 cl33">成交时间</div>
+            <div class="fs14 cl33">{$order[0]['complete_time']|date='Y-m-d H:i:s'}</div>
+        </div>
+        {/if}
+
+        <!-- 按钮 -->
+        <div class="d-daifukuan-btn-box fs0 pr10" data-status="{$order[0]['order_status']}">
+        	{if $order[0]['order_status'] == 0}<span id="cancelOrder">取消订单</span>{/if}
+        	{if $order[0]['order_status'] == 0}<span id="beginPay" data-from="{$Request.get.from}">付款</span>{/if}
+            {if $order[0]['order_status'] == 2}<span id="makeSure">确认收货</span>{/if}
+        	{if $order[0]['order_status'] == 3}<span id="reviews">评价</span>{/if}
+            {if $order[0]['order_status'] == 3}<span id="returnGoods">退货</span>{/if}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script src="__THIRD__/layer/mobile/layer.js" type="text/javascript"></script>
+<script type="text/javascript" src="__JS__/mylayer/mylayer.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	var payJsConfig = '{$payJsConfig ?? ""}'
+    if($('#beginPay').parent('div').data('status') == '0' && payJsConfig){
+        var wxConfig = JSON.parse(payJsConfig.replace(/&quot;/g, "\""));
+        wx.config(wxConfig)
+    }
+</script>
+<script type="text/javascript">
+var loadingIdx = null;
+var longajax = null;
+
+function longPolling(idx) {
+    $.ajax({
+        url: '{:url(\'getOrderStatus\')}',
+        type: 'post',
+        data: {order: $('#orderBox').data('num')},
+        dataType: "json",
+        timeout: 3000,
+        error: function () {
+            longajax = setTimeout(function() {
+                longPolling(idx);
+            }, 2000)
+        },
+        success: function (res) {
+            if(res.code == 1){
+                console.log('支付成功')
+                layer.close(idx);
+                layer_msg_call('支付成功', function(){
+                    window.location.reload();
+                }, {time: 1});
+            }else if(res.code == 2){
+            	console.log('正在支付')
+            	longajax = setTimeout(function() {
+                    longPolling(idx);
+                }, 2000)
+            }else{
+            	console.log('支付失败')
+            	layer.close(idx);
+            }
+        }
+    });
+}
+
+function openPay(){
+	$.post('{:url(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
+		if(res.code == 1){
+			wx.chooseWXPay({
+			  timestamp: res.result.timestamp,
+			  nonceStr: res.result.nonceStr,
+			  package: res.result.package,
+			  signType: res.result.signType,
+			  paySign: res.result.paySign,
+			  success: function (res) {
+			  	if(res.errMsg == 'chooseWXPay:ok') {
+                 	loadingIdx = layer_loading('正在查询支付结果')
+                 	longPolling(loadingIdx)
+                }
+			  }
+			});
+		}else{
+			layer_msg(res.result)
+		}
+	}, 'json')
+}
+
+function changeOrderStatus(status, callback) {
+    var idx = layer_loading();
+    $.post('{:url(\'User/changeOrderStatus\')}', {order_no: $('#orderBox').data('num'), status: status}, function(res){
+        if(res.code == 1){
+            if(typeof callback == 'function'){
+                callback()
+                layer.close(idx);
+            }else{
+                window.location.reload();
+            }
+        }else{
+            layer_msg('系统错误')
+            layer.close(idx);
+        }
+    }, 'json')
+}
+</script>
+<script type="text/javascript">
+if($('#beginPay').data('from')){
+	wx.ready(function(){
+	  	openPay();
+	});
+}	
+	
+$(function() {
+    $('#beginPay').on('click', function(){
+    	openPay();
+    })
+
+    $('#cancelOrder').on('click', function(){
+        layer_confirm('取消订单', function(){
+            changeOrderStatus(4)
+        }, ['是', '否'])
+    })
+
+    $('#makeSure').on('click', function(){
+        layer_confirm('确认收货', function(){
+            changeOrderStatus(3)
+        })
+    })
+
+    $('#reviews').on('click', function(){
+        window.location.href = '{:url(\'User/reviews\')}?no='+$('#orderBox').data('num');
+    })
+
+    $('#returnGoods').on('click', function(){
+        layer_confirm('若要退货请联系客服', function(idx){
+            layer.close(idx)
+        }, ['确定'])
+    })
+    
+})
+</script>
+{/block}

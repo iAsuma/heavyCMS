@@ -1,0 +1,361 @@
+{extend name="public/base" /}
+{block name="title"}商品详情{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="css"}
+<style type="text/css">
+body{background: #f8f8f8 !important;}
+</style>
+{/block}
+{block name="content"}
+<div id="homeDetail" v-cloak>
+    <div class="div-top">
+        <div class="home-detail-swiper-box" >
+            <van-swipe :autoplay="3000" indicator-color="white" @change="onChange">
+                {foreach $info.main_img as $v}
+                <van-swipe-item>
+                    <img class="swiperimg" src="__FILEROOT__{$v}" />
+                </van-swipe-item>
+                {/foreach}
+                <div class="custom-indicator" slot="indicator">
+                    {{ current + 1 }}/{$info['imgcount']|default=0}
+                </div>
+            </van-swipe>
+        </div>
+        
+        <div class="home-detail-mid fs0">
+            <div><span class="fs14 clog">￥<span class="fs20 fwb">{$info.price|round2}</span> </span> <del class="fs12 clad ml10">￥<del>{$info.market_price|round2}</del></del>
+            </div>
+            <div class="fs12 cl6e over mt10">{$info.introduction}</div>
+            <div class="fs14 cl33 over2 mt10 home-detail-goods-detail">{$info.goods_name}</div>
+            <div class="home-detail-goods-send fs12 cl6e">
+                <span>快递：<span>{eq name="$info.post_type" value="2"}{$info.freight|sprintf='%01.2f', ###}元{else/}免运费{/eq}</span>
+                </span>
+                <span>月销：<span>{$info.sold|default=0}</span>笔</span>
+                <span>配送：<span>{eq name="$info.post_type" value="3"}自提{else/}商家配送{/eq}</span></span>
+            </div>
+        </div>
+        <div class="home-detail-chose fs12 choseshuxing" @click="openBuy(1)">
+            <div class="home-detail-chose-left">选择</div>
+            <div class="home-detail-chose-mid">
+                <input type="text" placeholder="请选择" readonly v-model="done_attr">
+            </div>
+            <div class="home-detail-chose-right">
+                <img src="__MOD__/shop/images/right.png" alt="">
+            </div>
+        </div>
+        <!-- 商品详情 -->
+
+        <div class="mt10 fs14">
+                <van-tabs v-model="active" line-width="36" color="#4588F3" title-active-color="#4588F3">
+                    <van-tab title="商品详情"><div class="box-content">{$info.description|raw}</div></van-tab>
+                    <van-tab title="商品评价">
+                        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+                            <div class="home-detail-box" v-for="item in reviews">
+                                <div class="home-detail-box-top fs0">
+                                    <div class="home-detail-box-top-left">
+                                        <img :src="`${item.headimgurl}`" alt="">
+                                        <div class="dsfx ml10">
+                                            <span class="fs12 cl33">{{item.nickname}}</span>
+                                            <van-rate :value="`${item.stars}`" readonly size="15px"/><span class="fs10 clb4 ml10"><span>3</span>分</span>
+                                        </div>
+                                    </div>
+                                    <div class="fs12 cl6e">{{item.create_time}}</div>
+                                </div>
+                                <!-- 评价内容 -->
+                                <div class="fs0 tl home-detail-pinajiacontent">
+                                    <div class="fs12 cl33 home-detail-pinajiacontent-pinjia">{{item.content}}</div>
+                                    <div class="home-detail-image-content tl">
+                                        <img :src="`__FILEROOT__/thumb${ii}`" alt="" v-for="ii in item.imgs" @click="previewImg(item.imgs)">
+                                    </div>
+                                </div>
+                                <div class="home-detail-shangjiahuifu" v-if="item.content2">
+                                    <div class="home-detail-shangjiahuifu-title fs12 cl33 fwb">商家回复</div>
+                                    <div class="home-detail-shangjiahuifu-content fs12 cl33 mt10">
+                                        {{item.content2}}
+                                    </div>
+                                </div>
+                                <van-image-preview :images="preImgs" v-model="imgPre"></van-image-preview>
+                            </div>
+                        </van-list>
+                    </van-tab>
+                </van-tabs>
+            </div>
+        <div class="icontop">
+            <img src="__MOD__/shop/images/top.png" />
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="home-detail-bot" id="bottom_part" data-id="{$info.id}">
+        <div class="home-detail-bot-left ">
+            <a href="{:url('shop/Index/index')}" class="dffccb ">
+                <img src="__MOD__/shop/images/home.png " alt=" ">
+                <span class="fs10 cl33 ">首页</span>
+            </a>
+            <div class="dffccb collectd">
+                {if $info.collectd}
+                <img src="__MOD__/shop/images/collectd.png" alt=" " data-mark="1">
+                <span class="fs10 cl33 ">已收藏</span>
+                {else /}
+                <img src="__MOD__/shop/images/collect.png" alt=" " data-mark="2">
+                <span class="fs10 cl33 ">收藏</span>
+                {/if}
+            </div>
+            <a href="{:url('Cart/index')}" class="dffccb ">
+                <img src="__MOD__/shop/images/shop.png " alt=" ">
+                <span class="fs10 cl33 ">购物车</span>
+            </a>
+        </div>
+
+        <div class="home-detail-bot-btnone " @click="openBuy(2)">加入购物车</div>
+        <div class="home-detail-bot-btntwo " @click="openBuy(3)">立即购买</div>
+    </div>
+
+    <!-- 选择商品属性 -->
+    <van-popup v-model="shuxing" class="bugbox" position="bottom">
+        <div class="home-detail-pop-box">
+            <div class="home-detail-pop-box-top">
+                <img src="__FILEROOT__/thumb{$info['main_img'][0]}" alt="" class="sku_img">
+                <div class="home-detail-pop-box-info">
+                    <div class="home-detail-pop-box-info-des over2">{$info.goods_name}</div>
+                    <div class="fs10 clog">￥<span class="fs14 fwb sku_price">{$info.price|round2}</span></div>
+                    <div class="fs12 cl6e">库存<span class="sku_stock">{$info.stocks|default=0}</span>件</div>
+                    <div class="fs12 cl33">已选：{{attr_selected_str}}</div>
+                </div>
+            </div>
+            <div class="home-detail-of">
+                
+                <div class="home-detail-pop-box-mid" v-for="(item,index) in good_attrs">
+                    <div class="fs14 cl33">{{item[0]}}</div>
+                    <div class="mt15 fs0">
+                        <div class="home-detail-shuxing-btn" v-for="(v,i) in item[1]">{{v}}</div>
+                    </div>
+                </div>
+                
+            </div>
+            <img src="__MOD__/shop/images/close.png" alt="" class="home-detail-close-btn" @click="shuxing = false">
+            <div class="dfbtc gmsl mt20">
+                <div class="cl33 fwb fs14">购买数量</div>
+                <div>
+                    <van-stepper v-model="buyNum" :max="maxbuy"/>
+                </div>
+            </div>
+        </div>
+        <div class="huowubtn huowubtn-no" v-if="outSold">已下架</div>
+        <div class="huowubtn" @click="sureSelect()" v-else-if="sureBtn">确定</div>
+        <div class="huowubtn huowubtn-no" v-else-if="!sureBtn">库存不足</div>
+    </van-popup>
+</div>
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
+<script>
+// 在 #app 标签下渲染一个按钮组件
+var vue = new Vue({
+            el: '#homeDetail',
+            data: {
+                current: 0,
+                done_attr: '',
+                shuxing: false, //属性框显示
+                buyNum: 1, //步进器 数量
+                maxbuy: 1,
+                mark: 0,
+                goods_id: '{$info.id}',
+                good_attrs: eval('{$info.goods_sku_attributes}'.replace(/&quot;/g,"\"")),
+                attr_len : 0,
+                attrSelected: [],
+                attr_selected_str: '',
+                goods_sku_id: '',
+                sureBtn: false,
+                outSold: false,
+                active: 0,
+                loading: false,
+                finished: false,
+                reviews: [],
+                reviewsPage: 1,
+                reviewsPageLimit: 5,
+                imgPre: false,
+                preImgs: []
+            },
+            mounted(){
+                this.attr_len = this.good_attrs.length
+            },
+            methods: {
+                onChange(index) {
+                    this.current = index;
+                },
+                openBuy(mark){
+                    this.shuxing = true
+                    this.mark = mark
+
+                    //当属性只有一组时默认选中
+                    if(this.attr_len == 1){
+                        setTimeout(function(){
+                            $('.home-detail-shuxing-btn').each(function(i,v){
+                                $(v).click();  
+                            })
+                        }, 100)
+                    }
+                },
+                sureSelect(){
+                    var mark = this.mark
+                    var buyNum = this.buyNum
+                    var attrSelected = this.attrSelected
+                    var sureLen = attrSelected.length
+
+                    if(sureLen != this.attr_len){
+                        return false;
+                    }
+
+                    if(this.sureBtn == false){
+                        vant.Toast.fail('库存不足');
+                        return false;
+                    }
+                    
+                    this.shuxing = false
+                    if(mark == 1){
+                        this.done_attr = '已选：' + attrSelected.join(' ');
+                    }else if(mark == 2){
+                        axios.post('{:url(\'Cart/pushToCart\')}', {
+                            goods_id: this.goods_id,
+                            attrs: attrSelected,
+                            buyNum: this.buyNum
+                        }).then(res => {
+                            if (res.data.code == 1) {
+                                this.done_attr = '已选：' + attrSelected.join(' ');
+                                vant.Toast.success('添加成功');
+                            } else {
+                                vant.Toast.fail('添加失败');
+                            }
+                        });
+                    }else{
+                        let time = Date.parse(new Date()).toString().slice(0, -3);
+                        let goods_id = this.goods_id
+                        let goods_sku_id = this.goods_sku_id
+                        let buy_num = this.buyNum
+                        let buy =  mark + '_' + time + '_' + '00' + '_' + goods_id + '_' + buy_num + '_' + goods_sku_id
+                        window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
+                    }
+
+                },
+                onLoad() {
+                    axios.post('{:url(\'getGoodsReviews\')}', {
+                        goods_id: this.goods_id,
+                        pageStart: this.reviewsPage,
+                        perpage: this.reviewsPageLimit
+                    }).then(res => {
+                        this.loading = false
+                        if (res.data.code == 1) {
+                            this.reviewsPage += 1;
+                            this.reviews = res.data.result
+                            if(res.data.result.length < this.reviewsPageLimit){
+                                this.finished = true;    
+                            }
+                        } else {
+                            this.finished = true;
+                        }
+                    });
+                },
+                previewImg(img){
+                    console.log(img)
+                    for (var i = 0; i < img.length; i++) {
+                        this.preImgs[i] = '__FILEROOT__'+img[i]
+                    }
+                    this.imgPre = true
+                }
+            }
+        });
+</script>
+<script type="text/javascript">
+$(function() {
+    $('.collectd').on('click', function(){
+        var _this = $(this)
+        var mark = _this.children('img').data('mark');
+        var id = $('#bottom_part').data('id')
+        $.post('{:url(\'User/dogGoodsCollected\')}', {mark: mark, id: id}, function(res){
+            if(res.code == 1){
+                if(mark == 1){
+                    vant.Toast('已取消收藏')
+                    _this.children('img').attr('src', '__MOD__/shop/images/collect.png')
+                    _this.children('img').data('mark', 2)
+                    _this.children('span').html('收藏')
+                }else{
+                    vant.Toast('收藏成功')
+                    _this.children('img').attr('src', '__MOD__/shop/images/collectd.png')
+                    _this.children('img').data('mark', 1)
+                    _this.children('span').html('已收藏')
+                }
+            }else{
+                vant.Toast('收藏失败')
+            }
+        }, 'json')
+        
+    })
+
+    $('.detailChange').click(function(){
+        var idx = $(this).index()
+        $(this).addClass("heng-active").siblings().removeClass("heng-active")
+        $('.content-box').eq(idx).show()
+        $('.content-box').eq(idx).siblings('.content-box').hide()
+    })
+
+    /*选择属性*/
+    $('body').on('click', '.home-detail-shuxing-btn', function() {
+        var idx = $(this).parents('.home-detail-pop-box-mid').index()
+        var text = $(this).html()
+        $(this).addClass("btn-active").siblings().removeClass("btn-active")
+        var attrs = vue.attrSelected
+        if(typeof attrs[idx] == 'undefined'){
+            vue.attrSelected.push(text)
+        }else{
+            vue.attrSelected.splice(idx, 1, text)
+        }
+
+        if(vue.attr_len == vue.attrSelected.length){
+            vue.attr_selected_str = vue.attrSelected.join(' ');
+            $.post('{:url(\'getAttrInfo\')}', {goods_id: vue.goods_id, attrs: vue.attrSelected}, function(res){
+                if(res.code == 1){
+                    vue.goods_sku_id = res.result.id
+                    $('.sku_img').attr('src', '__FILEROOT__/thumb'+res.result.sku_img)
+                    $('.sku_price').html(res.result.price)
+                    $('.sku_stock').html(res.result.stocks)
+                    vue.maxbuy = res.result.stocks
+
+                    if(res.result.is_sold != 1){
+                        vue.outSold = true
+                    }else{
+                        vue.outSold = false
+                    }
+                    
+                    if(res.result.stocks >= 1){
+                        vue.sureBtn = true;
+                    }else{
+                        vue.sureBtn = false;
+                    }
+                }else{
+                    vant.Toast.fail('系统错误');
+                }
+            }, 'json')
+        }
+    })
+
+    $('.icontop').on('click', function() {
+        var T = $(window).scrollTop();
+        var t = setInterval(function() {
+            if (T < 0) {
+                clearInterval(t);
+            } else {
+                T -= 50;
+                $(window).scrollTop(T);
+            }
+        }, 13);
+    });
+
+})
+</script>
+{/block}

@@ -1,0 +1,104 @@
+{extend name="public/original" /}
+{block name="title"}添加权限{/block}
+{block name="css"}
+<style type="text/css">
+  .layui-input-inline{width: 260px !important;}
+</style>
+{/block}
+{block name="content"}
+<div class="layui-form" lay-filter="filter-form-auth" id="form-auth" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="authtitle" lay-verType="tips" lay-verify="required" placeholder="请输入权限名称" autocomplete="off" class="layui-input" >
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限类型</label>
+      <div class="layui-input-inline">
+        <select name="type" lay-verType="tips" lay-verify="required" lay-filter="typeSel" data-url="{:url('modsTree')}">
+          <option value="">选择一个类型</option>
+          <option value="1">模块</option>
+          <option value="2">子模块</option> <!-- 一般用于左侧有三级菜单的情况，可去掉disabled -->
+          <option value="3">节点</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item" id="fatherMod" style="display: none;">
+      <label class="layui-form-label">所属上级</label>
+      <div class="layui-input-inline">
+        <select name="pId" class="fathersel" lay-verType="tips" lay-filter="fathersel" lay-verify="pidneed" lay-search>
+          <option></option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限标识</label>
+      <div class="layui-input-inline">
+        <input type="text" name="authname" lay-verType="tips" lay-verify="required" placeholder="请输入标识" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">表现类型</label>
+      <div class="layui-input-inline">
+        <input type="radio" name="run_type" value="1" title="普通" lay-filter="runTypeSel" checked="">
+        <input type="radio" name="run_type" value="2" title="异步" lay-filter="runTypeSel">
+      </div>
+    </div>
+    <div class="layui-form-item" id="menuCtl">
+      <label class="layui-form-label">设为菜单</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" lay-filter="menuSwt" name="is_menu" lay-skin="switch" lay-text="是|否" value="1">
+      </div>
+    </div>
+    <div class="layui-form-item" id="iconCtl" style="display: none;">
+      <label class="layui-form-label">图标</label>
+      <div class="layui-input-block">
+        <input type="text" id="iconPicker" lay-verify="Menu" lay-filter="iconPicker" name="icon" value="">
+      </div>
+    </div>
+    <div class="layui-form-item" id="weight" style="display: none;">
+      <label class="layui-form-label">权重</label>
+      <div class="layui-input-inline">
+        <input type="text" name="sorted" class="layui-input" value="0" lay-verify="number">
+      </div>
+    </div>
+    <div class="layui-form-item" id="logCtl" style="display: none;">
+      <label class="layui-form-label">记录日志</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" name="is_log" lay-skin="switch" lay-text="是|否" value="1">
+      </div>
+      <div class="layui-form-mid layui-word-aux">请在需要记录日志的行为时再开启</div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限描述</label>
+      <div class="layui-input-block" >
+        <textarea placeholder="对权限的描述或者记录日志的行为描述" class="layui-textarea" name="desc" lay-verType="tips" lay-verify="descNeed"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" name="status" lay-skin="switch" lay-text="正常|关闭" value="1">
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+      <input type="button" lay-submit lay-filter="auth-submit" id="auth-submit" value="确认" data-url="{:url('pullRule')}">
+    </div>
+  </div>
+{/block}
+{block name="footjs"}
+<script id="treeMods" type="text/html">
+  <option></option>
+  {{# layui.each(d, function(i, t){ }}
+    <option value="{{t.id}}" data-l="1">{{t.title}} ({{t.name}})</option>
+    {{# if(t.child){ }}
+      {{# layui.each(t.child, function(ii, tt){ }}
+        <option value="{{tt.id}}" data-l="2">└ {{tt.title}} ({{tt.name}})</option>
+      {{# }); }}
+    {{# } }}
+  {{# }); }}
+</script>
+<script type="text/javascript" src="__STATIC__/mod/admin/authset/auth_add.js" id="auth_add" data-path="__JS__"></script>
+{/block}

@@ -1,0 +1,75 @@
+{extend name="public/base" /}
+{block name="title"}权限管理{/block}
+{block name="css"}
+<style type="text/css">
+.menu-search{width: auto !important;margin-right: 0 !important;margin-left: 30px;}
+.menu-search .layui-form-checkbox[lay-skin="primary"]{margin-top: 0;}
+</style>
+<link rel="stylesheet" type="text/css" href="__JS__/layuiext/iconFonts/css/font-awesome.min.css">
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+<div class="layui-card">
+  <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+    <div class="layui-form-item asuma-form-item">
+      <div class="layui-inline">
+        <div class="layui-input-inline menu-search">
+          <input type="checkbox" name="is_menu" lay-skin="primary" title="只筛选菜单" lay-filter="chooseMenu" value="1">
+        </div>
+      </div>
+      <div class="layui-inline">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+          <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-inline">
+        <label class="layui-form-label">规则</label>
+        <div class="layui-input-inline">
+          <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn layui-btn-asuma layuiadmin-btn-list" lay-submit lay-filter="listSearch">
+          <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-card-body">
+  	<div class="layui-tab-content">
+	    <div style="padding-bottom: 10px;" id="authOpt" data-add="{:url('authAdd')}" data-edit="{:url('authEdit')}">
+	      <button class="layui-btn layui-btn-asuma layuiadmin-btn-list" data-type="add">添加</button>
+	    </div>
+	    <table id="udzan-rule" lay-filter="udzan-rule" data-url="{:url('permissionsList')}" data-sturl="{:url('changeWeight')}"></table> 
+	</div>
+  </div>
+</div>
+</div>
+{/block}
+{block name="footjs"}
+<script type="text/html" id="loggedTpl" data-url="{:url('changeLogStatus')}">
+  {{# if(d.run_type == 2){ }}
+  <input type="checkbox" name="is_logged" value="{{d.id}}" lay-filter="logSwitch" lay-skin="switch" lay-text="是|否" {{d.is_logged == 1 ? 'checked' : ''}}>
+  {{# }else{ }}
+  <button class="layui-btn layui-btn-xs layui-btn-disabled">限制</button>
+  {{# } }}
+</script>
+<script type="text/html" id="statusTpl" data-url="{:url('changeRuleStatus')}">
+  {{# if(d.name == 'AuthSet/permissions'){ }}
+  <button class="layui-btn layui-btn-xs layui-btn-disabled">限制</button>
+  {{# }else{ }}
+  <input type="checkbox" name="status" value="{{d.id}}" title="开启" lay-filter="optstatus" {{d.status == 1 ? 'checked' : ''}}>
+  {{# } }}
+</script>
+<script type="text/html" id="optTpl">
+  <a class="layui-btn layui-btn-asuma layui-btn-xs" lay-event="edit">编辑</a>
+  {{# if(d.name == 'AuthSet/permissions'){ }}
+  <a class="layui-btn layui-btn-disabled layui-btn-xs" >删除</a>
+  {{# }else{ }}
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  {{# } }}
+</script>
+<script type="text/javascript" src="__STATIC__/mod/admin/authset/permissions.js"></script>
+{/block}

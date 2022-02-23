@@ -1,0 +1,806 @@
+{extend name="public/base" /}
+{block name="title"}商品管理{/block}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__MOD__/admin/shop/goods.css">
+{/block}
+{block name="content"}
+<div class="layui-fluid">
+<div class="layui-row layui-col-space15">
+  <div class="layui-col-md12">
+    <div class="layui-card">
+      <div class="layui-card-header">编辑商品</div>
+      <div class="layui-card-body" pad15>
+        <form class="layui-form">
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="goods_name" value="{$goods.goods_name}" class="layui-input" lay-verify="required" lay-reqText="商品名称必填">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品分类</label>
+            <div class="layui-input-block">
+              <select name="classification" lay-search lay-verify="required" lay-reqText="请选择分类">
+                <option value="">支持搜索</option>
+                {volist name="classify" id="one"}
+                <optgroup label="{$one.name}">
+                  {if $one.child ?? ''}
+                  {volist name="$one.child" id="two"}
+                  <option value="{$two.id}" {eq name="$goods.classification_id" value="$two.id" }selected{/eq} >{$two.name}</option>
+                  {/volist}
+                  {/if}
+                </optgroup>
+                {/volist}
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品介绍</label>
+            <div class="layui-input-block">
+              <input type="text" name="introduction" value="{$goods.introduction}" placeholder="请输入简短的介绍，非必填" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品主图</label>
+            <div class="layui-input-block">
+              <button type="button" class="layui-btn layui-btn-asuma" id="openUploadMain" data-type="add">上传主图</button>
+              <div class="image-box">
+                {foreach $goods.goodsImgArr as $v}
+                <div class="box1-image-item">
+                  <div class="box1-image-item-content">
+                      <img src="__FILEROOT__/thumb{$v}" alt="">
+                      <div class="i-top delSelected"><i class="layui-icon layui-icon-delete"></i></div>
+                  </div>
+                </div>
+                {/foreach}
+              </div>
+              <input type="hidden" name="goods_imgs" value="{$goods.goods_imgs}">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商品规格</label>
+            <div class="layui-input-block">
+                 <!--<button type="button" class="layui-btn layui-btn-asuma mb20" id="addBigParam"><i class="layui-icon layui-icon-add-1"></i>添加参数</button> -->
+                <div id="add-box">
+                  {foreach $goods.goods_attrs as $i}
+                    <div class="add-box-item">
+                        <div class="add-box-item-thead">
+                            <input type="text" class="layui-input big_input" placeholder="例：颜色" lay-verify="required" lay-reqText="请完善规格项" value="{$i[0]}">
+                            <!-- <i class="layui-icon layui-icon-close delBig"></i> -->
+                        </div>
+                        <div class="add-box-item-th-box">
+                            <div class="add-box-item-th bp" >
+                                {foreach $i[1] as $j}
+                                <div class="add-box-item-th-item">
+                                    <input type="text" class="attr_input" placeholder="例：红色" lay-verify="required" lay-reqText="请完善规格项" value="{$j}" readonly="">
+                                    <!-- <i class="layui-icon layui-icon-close delParam"></i> -->
+                                </div>
+                                {/foreach}
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>
+                        </div>
+                    </div>
+                  {/foreach}
+                </div>
+                <div class="table-box">
+                  <table class="layui-table" lay-skin="line">
+                    <thead>
+                      <tr>
+                      {foreach $goods.goods_attrs as $v}
+                      <th>{$v[0]}</th>
+                      {/foreach}
+                      <th>展示图</th>
+                      <th>库存</th>
+                      <th>市场价</th>
+                      <th>售卖价格</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foreach $skus as $k=>$v}
+                      <tr>
+                        {volist name="$skus_arr[$k]" id="vv"}
+                        <td>{$vv.attr}</td>
+                        {/volist}
+                        <td class="up-img">
+                          <img src="__FILEROOT__/thumb{$v.sku_img}">
+                          <input type="hidden" value="{$v.sku_img}" lay-verify="required" lay-reqText="请完善规格项的图片">
+                          <button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input stockIpt" value="{$v.stocks}" lay-verify="required" lay-reqtext="请完善规格项的库存">
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input marketIpt" value="{$v.market_price}" lay-verify="required" lay-reqtext="请完善规格项的市场价">
+                        </td>
+                        <td>
+                          <input type="text" class="layui-input edit-input priceIpt" value="{$v.price}" lay-verify="required" lay-reqtext="请完善规格项的售卖价">
+                        </td>
+                      </tr>
+                      {/foreach}
+                    </tbody>
+                  </table>
+                </div>
+                <input type="hidden" name="goods_attributes" value="{$goods.attrs_str}">
+                <input type="hidden" name="goods_skus" value="{$goods.skus_str}">
+                <input type="hidden" name="skus_val" value="{$goods.skus_val}">
+                <div class="layui-form-mid layui-word-aux">点击页面任意空白处完成添加或修改，否则保存将不会生效</div>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+              {include file="public/ueditor" name="description"}
+              <input type="hidden" id="hidden_content" value="{$goods.description}">
+            </div>
+          </div>          
+          
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">配送方式</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="post_type" value="1" title="包邮" lay-filter="freightswt" {eq name="$goods.post_type" value="1" }checked{/eq} >
+                <input type="radio" name="post_type" value="2" title="买家承担运费" lay-filter="freightswt" {eq name="$goods.post_type" value="2" }checked{/eq}>
+                <span class="layui-input-inline freight-line" {eq name="$goods.post_type" value="2" }style="display:block;"{/eq}>
+                  <input class="layui-input freight-inp" name="freight" lay-verify="poInt" value="{$goods.freight}">
+                  <span>元</span>
+                </span>
+            </div>
+          </div>
+
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">是否上架</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" name="is_sold" lay-skin="switch" lay-text="是|否" value="1" {eq name="$goods.is_sold" value="1" }checked{/eq}>
+            </div>
+          </div>
+
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+              <input type="hidden" name="gid" value="{$goods.id}">
+              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:url('modify')}">确认</button>
+              <button type="reset" class="layui-btn layui-btn-primary">取消</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{/block}
+{block name="footjs"}
+<script src="__THIRD__/compressImg/tools.js"></script>
+<script src="__THIRD__/compressImg/pictureHandle.js"></script>
+<script type="text/javascript">
+  function bigParamHtml(){
+    var len = $('.add-box-item').length
+    if(len >= 5){
+      layer.msg('最多只能添加5个参数')
+      return false;
+    }
+
+    var _html = '<div class="add-box-item">'
+                    +'<div class="add-box-item-thead">'
+                        +'<input type="text" class="layui-input big_input" lay-verify="required" lay-reqText="请完善规格项">'
+                        +'<i class="layui-icon layui-icon-close delBig"></i>'
+                    +'</div>'
+                    +'<div class="add-box-item-th-box">'
+                        +'<div class="add-box-item-th bp">'
+                            +'<div class="add-box-item-th-item">'
+                                +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善规格项">'
+                                +'<i class="layui-icon layui-icon-close delParam"></i>'
+                            +'</div>'
+                        +'</div>'
+                        +'<button type="button" class="layui-btn layui-btn-primary ml20 addLteParam">添加</button>'
+                    +'</div>'
+                +'</div>';
+    
+    $('#add-box').append(_html);
+  }
+
+  function lteParamHtml(obj){
+    var itemBox = obj.parent('.add-box-item-th-box').children('.add-box-item-th');
+    var len = itemBox.children('.add-box-item-th-item').length
+    
+    if(len >= 8){
+      layer.msg('最多只能添加8个规格值')
+      return false;
+    }
+
+    var _html = '<div class="add-box-item-th-item">'
+                  +'<input type="text" class="attr_input" lay-verify="required" lay-reqText="请完善规格项">'
+                  +'<i class="layui-icon layui-icon-close delParam"></i>'
+               +'</div>';
+
+    itemBox.append(_html);
+  }
+
+  function paramJson(){
+    var father = $('.add-box-item')
+    var json_data = {};
+    for (var i = 0; i < father.length; i++) {
+      var key = father.eq(i).children('.add-box-item-thead').children('input').val().trim();
+      if(key == '') {
+        continue;
+      }
+      json_data[key] = [];
+
+      let children = father.eq(i).children('.add-box-item-th-box').children('.add-box-item-th').children('.add-box-item-th-item')
+      children.each(function(i,v){
+        let value = $(v).children('input').val().trim();
+        if(value == ''){
+          return true;
+        }
+        json_data[key].push(value)
+      })
+    }
+    $('input[name=goods_attributes]').val(JSON.stringify(json_data))
+    return json_data;
+  }
+
+  function tableHtml(data){
+    var tablePre = '<table class="layui-table" lay-skin="line">'
+                    +'<thead>'
+                      +'<tr>';
+    var thead    =     '';
+    var tableMid =     '</tr>'
+                    +'</thead>'
+                    +'<tbody>'
+    var tbody    =     '';
+    var tableEnd =   '</tbody>'
+                  +'</table>';
+
+    var attrKeys = []
+    var preData = []
+    $.each(data, function(i, v){
+      thead += '<th>'+i+'</th>'
+      attrKeys.push(i)
+      preData.push(v)
+    })
+    thead += '<th>展示图</th><th>库存</th><th>市场价</th><th>售卖价格</th>'
+
+    var needTd = '<td class="up-img">'
+                  +'<img src="[imgurl]" alt="">'
+                  +'<input type="hidden" value="[imgurl]" lay-verify="required" lay-reqText="请完善规格项的图片">'
+                  +'<button type="button" class="layui-btn layui-btn-xs layui-btn-primary upload-btn">上传</button>'
+                +'</td>'
+                +'<td>'
+                  +'<input type="text" class="layui-input edit-input stockIpt" value="[stock]" lay-verify="required" lay-reqText="请完善规格项的库存">'
+                +'</td>'
+                +'<td>'
+                  +'<input type="text" class="layui-input edit-input marketIpt" value="[market]" lay-verify="required" lay-reqText="请完善规格项的市场价">'
+                +'</td>'
+                +'<td>'
+                  +'<input type="text" class="layui-input edit-input priceIpt" value="[price]" lay-verify="required" lay-reqText="请完善规格项的售卖价">'
+                +'</td>';
+    var madingData = calcDescartes(preData);
+    var initVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : ''
+    var goodSkus = $('input[name=goods_skus]').val()
+    var skus = []
+
+    if(madingData[0] instanceof Array){
+      $.each(madingData, function(i, v){
+        tbody += '<tr>';
+        skus[i] = []
+        for (var j = 0; j < v.length; j++) {
+          tbody += '<td>'+v[j]+'</td>';
+          skus[i].push({'title': attrKeys[j], 'attr': v[j]})
+        }
+
+        var sku_arr_str = JSON.stringify(skus[i])
+        if(goodSkus.indexOf(sku_arr_str) == -1){
+          initVal.splice(i, 0, null)
+        }
+        
+        var eachNeed = needTd;
+        if(initVal != '' && typeof initVal[i] != 'undefined' && initVal[i] != null){
+          eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
+          eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
+          eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+        }else{
+          eachNeed = eachNeed.replace('[stock]', '')
+          eachNeed = eachNeed.replace('[market]', '')
+          eachNeed = eachNeed.replace('[price]', '')
+          eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+        }
+
+        tbody += eachNeed+'</tr>';
+      }) 
+    }else{
+        for (var i = 0; i < madingData.length; i++) {
+          var eachNeed = needTd;
+          if(initVal != '' && typeof initVal[i] != 'undefined' && initVal[i] != null){
+            eachNeed = eachNeed.replace('[stock]', initVal[i].stock ? initVal[i].stock : '')
+            eachNeed = eachNeed.replace('[market]', initVal[i].marketPrice ? initVal[i].marketPrice : '')
+            eachNeed = eachNeed.replace('[price]', initVal[i].price ? initVal[i].price : '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, initVal[i].img ? '__FILEROOT__/thumb'+initVal[i].img : '')
+          }else{
+            eachNeed = eachNeed.replace('[stock]', '')
+            eachNeed = eachNeed.replace('[market]', '')
+            eachNeed = eachNeed.replace('[price]', '')
+            eachNeed = eachNeed.replace(/\[imgurl\]/g, '')
+          }
+          tbody += '<tr><td>'+madingData[i]+'</td>'+eachNeed+'</tr>';
+          skus.push([{'title': attrKeys[0], 'attr': madingData[i]}])
+        }
+    }
+
+    $('input[name=goods_skus]').val(JSON.stringify(skus))
+    return tablePre + thead + tableMid + tbody + tableEnd;
+  }
+
+/*
+* 笛卡尔积算法
+*/
+function calcDescartes (array) {
+    if (array.length < 2) return array[0] || [];
+    return [].reduce.call(array, function (col, set) {
+        var res = [];
+        col.forEach(function (c) {
+            set.forEach(function (s) {
+                var t = [].concat(Array.isArray(c) ? c : [c]);
+                t.push(s);
+                res.push(t);
+            })
+        });
+        return res;
+    });
+}
+
+function makeImgHtml(imgUrl, fromList, imgs) {
+  imgUrl = imgUrl.replace(/\\/g, '/')
+  if(!(imgUrl.indexOf('uploads') != -1)){
+    imgSrc = '__FILEROOT__/thumb'+imgUrl
+  }
+
+  if(fromList && imgs && imgs.search(imgUrl) != -1){
+    var imgHtml = '<div class="box1-image-item left_item">'
+                  +'<div class="box1-image-item-content">'
+                      +'<img src="'+imgSrc+'" alt="">'
+                      +'<div class="i-top delPic" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>'
+                      + '<div class="i-bot bcb "><i class="layui-icon layui-icon-ok-circle"></i></div>'
+                  +'</div>'
+               +'</div>'
+               
+  }else{
+    var imgHtml = '<div class="box1-image-item left_item">'
+                    +'<div class="box1-image-item-content">'
+                        +'<img src="'+imgSrc+'" alt="">'
+                        +'<div class="i-top delPic"><i class="layui-icon layui-icon-delete"></i></div>'
+                    +'</div>'
+                 +'</div>'
+  }
+
+  return imgHtml;
+}
+
+function makeRightImg(imgUrl) {
+  imgUrl = imgUrl.replace(/\\/g, '/')
+  var imgHtml = '<div class="box1-image-item right_item">'
+                  +'<div class="box1-image-item-content">'
+                      +'<img src="'+imgUrl+'" alt="">'
+                  +'</div>'
+               +'</div>'
+  return imgHtml;
+}
+
+function makeSelectedHtml(imgUrl){
+  imgUrl = imgUrl.replace(/\\/g, '/')
+  var imgHtml = '<div class="box1-image-item">'
+                  +'<div class="box1-image-item-content">'
+                      +'<img src="__FILEROOT__/thumb'+imgUrl+'" alt="">'
+                      +'<div class="i-top delSelected"><i class="layui-icon layui-icon-delete"></i></div>'
+                  +'</div>'
+                +'</div>'
+  return imgHtml;
+}
+
+</script>
+<script type="text/javascript">
+layui.config({
+  base: '__JS__/layuiext/'
+}).extend({
+  numinput: 'numinput/numinput'
+  ,croppers: 'cropper/croppers'
+}).use(['form', 'upload', 'flow'], function() {
+  var form = layui.form
+  ,upload = layui.upload
+  ,flow = layui.flow
+  ,imgBox;
+
+  /*上传主图*/
+  $('#openUploadMain').on('click', function(){
+    var selectImgs = $('input[name=goods_imgs]').val()
+
+    $.post('{:url(\'pictures\')}', {imgs:selectImgs}, function(str){
+      imgBox = layer.open({
+        type: 1,
+        area: ['830px', '600px'],
+        title: '图片库',
+        content: str+'',
+        success: function(){
+          flow.load({
+            elem: '#pics-content' 
+            ,isLazyimg: true
+            ,done: function(page, next){ 
+              $.post('{:url(\'pictureList\')}',{page:page},function(res){
+                let imgHtml = '';
+                let list = res.result[1];
+                for (var i = 0; i < list.length; i++) {
+                  imgHtml += makeImgHtml(list[i].good_img_url, true, selectImgs)
+                }
+                next(imgHtml, page < res.result[0]);
+              })
+            }
+          });
+
+          upload.render({
+            elem: '#uploadMain'
+            ,url: '{:url(\'uploadMainImg\')}'
+            ,field: 'image'
+            ,multiple: true
+            ,number: 5
+            ,size: 900
+            ,done: function(res){
+              if(res.code == 1){
+                var imgHtml = makeImgHtml(res.result[0])
+                $('#pics-content').prepend(imgHtml);
+              }
+              
+            }
+          });
+        }
+      });
+    });
+  })
+
+  /*图片左侧点击*/
+  $(document).on('click', '.left_item img', function(){
+    if($(this).parents('.left_item').find('.layui-icon-ok-circle').length){
+      return false;
+    }
+    var max = $('#done-dist').data('max');
+    if($('#done-dist').find('.right_item').length >= max){
+      return false;
+    }
+
+    var img = $(this).attr('src');
+    $('#done-dist').append(makeRightImg(img))
+    $(this).siblings('.delPic').hide()
+    $(this).parents('.left_item').find('.box1-image-item-content').append('<div class="i-bot bcb "><i class="layui-icon layui-icon-ok-circle"></i></div>');
+  })
+
+  /*图片库右侧点击*/
+  $(document).on('click', '.right_item', function(){
+    var _this = $(this)
+    
+    var img = _this.find('img').attr('src');
+    var leftImg = $('#pics-content').find('img[src="'+img+'"]')
+    var leftObj = leftImg.parents('.left_item')
+    
+    leftObj.find('.bcb').remove()
+    leftObj.find('.delPic').show()
+    _this.remove()
+  })
+
+  /*图片库删除*/
+  $(document).on('click', '.delPic', function(){
+      var _this = $(this)
+      var delIn = layer.confirm('从图片库中删除？', function(){
+        var imgUrl = _this.parent('.box1-image-item-content').children('img').attr('src');
+        $.post('deleteGoodsPic',{imgUrl:imgUrl}, function(res){
+          if(res.code == 1){
+            _this.parents('.left_item').remove();
+            layer.close(delIn)
+          }else{
+            layer.msg('操作失败');
+          }
+        })
+      });
+  })
+
+  /*图片库确认*/
+  $(document).on('click', '#sureSelect', function(){
+      if($('#done-dist').find('img').length < 1){
+        layer.msg('没有选择图片');
+        return false;
+      }
+
+      var imgs = ''
+      var selectHtml = ''
+
+      $('#done-dist').find('img').each(function(i,v){
+        var imgSrc = $(v).attr('src').replace('/uploads/thumb', '')
+        if(i == 0){
+          imgs += imgSrc
+        }else{
+          imgs += ','+imgSrc
+        }
+
+        selectHtml += makeSelectedHtml(imgSrc)
+      })
+
+      var max = $('#done-dist').data('max');
+      if(max == 1){
+        var idx = $(this).data('idx')
+        var obj = $('.table-box').children('table').children('tbody').find('tr:eq('+idx+')')
+        obj.find('.up-img').children('img').attr('src', '__FILEROOT__/thumb'+imgs)
+        obj.find('.up-img').children('input').val(imgs)
+
+        if(typeof skusVal[idx] == 'undefined'){
+          skusVal[idx] = {}
+        }
+        skusVal[idx].img = imgs
+        
+        $('input[name=skus_val]').val(JSON.stringify(skusVal))
+      }else{
+        $('input[name=goods_imgs]').val(imgs);
+        $('.image-box').html(selectHtml)  
+      }
+
+      layer.close(imgBox)
+  })
+
+  $(document).on('click', '.delSelected', function(){
+    var _this = $(this)
+    _this.parents('.box1-image-item').remove()
+
+    var imgs = ''
+    $('.image-box').find('img').each(function(i,v){
+      var imgSrc = $(v).attr('src').replace('/uploads/thumb', '')
+      if(i == 0){
+        imgs += imgSrc
+      }else{
+        imgs += ','+imgSrc
+      }
+    })
+    $('input[name=goods_imgs]').val(imgs);
+  })
+
+  /*** 规格值操作区域方法 ***/
+
+  $(document).on('click', '.delBig', function(){
+    var _this = $(this)
+    var len = $('.add-box-item').length
+
+    if(len <= 1){
+      layer.msg('至少保留1个参数')
+      return false;
+    }
+
+    _this.parents('.add-box-item').remove()
+
+    //table 渲染
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  var oldBig;
+  $(document).on('blur', '.big_input', function(){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldBig){
+      return false;
+    }
+
+    var obj = $(this).parents('.add-box-item').find('.add-box-item-th')
+    let child_value = obj.children('.add-box-item-th-item').eq(0).children('input').val()
+
+    oldBig = $(this).val().trim();
+
+    if(child_value == '' || child_value == null){
+      return false;
+    }
+    
+    //table 渲染
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  $(document).on('click', '.addLteParam', function(){
+      var _this = $(this)
+      var f_value = _this.parents('.add-box-item').children('.add-box-item-thead').find('input').val()
+      if(f_value == '' || f_value == null){
+        layer.msg('请先完善当前的参数名称')
+        return false;
+      }
+
+      lteParamHtml(_this);
+  })
+
+  $(document).on('click', '.delParam', function(){
+    var _this = $(this)
+    var len = _this.parents('.add-box-item-th').children('.add-box-item-th-item').length
+    
+    if(len <= 1){
+      layer.msg('当前参数至少保留1个规格值');
+      return false;
+    }
+
+    _this.parent('.add-box-item-th-item').remove()
+
+    //table 渲染
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  var oldLte;
+  $(document).on('blur', '.attr_input', function(){
+    if($(this).val().trim() == '' || $(this).val().trim() == null || $(this).val().trim() == oldLte){
+      return false;
+    }
+
+    oldLte = $(this).val().trim()
+
+    let f_value = $(this).parents('.add-box-item').children('.add-box-item-thead').children('input').val();
+    if(f_value == '' || f_value == null){
+      return false;
+    }
+    
+    //table 渲染
+    let json_data = paramJson();
+    let _table = tableHtml(json_data);
+    $('.table-box').html(_table)
+  })
+
+  var skusVal = $('input[name=skus_val]').val() ? JSON.parse($('input[name=skus_val]').val()) : [];
+
+  $(document).on('click', '.upload-btn', function(){
+    var selectImgs = $(this).siblings('img').attr('src').replace('__FILEROOT__/thumb', '')
+    var upIdx = $(this).parents('tr').index();
+    
+    $.post('{:url(\'pictures\')}', {imgs:selectImgs, max:1,upIdx: upIdx}, function(str){
+      imgBox = layer.open({
+        type: 1,
+        area: ['830px', '600px'],
+        title: '图片库',
+        content: str+'',
+        success: function(){
+          flow.load({
+            elem: '#pics-content' 
+            ,isLazyimg: true
+            ,done: function(page, next){ 
+              $.post('{:url(\'pictureList\')}',{page:page},function(res){
+                let imgHtml = '';
+                let list = res.result[1];
+                for (var i = 0; i < list.length; i++) {
+                  imgHtml += makeImgHtml(list[i].good_img_url, true, selectImgs)
+                }
+                next(imgHtml, page < res.result[0]);
+              })
+            }
+          });
+
+          upload.render({
+            elem: '#uploadMain'
+            ,url: '{:url(\'uploadMainImg\')}'
+            ,field: 'image'
+            ,size: 900
+            ,done: function(res){
+              if(res.code == 1){
+                var imgHtml = makeImgHtml(res.result[0])
+                $('#pics-content').prepend(imgHtml);
+              }
+              
+            }
+          });
+        }
+      });
+    });
+  })
+
+  $(document).on('blur', '.stockIpt', function(){
+    var _this = $(this)
+    var _thisVal = _this.val().trim()
+    var idx = _this.parents('tr').index()
+
+    if($.isNumeric(_thisVal)){
+      _this.val(parseInt(_thisVal));
+    }else{
+      _this.val(0);
+    }
+
+    if(typeof skusVal[idx] == 'undefined'){
+      skusVal[idx] = {}
+    }
+    skusVal[idx].stock = _this.val()
+    
+    $('input[name=skus_val]').val(JSON.stringify(skusVal))
+  })
+
+  $(document).on('blur', '.marketIpt', function(){
+    var _this = $(this)
+    var _thisVal = _this.val().trim()
+    var idx = _this.parents('tr').index()
+
+    if($.isNumeric(_thisVal)){
+      _this.val(parseFloat(_thisVal).toFixed(2));
+    }else{
+      _this.val(0);
+    }
+
+    if(typeof skusVal[idx] == 'undefined'){
+      skusVal[idx] = {}
+    }
+    skusVal[idx].marketPrice = _this.val()
+    
+    $('input[name=skus_val]').val(JSON.stringify(skusVal))
+  })
+
+  $(document).on('blur', '.priceIpt', function(){
+    var _this = $(this)
+    var _thisVal = _this.val().trim()
+    var idx = _this.parents('tr').index()
+
+    if($.isNumeric(_thisVal)){
+      _this.val(parseFloat(_thisVal).toFixed(2));
+    }else{
+      _this.val(0);
+    }
+
+    if(typeof skusVal[idx] == 'undefined'){
+      skusVal[idx] = {}
+    }
+    skusVal[idx].price = _this.val()
+    
+    $('input[name=skus_val]').val(JSON.stringify(skusVal))
+  })
+
+  /***********************/
+
+  form.verify({
+    poInt: function(value ,item){
+      if($('input[name=post_type]:checked').val() == 2){
+        if(value == '' || value == null){
+          return '运费不能为空';
+        }
+        if(!(/^[1-9]+\d*$/.test(value))){
+          return '运费只能为整数';
+        }
+      }
+    }
+  })
+
+  form.on('radio(freightswt)', function(data){
+    if(data.value == 2){
+      $('.freight-line').show();
+    }else{
+      $('input[name=freight]').val('');
+      $('.freight-line').hide();
+    }
+  })
+
+  form.on('submit(save)', function(data){
+    var field = data.field; //获取提交的字段
+    if(field.goods_imgs == ''){
+      layer.msg('请上传商品图片', {icon: 5});
+      return false;
+    }
+
+    if(field.goods_skus == ''){
+      layer.msg('请添加商品规格值', {icon: 5});
+      return false;
+    }
+
+    if(typeof field.description == 'undefined' || field.description == ''){
+      layer.msg('商品描述不能为空', {icon: 5});
+      return false; 
+    }
+
+    //提交 Ajax 成功后，关闭当前弹层并重载表格
+    $.post($(data.elem).data('url'), data.field, function(res){
+      if(res.code == 1){
+        layer.msg('修改成功', {icon: 6}, function(){
+          window.history.back(-1);
+        })
+      }else{
+        layer.msg(res.result, {icon: 5});
+      }
+    },'json');
+  });
+
+});
+</script>
+{/block}

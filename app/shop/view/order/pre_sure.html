@@ -1,0 +1,150 @@
+{extend name="public/base" /}
+{block name="title"}结算{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="content"}
+<div id="gouWuZhiFu" class="fs0 layui-form" v-cloak>
+	<a href="{:url('User/address', ['preorder' => $Request.get.buy])}">
+    <div class="gwz-top">
+        <div class="gwz-top-left">
+            <div class="fs14 cl33">收货人: <span>{$address.name}</span> <span class="ml20">{$address.phone}</span></div>
+            <div class="fs14 cl33 mt20">收货地址: <span>{$address.province}{$address.city}{$address.district}{$address.address}</span></div>
+        </div>
+        <img src="__MOD__/shop/images/right.png" alt="">
+    </div>
+    </a>
+    <img src="__MOD__/shop/images/addresstiao.png" alt="" class="gwz-address-img fs0">
+    <div class="gwz-item-content">
+		<div class="gwz-item fs0" v-for="(item,index) in buy_list">
+            <img :src="`__FILEROOT__/thumb${item.sku_img}`" alt="">
+            <div class="gwz-item-right">
+                <div class="gwz-item-right-top">
+                    <div class="fs14 cl33">{{item.goods_name}}</div>
+                    <div class="fs12 clad mt5">{{item.sku}}</div>
+                </div>
+                <div class="gwz-item-right-bot">
+                    <span class="fs10 clog">￥<span class="fs14 fwb">{{item.price}}</span></span>
+                    <span class="fs16 cl33">×<span>{{item.buynum}}</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="gwz-youhuiquan" v-if="from == 3">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">购买数量</div>
+                <div>
+                    <van-stepper v-model="buy_list[0].buynum" max="{$goods[0]['stocks']}"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="gwz-youhuiquan">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">小计</div>
+                <div class="fs14 clog">{{goods_total}}</div>
+            </div>
+        </div>
+<!--         <div class="gwz-youhuiquan">
+            <div class="gwz-youhuiquan-top">
+                <div class="fs14 cl33">优惠券</div>
+                <div><span class="fs12 clog">满1000元减100优惠券</span><img src="__MOD__/shop/images/right.png" alt="" class="gwz-right-img"></div>
+            </div>
+            <div class="gwz-youhuiquan-bot">
+                <div class="dfbtc">
+                    <div>
+                        <van-switch v-model="checked" size=".4rem" />
+                    </div>
+                    <span class="fs14 cl33 ml5">积分抵扣(当前积分50)</span>
+                </div>
+
+                <div class="fs14"><span class="fs12 clog">-￥5.00</span><img src="__MOD__/shop/images/right.png" alt="" class="gwz-right-img"></div>
+            </div>
+        </div> -->
+        <!-- <div class="gwz-mjly fs12 cl33">
+            买家留言:
+            <input type="text" value="" placeholder="请填写内容">
+        </div> -->
+    </div>
+    <div class="gwz-bot fs0">
+        <div class="gwz-bot-item">
+            <div class="fs12 cl33">配送费</div>
+            <div>
+                <span class="fs12 cl33">{{freight !=0 ? '¥'+freight : '商家包邮'}}</span>
+                <!-- <img src="__MOD__/shop/images/right.png" alt=""> -->
+            </div>
+        </div>
+        <div class="gwz-bot-item">
+            <div class="fs12 cl33">支付方式</div>
+            <div>
+                <span class="fs12 cl33">在线支付</span>
+                <!-- <img src="__MOD__/shop/images/right.png" alt=""> -->
+            </div>
+        </div>
+        <div class="gwz-bot-item bbn">
+            <div class="fs12 cl33">发票</div>
+            <div>
+                <span class="fs12 clad pr5">暂无发票</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="gwz-jiesuan-box">
+        <div class="gwz-jiesuan-box-left">
+            <div class="fs14 cl33">合计: <span class="fs10 clog">￥ <span class="fs14 fwb">{{total}}</span></span>
+            </div>
+        </div>
+        <div class="gwz-jiesuan-btn" @click="sub()">提交订单</div>
+    </div>
+</div>
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
+<script>
+new Vue({
+    el: '#gouWuZhiFu',
+    data: {
+        buy_list: eval('{$goods|json_encode}'.replace(/&quot;/g, "\"")),
+        // checked: false,
+        from: '{$from}',
+        cart_ids: '{$cart_ids ?? ''}',
+        freight: '{$freight}'
+    },
+    methods: {
+        sub() {
+            vant.Toast.loading({ forbidClick: true });
+            axios.post('{:url(\'make\')}', {
+                buy_list: this.buy_list,
+                freight: this.freight,
+                order_price: this.total,
+                address_id: '{$address.id}',
+                cart_ids: this.cart_ids
+            }).then(res => {
+                vant.Toast.clear();
+                if (res.data.code == 1) {
+                	window.location.replace('{:url('detail')}?from=pre&no='+res.data.result)
+                }else{
+                	vant.Toast.fail('系统错误');
+                }
+            });
+        }
+    },
+    computed: {
+    	goods_total(){
+    		let allprice = 0;
+            for (let i = 0; i < this.buy_list.length; i++) {
+                allprice += this.buy_list[i].price * this.buy_list[i].buynum
+            }
+
+            return allprice.toFixed(2);
+    	},
+        total() {
+            return parseFloat(this.goods_total)+parseFloat(this.freight);
+        }
+    }
+});
+</script>
+{/block}

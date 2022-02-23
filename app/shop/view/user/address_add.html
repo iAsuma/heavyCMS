@@ -1,0 +1,135 @@
+{extend name="public/base" /}
+{block name="title"}添加收货地址{/block}
+{block name="frontcss"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+{/block}
+{block name="content"}
+<div id="shouHuoDiZhi" v-cloak>
+    <div class="addshdz-s-e-ipt-box">
+        <div class="addshdz-itembox">
+            <span class="cl66 fwb fs14 ls10 tl minw24">收货人</span>
+            <input type="text" placeholder v-model="username" class="huifangsousuo-itembox-input cl33 fs14" />
+        </div>
+        <div class="addshdz-itembox">
+            <span class="cl66 fwb fs14 ls10 minw24 tl">手机号码</span>
+            <input type="text" placeholder v-model="phone" class="huifangsousuo-itembox-input cl33 fs14" />
+        </div>
+        <div class="huifangsousuo-itembox">
+            <span class="cl66 fwb fs14 ls10 minw24 tl">所在地区</span>
+            <input type="text" placeholder class="huifangsousuo-itembox-input cl33 fs14" value @click="area_show=true" readonly v-model="area_value" style="width:62%" />
+            <img src="__MOD__/shop/images/right.png" alt />
+        </div>
+        <div class="addshdz-itembox">
+            <span class="cl66 fwb fs14 ls10 minw24 tl">详细地址:</span>
+            <input type="text" id="deipt" placeholder="小区、楼栋、单元室、门牌号" class="huifangsousuo-itembox-input cl33 fs14" v-model="address" />
+        </div>
+        <div class="huifangsousuo-itembox">
+            <span class="cl66 fwb fs14 ls10 minw34 tl">设为默认地址:</span>
+            <van-switch v-model="checked" size="0.4rem" />
+        </div>
+    </div>
+    <!-- 选择地区 -->
+    <van-popup v-model="area_show" position="bottom" :style="{ height: '5rem' }">
+        <van-area :area-list="area" @confirm="getareavalue" @cancel="cancelarea" />
+    </van-popup>
+    <div class="addshdz-sub-btn-box tc">
+        <button type="button" @click="add()" v-show="!ing" class="addshdz-sub-btn">保存</button>
+        <van-button loading type="info" v-show="ing" class="addshdz-sub-btn" />
+    </div>
+
+</div>
+{/block}
+{block name="footjs"}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="__JS__/public/axios-rediect.js"></script>
+<script src="__MOD__/shop/js/area.js"></script>
+<script src="__THIRD__/layer/mobile/layer.js"></script>
+<script>
+// 在 #app 标签下渲染一个按钮组件
+new Vue({
+    el: '#shouHuoDiZhi',
+    data: {
+        username: "" /*收货人 */ ,
+        phone: "" /*电话 */ ,
+        address: "" /*详细地址*/ ,
+
+        /*选择区域*/
+        area_show: false, //地区下拉框显示隐藏
+        area_value: "", //地区所选的值
+        area_num: "", //地区所选的编号
+        area: area, //地区数据
+        ing: false,
+        /*是否设置为默认地址*/
+        checked: false
+    },
+    methods: {
+        /*区域选择回填*/
+        getareavalue(val) {
+            this.area_value = val[0].name + "-" + val[1].name + "-" + val[2].name;
+            this.area_num = val[0].code + "-" + val[1].code + "-" + val[2].code;
+            this.area_show = false;
+        },
+        cancelarea() {
+            this.area_show = false;
+        },
+        /*点击添加 */
+        add() {
+        	if(this.username  == ''){
+        		vant.Notify("收货人不能为空");
+            	return false;
+        	}
+
+            var reg = 11 && /^((13|14|15|16|17|18|19)[0-9]{1}\d{8})$/;
+            if(this.phone == ''){
+            	vant.Notify("手机号码不能为空");
+            	return false;
+            }
+
+			if (!reg.test(this.phone)) {
+                vant.Notify("手机号码有误");
+                return false;
+            }
+
+            if(this.area_value == ''){
+            	vant.Notify("请选择所在地区");
+            	return false;
+            }
+
+            if(this.address == ''){
+            	vant.Notify("请填写详细地址");
+            	return false;	
+            }
+
+            if (!reg.test(this.phone)) {
+                vant.Notify("手机号码有误");
+            } else {
+                this.ing = true;
+                axios.post('{:url(\'newAddress\')}', {
+                    userName: this.username,
+                    userPhone: this.phone,
+                    area: this.area_value,
+                    address: this.address,
+                    isdefault: this.checked ? 1 : 0
+                }).then(res => {
+                    this.ing = false;
+                    if (res.data.code == 1) {
+                        vant.Notify({
+                            message: "添加成功",
+                            background: "#1989fa"
+                        });
+                        setTimeout(function() {
+                            window.history.go(-1);
+                        }, 1000);
+                    } else {
+                        vant.Notify('添加失败，请重试');
+                    }
+                });
+            }
+        }
+
+    }
+});
+</script>
+{/block}

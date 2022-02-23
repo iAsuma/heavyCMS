@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{block name="title"}商城{/block}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <!-- 引入样式文件 -->
+    {block name="frontcss"}{/block}
+    <link rel="stylesheet" href="__MOD__/shop/css/main.css" />
+	{block name="css"}{/block}
+    <script src="__MOD__/shop/js/main.js"></script>
+	<script type="text/javascript" src="__JS__/public/jquery.min.js"></script>
+	{block name="headjs"}{/block}
+</head>
+<body class="body-container">
+{block name="content"}{/block}
+<script type="text/javascript" src="__JS__/public/ajax-rediect.js"></script>
+{block name="footjs"}{/block}
+</body>
+</html

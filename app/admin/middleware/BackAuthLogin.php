@@ -6,10 +6,11 @@
 // +----------------------------------------------------------------------
 // | Time: 2019-05-06
 // +----------------------------------------------------------------------
-namespace app\http\middleware;
-use Session;
-use Url;
+namespace app\admin\middleware;
+use think\facade\Session;
 use auth\facade\Permissions;
+use think\facade\Route;
+use app\common\Request;
 
 class BackAuthLogin
 {
@@ -17,7 +18,7 @@ class BackAuthLogin
      * 跳转地址，支持符合规则的路由或模块/控制器/方法
      *
      */
-    protected $redirect_url = '/admin/login';  // 必设项，检测到未登录时的跳转地址
+    protected string $redirect_url = '/admin/login';  // 必设项，检测到未登录时的跳转地址
 
     /**
      * 排除的验证地址
@@ -25,13 +26,13 @@ class BackAuthLogin
      * 支持 模块，模块/控制器，模块/控制器/方法
      * @var array
      */
-    protected $except = [
-        'admin/login',
+    protected array $except = [
+        'login',
     ];
 
-    public function handle($request, \Closure $next, $name)
+    public function handle(Request $request, \Closure $next, $name="")
     {
-        if($this->inExceptArray($request)){
+        if($request->checkRouteInList($this->except)){
             return $next($request);
         }
 
@@ -41,15 +42,15 @@ class BackAuthLogin
                 //返回head头 ajax的url请求由js接收跳转
                 return response()->header([
                     'Ajax-Mark' => ' redirect',
-                    'Redirect-Path' => Url::build($this->redirect_url)
+                    'Redirect-Path' => (string)Route::buildUrl($this->redirect_url)
                 ]);
             }else{
                 return redirect($this->redirect_url);
             }
     	}else{
-            $userInfo = Session::get(config('auth_key'));
+            $userInfo = Session::get(config('auth_session_key'));
             $node = $request->controller().'/'.$request->action();
-            
+
             // 权限检测
             if(!Permissions::check($node, $userInfo['uid'])){
                 if($request->isAjax()){
@@ -65,36 +66,5 @@ class BackAuthLogin
         }
 
     	return $next($request);
-    }
-
-    protected function inExceptArray($request)
-    {
-        foreach ($this->except as $v) {
-            if(strtolower($v) == $request->path() || $this->checkRoute($request, $v)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function checkRoute($request, $pattern)
-    {
-        $patternArr = explode('/', $pattern);
-        if(count($patternArr) == 3){
-            if(strtolower($patternArr[0]) == strtolower($request->module()) && strtolower($patternArr[1]) == strtolower($request->controller()) && strtolower($patternArr[2]) == strtolower($request->action())){
-                return true;
-            }
-        }else if(count($patternArr) == 2){
-            if(strtolower($patternArr[0]) == strtolower($request->module()) && strtolower($patternArr[1]) == strtolower($request->controller())){
-                return true;
-            }
-        }else{
-            if(strtolower($patternArr[0]) == strtolower($request->module())){
-                return true;
-            }
-        }
-
-        return false;
     }
 }

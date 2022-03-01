@@ -21,7 +21,7 @@ class Login
         $loginUser = Register::check($request->post());
         ($loginUser && !Register::login($loginUser, $request->post('remembered'))) && exit(res_json_str(0, '登录失败'));;
         
-        Hook::listen('admin_log', ['登录', '登录页登录系统']); //监听登录行为
+//        Hook::listen('admin_log', ['登录', '登录页登录系统']); //监听登录行为
 
         return res_json(1);
     }

@@ -53,7 +53,7 @@ class InAppCheck
         }
     }
 
-    protected function getTargetUrl($request)
+    protected function getTargetUrl($request): string
     {
         $param = $request->get();
         if (isset($param['code'])) {

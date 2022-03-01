@@ -42,14 +42,14 @@
           </ul>
         </div>
       </div>
-      
+
       <!-- 主体内容 -->
       <div class="layui-body" id="LAY_app_body">
         <div class="layadmin-tabsbody-item layui-show">
           <iframe src="{:url(isset($menu[0]['child']) ? ($menu[0]['child'][0]['name'] ?: 'emptyAuth') : 'emptyAuth?msg=当前页面没有权限')}" frameborder="0" class="layadmin-iframe"></iframe>
         </div>
       </div>
-      
+
       <!-- 辅助元素，一般用于移动设备下遮罩 -->
       <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
@@ -85,7 +85,7 @@
           tabName: tabName
         }
       });
-    });    
+    });
 
     $('#logout').on('click', function(){
       layer.msg('即将退出登录', {

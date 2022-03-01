@@ -2,6 +2,7 @@
 // +----------------------------------------------------------------------
 // | 模板设置
 // +----------------------------------------------------------------------
+use think\facade\Env;
 
 return [
     // 模板引擎类型使用Think
@@ -22,4 +23,15 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
+    // 模板字符串替换
+    'tpl_replace_string'  =>  [
+        '__STATIC__' => '/static',
+        '__IMAGE__' => '/static/images',
+        '__JS__' => '/static/js',
+        '__CSS__' => '/static/css',
+        '__THIRD__' => '/static/third',
+        '__MOD__' => '/static/mod',
+        '__MODSTATIC__' => '/static/mod',
+        '__FILEROOT__' => Env::get('FILE_UPLOAD_PATH')
+    ]
 ];

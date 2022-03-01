@@ -19,7 +19,7 @@ class AdminLog
 			$data['ip'] = $request->ip();
 			$data['record_time'] = date('Y-m-d H:i:s');
 
-			$userInfo = session(config('auth_key'));
+			$userInfo = session(config('auth_session_key'));
 			$data['behavior_user'] = $userInfo['ulogin'];
 			
 			Db::name('operation_log')->insert($data);

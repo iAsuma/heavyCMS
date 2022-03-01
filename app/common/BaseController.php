@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-namespace app;
+namespace app\common;
 
 use think\App;
 use think\exception\ValidateException;
@@ -16,25 +16,25 @@ abstract class BaseController
      * Request实例
      * @var \think\Request
      */
-    protected $request;
+    protected \think\Request $request;
 
     /**
      * 应用实例
-     * @var \think\App
+     * @var App
      */
-    protected $app;
+    protected App $app;
 
     /**
      * 是否批量验证
      * @var bool
      */
-    protected $batchValidate = false;
+    protected bool $batchValidate = false;
 
     /**
      * 控制器中间件
      * @var array
      */
-    protected $middleware = [];
+    protected array $middleware = [];
 
     /**
      * 构造方法

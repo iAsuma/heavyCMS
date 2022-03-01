@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use auth\facade\Permissions;
+use think\facade\View;
 /**
  * 首页
  * @author asuma(lishuaiqiu) <sqiu_li@163.com>
@@ -14,8 +15,7 @@ class Index
 
         $tree = new \util\Tree($rules);
         $menu = $tree->leaf();
-    	
-        return view('', ['menu' => $menu, 'nickname' => request()->uname, 'userid' => request()->uid]);
+        return View::fetch('', ['menu' => $menu, 'nickname' => request()->uname, 'userid' => request()->uid]);
     }
 
     /**

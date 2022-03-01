@@ -10,20 +10,7 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP6!';
-});
 
-Route::get('hello/:name', 'index/hello');
-
-Route::get('redirect', 'index/redirectLast'); //记住的跳转地址
-Route::get('only-wechat', 'index/Login/onlyWechat');
-
-Route::group('admin', function(){
-    Route::get('/', 'admin/index/index');
-    Route::rule('ueditor' , 'admin/index/ueditor');
-    Route::rule('layuiUpload', 'admin/index/layuiUpload');
-});
 
 Route::group('shop', function(){
     Route::get('/', 'shop/Index/index');

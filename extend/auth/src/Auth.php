@@ -12,11 +12,18 @@
 // +----------------------------------------------------------------------
 namespace auth\src;
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\facade\Db;
+
 class Auth{
 
     //默认配置
     protected $_config = array(
         'auth_on'           => true,                // 认证开关
+        'auth_list_only'    => true,                //是否只对规则表的权限检测，若否则验证全部路由
+        'auth_check_except' => '',					//不需要验证权限的用户ID，多个ID以,分隔
         'auth_type'         => 1,                   // 认证方式，1为实时认证；2为登录认证。
         'auth_group'        => 'auth_group',        // 用户组数据表名
         'auth_group_access' => 'auth_group_access', // 用户-用户组关系表
@@ -33,14 +40,15 @@ class Auth{
 
     /**
       * 检查权限
-      * @param name string|array  需要验证的规则列表,支持逗号分隔的权限规则或索引数组
-      * @param uid  int           认证用户的id
-      * @param relation string    如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
+      * @param string|array name  需要验证的规则列表,支持逗号分隔的权限规则或索引数组
+      * @param int uid            认证用户的id
+      * @param string relation    如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
       * @param int mark           区别不同的check行为，一般不需设置
       * @param string mode        执行check的模式 
       * @return boolean           通过验证返回true;失败返回false
      */
-    public function check($name, $uid, $relation = 'or', $mark = 1, $mode = 'url') {
+    public function check($name, $uid, $relation = 'or', $mark = 1, $mode = 'url'): bool
+    {
         if (!$this->_config['auth_on']) {
             return true;
         }
@@ -89,36 +97,46 @@ class Auth{
 
     /**
      * 根据用户id获取用户组,返回值为数组
-     * @param  uid int     用户id
+     * @param $uid
+     * @param int $mark
      * @return array       用户所属的用户组 array(
      *     array('uid'=>'用户id','group_id'=>'用户组id','title'=>'用户组名称','rules'=>'用户组拥有的规则id,多个,号隔开'),
      *     ...)
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
-    public function getGroups($uid, $mark=1) {
+    public function getGroups($uid, int $mark=1): array
+    {
         static $groups = array();
 
         if (isset($groups[$uid])) return $groups[$uid];
 
         $cacheKey = 'group_'.$mark.'_'.$uid;
-        $user_groups = \think\Db::name($this->_config['auth_group_access'])
+        $user_groups = Db::name($this->_config['auth_group_access'])
             ->alias('a')
             ->join($this->_config['auth_group']." g", "g.id=a.group_id")
             ->where("a.uid='$uid' and g.status='1'")
             ->field('uid,group_id,title,rules')
             ->cache($cacheKey, 24*60*60, 'auth_rule')
-            ->select();
-            
-        $groups[$uid] = $user_groups ? $user_groups : [];
+            ->select()
+            ->toArray();
+
+        $groups[$uid] = $user_groups ? : [];
 
         return $groups[$uid];
     }
 
     /**
      * 获得权限列表
-     * @param integer $uid  用户id
-     * @param integer $mark 
+     * @param integer $uid 用户id
+     * @param integer $mark
+     * @return array|mixed
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
-    protected function getAuthList($uid, $mark) {
+    protected function getAuthList(int $uid, int $mark) {
         static $_authList = array(); //保存用户验证通过的权限列表
         
         if (isset($_authList[$uid.$mark])) {
@@ -147,7 +165,7 @@ class Auth{
 
         $cacheKey = 'rule'.$mark.'_'.md5(http_build_query($map));
         //读取用户组所有权限规则
-        $rules = \think\Db::name($this->_config['auth_rule'])->field('condition,name')->cache($cacheKey, 24*60*60, 'auth_rule')->where($map)->select();
+        $rules = Db::name($this->_config['auth_rule'])->field('condition,name')->cache($cacheKey, 24*60*60, 'auth_rule')->where($map)->select();
 
         //循环规则，判断结果。
         $authList = array();
@@ -183,7 +201,7 @@ class Auth{
 
         if(!isset($userinfo[$uid])){
             $cacheKey= md5('adminUser_'.$uid);
-            $userinfo[$uid] = \think\Db::name($this->_config['auth_user'])->where(array('id' => $uid))->cache($cacheKey, 24*60*60, 'admin_user')->find();
+            $userinfo[$uid] = Db::name($this->_config['auth_user'])->where(array('id' => $uid))->cache($cacheKey, 24*60*60, 'admin_user')->find();
         }
 
         return $userinfo[$uid];

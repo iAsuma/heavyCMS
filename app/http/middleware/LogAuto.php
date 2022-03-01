@@ -7,7 +7,7 @@
 // | Time: 2019-06-21
 // +----------------------------------------------------------------------
 namespace app\http\middleware;
-use think\facade\Hook;
+//use think\facade\Hook;
 use think\Db;
 
 class LogAuto

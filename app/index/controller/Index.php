@@ -8,7 +8,7 @@ class Index
 //        if(!request()->isMobile()){
 //            return redirect('/admin');
 //        }
-    	echo "<h3>nothing here</h3>";
+    	return "<h3>nothing here</h3>";
     }
     
     /**

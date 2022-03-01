@@ -1,9 +1,9 @@
 <?php
 namespace app\admin\service;
-use Session;
-use Config;
-use Cookie;
-use Db;
+use think\facade\Session;
+use think\facade\Config;
+use think\facade\Cookie;
+use think\facade\Db;
 // +----------------------------------------------------------------------
 // | 注册/登录类库
 // +----------------------------------------------------------------------
@@ -18,8 +18,8 @@ class Register
 
 	public function __construct()
 	{
-		$this->key = Config::get('auth_key');
-		$this->cookie_key = Config::get('auth_key_incookie');
+		$this->key = Config::get('auth.auth_session_key');
+		$this->cookie_key = Config::get('auth.auth_cookie_key');
 	}
 
 	/**

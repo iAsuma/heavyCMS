@@ -6,6 +6,7 @@
 // +----------------------------------------------------------------------
 
 namespace app\http\middleware;
+use app\common\Request;
 use Session;
 use Url;
 use think\Db;
@@ -30,9 +31,9 @@ class AutoLogin
         'shop/Api'
     ];
 
-    public function handle($request, \Closure $next, $name)
+    public function handle(Request $request, \Closure $next, string $name="")
     {
-        if($this->inExceptArray($request)){
+        if($request->checkRouteInList($this->except)){
             return $next($request);
         }
 
@@ -98,36 +99,5 @@ class AutoLogin
         }
 
     	return $next($request);
-    }
-
-    protected function inExceptArray($request)
-    {
-        foreach ($this->except as $v) {
-            if(strtolower($v) == $request->path() || $this->checkRoute($request, $v)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function checkRoute($request, $pattern)
-    {
-        $patternArr = explode('/', $pattern);
-        if(count($patternArr) == 3){
-            if(strtolower($patternArr[0]) == strtolower($request->module()) && strtolower($patternArr[1]) == strtolower($request->controller()) && strtolower($patternArr[2]) == strtolower($request->action())){
-                return true;
-            }
-        }else if(count($patternArr) == 2){
-            if(strtolower($patternArr[0]) == strtolower($request->module()) && strtolower($patternArr[1]) == strtolower($request->controller())){
-                return true;
-            }
-        }else{
-            if(strtolower($patternArr[0]) == strtolower($request->module())){
-                return true;
-            }
-        }
-
-        return false;
     }
 }

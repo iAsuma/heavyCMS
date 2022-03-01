@@ -1,5 +1,5 @@
 <?php
 return [
-//    'BackAuthLogin',
-//    'LogAuto'
+    app\admin\middleware\BackAuthLogin::class
+//    app\http\middleware\LogAuto::class
 ];

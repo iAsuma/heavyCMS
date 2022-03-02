@@ -86,17 +86,17 @@ class Tree {
     /**
      * 菜单 多维数组
      *
-     * @param integer $id 分类id
-     * @return array 返回分支，默认返回整个树
+     * @param integer|null $id 分类id
+     * @return array|bool
      */
-    public function leaf($id = null) {
+    public function leaf(int $id = null) {
         if(empty($this->result)){
             return false;
         }
         
         $id = ($id == null) ? $this->root : $id;
         $this->handler();
-        return isset($this->tmp[$id]) ? $this->tmp[$id] : [];
+        return $this->tmp[$id] ?? [];
     }
 
     /**

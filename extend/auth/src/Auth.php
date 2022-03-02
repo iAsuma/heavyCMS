@@ -32,9 +32,9 @@ class Auth{
     );
 
     public function __construct() {
-        if (config('auth_config')) {
+        if (config('auth.auth_config')) {
             //可设置配置项 auth_config, 此配置项为数组。
-            $this->_config = array_merge($this->_config, config('auth_config'));
+            $this->_config = array_merge($this->_config, config('auth.auth_config'));
         }
     }
 

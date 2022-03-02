@@ -56,7 +56,6 @@ class Permissions extends Auth
 			//读取用户所属用户组
 	        $groups = $this->getGroups($uid, $mark);
 	        $ids = [];
-	        
 	        foreach ($groups as $v) {
 	            $ids = array_merge($ids, explode(',', $v['rules']));
 	        }
@@ -77,7 +76,6 @@ class Permissions extends Auth
         $rules = Db::name($this->_config['auth_rule'])->field('id,name,title,pid,icon,type')->cache($cacheKey, 24*60*60, 'auth_rule')->where($map)->order(['sorted', 'id'])->select();
 
         $_menuList[$uid.$mark] = $rules;
-        
         return $rules;
 	}
 }

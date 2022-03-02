@@ -27,7 +27,7 @@ class BackAuthLogin
      * @var array
      */
     protected array $except = [
-        'login',
+        'admin/login',
     ];
 
     public function handle(Request $request, \Closure $next, $name="")
@@ -39,7 +39,7 @@ class BackAuthLogin
     	if(!app('register')->isLogined()){
             //用户未登录后跳转
             if($request->isAjax()){
-                //返回head头 ajax的url请求由js接收跳转
+                //返回head头 ajax的url请求由js接收跳
                 return response()->header([
                     'Ajax-Mark' => ' redirect',
                     'Redirect-Path' => (string)Route::buildUrl($this->redirect_url)
@@ -48,7 +48,7 @@ class BackAuthLogin
                 return redirect($this->redirect_url);
             }
     	}else{
-            $userInfo = Session::get(config('auth_session_key'));
+            $userInfo = Session::get(config('auth.auth_session_key'));
             $node = $request->controller().'/'.$request->action();
 
             // 权限检测

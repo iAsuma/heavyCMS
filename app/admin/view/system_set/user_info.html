@@ -45,8 +45,8 @@
           </div>
           <div class="layui-form-item">
             <div class="layui-input-block">
-            	<input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
-              <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:route('updateUserInfo')}">确认修改</button>
+            	<input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
+              <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:route('SystemSet/updateUserInfo')}">确认修改</button>
               <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
             </div>
           </div>

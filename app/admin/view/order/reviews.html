@@ -21,7 +21,7 @@
      <div class="layui-form-item layui-hide">
         <input type="hidden" name="order_id" value="{$info.order_id}">
         <input type="hidden" name="order_no" value="{$order_no}">
-        <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+        <input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
         <input type="button" lay-submit lay-filter="submit" id="submit" value="确认" {if $hasRe}disabled{/if}>
     </div>
 </div>

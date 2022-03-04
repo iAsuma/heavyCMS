@@ -107,7 +107,7 @@
 
           <div class="layui-form-item">
             <div class="layui-input-block">
-            	<input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+            	<input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
               <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:route('save')}">确认</button>
               <button type="reset" class="layui-btn layui-btn-primary">取消</button>
             </div>

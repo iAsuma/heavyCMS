@@ -21,7 +21,15 @@ Route::group('/', function (){
 
     // 管理用户组
     Route::group('user', function (){
-        Route::get('info', 'SystemSet/userInfo');
+        Route::get('info', 'SystemSet/userInfo'); //查看管理员信息
+        Route::post('update', 'SystemSet/updateUserInfo'); //修改管理员信息
+
+        Route::get('password/index', 'SystemSet/password'); //修改页面页面
+        Route::post('password/change', 'SystemSet/changePwd'); //修改页面页面
+    });
+
+    Route::group('system', function (){
+
     });
 
 })->middleware([

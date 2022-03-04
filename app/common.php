@@ -71,10 +71,10 @@ function i_base64decode($string)
 /**
  * 记录日志输出文件，用于程序无法在浏览器打印调试时调用
  * @author lishuaiqiu 
- * @param  $output 输出的变量信息
- * @param  $filename 文件名
- * @param  $suffix 文件后缀名
- * @return 
+ * @param mixed $output 输出的变量信息
+ * @param string $filename 文件名
+ * @param string $suffix 文件后缀名
+ * @return void
  */
 function i_log($output, $filename = '', $suffix = ".log")
 {
@@ -110,9 +110,9 @@ function i_log($output, $filename = '', $suffix = ".log")
  * | 4. 将拼接得到的16位字符串再次使用MD5加密
  * +----------------------------------------------------------------------
  * @author lishuaiqiu
- * @param $str 要加密的字符串
- * @param $key 自定义加密key 两位的字符串, 自行记录，以免忘记不可随意更改
- * @return 返回32位字符十六进制数
+ * @param string $str 要加密的字符串
+ * @param string $key 自定义加密key 两位的字符串, 自行记录，以免忘记不可随意更改
+ * @return string|bool 返回32位字符十六进制数
  */
 function md5safe($str, $key = 'MY')
 {
@@ -125,7 +125,7 @@ function md5safe($str, $key = 'MY')
 
 /**
  * @author lishuaiqiu
- * @return 返回http或者https
+ * @return string 返回http或者https
  */
 function http_scheme() 
 {
@@ -141,7 +141,7 @@ function http_scheme()
 
 /**
  * 表单令牌验证，防止表单重复提交
- * @param $data 表单数据
+ * @param array $data 表单数据
  * @author lishuaiqiu
  */
 function checkFormToken($data=[])
@@ -166,7 +166,7 @@ function checkFormToken($data=[])
 
 /**
  * 销毁缓存中的表单令牌
- * @param $data 表单数据
+ * @param array $data 表单数据
  * @author lishuaiqiu
  */
 function destroyFormToken($data=[])
@@ -183,7 +183,7 @@ function destroyFormToken($data=[])
     }
 
     if($session_token === $data[$token]){
-        \think\facade\Session::delete('__token__');
+        \think\facade\Session::delete($token);
         return true;
     }
 
@@ -227,7 +227,7 @@ function rand_str($length=16)
 }
 
 /**
- * @param $code 状态码
+ * @param int $code 状态码
  * @author lishuaiqiu
  * json数据全局统一返回格式
  */
@@ -248,7 +248,7 @@ function res_json_str($code= 100, $result='')
 }
 
 /**
- * @param $code 状态码
+ * @param int $code 状态码
  * @author lishuaiqiu
  * Admin后台table数据全局统一返回格式
  */
@@ -259,7 +259,7 @@ function table_json($data = [], $count = 0, $code = 0, $msg = "")
 }
 
 /**
- * @param $val 字符串
+ * @param string $val 字符串
  * xss过滤
  */
 function off_xss($val) {

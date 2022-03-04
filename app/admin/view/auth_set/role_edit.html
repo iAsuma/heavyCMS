@@ -35,7 +35,7 @@
   </div>
   <div class="layui-form-item layui-hide">
     <input type="hidden" name="role_id" value="{$role.id}" />
-    <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+    <input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
     <input type="button" lay-submit lay-filter="role-submit" id="role-submit" value="确认" data-url="{:route('addNewRole')}">
   </div>
 </div>

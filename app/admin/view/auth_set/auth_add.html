@@ -83,7 +83,7 @@
       </div>
     </div>
     <div class="layui-form-item layui-hide">
-      <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
+      <input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
       <input type="button" lay-submit lay-filter="auth-submit" id="auth-submit" value="确认" data-url="{:route('pullRule')}">
     </div>
   </div>

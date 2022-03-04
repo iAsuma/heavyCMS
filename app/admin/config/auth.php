@@ -2,7 +2,7 @@
 //配置文件
 return [
 	/* 权限session key */
-	'auth_session_key' => 'heavy_asuma',
+	'auth_session_key' => 'heavy_asuma_s',
     /* 权限cookie key */
 	'auth_cookie_key' => 'heavy_asuma_c',
 	

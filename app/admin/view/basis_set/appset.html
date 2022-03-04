@@ -34,7 +34,7 @@
 
    var tableIns =  table.render({
       elem: '#appset'
-      ,url: "{:url('dataList')}" //数据接口
+      ,url: "{:route('dataList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -74,7 +74,7 @@
          layer.open({
           type: 2
           ,title: '添加基础配置'
-          ,content: "{:url('add')}"
+          ,content: "{:route('add')}"
           ,maxmin: true
           ,area: ['40%', '80%']
           ,btn: ['确定', '取消']
@@ -91,7 +91,7 @@
               layer.open({
                 type: 2
                 ,title: '编辑基础配置'
-                ,content: "{:url('edit')}?id="+obj.data.id
+                ,content: "{:route('edit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['40%', '80%']
                 ,btn: ['确定', '取消']
@@ -107,7 +107,7 @@
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('BasisSet/del')}", {id:obj.data.id}, function(res){
+                   $.post("{:route('BasisSet/del')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('appset'); //重载表格

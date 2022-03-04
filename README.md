@@ -1,8 +1,8 @@
 
-基于iAsuma/layui-tp51-admin编写
-===============
+基于iAsuma/layui-tp51-admin
 
-基础权限框架由asuma编写
+迁移thinkphp5.1LTS框架至6.0LTS版本
+===============
 
 作者主页
 ```

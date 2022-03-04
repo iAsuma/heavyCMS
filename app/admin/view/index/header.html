@@ -24,7 +24,7 @@
   <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
     <!-- 消息通知 -->
     <!-- <li class="layui-nav-item" lay-unselect>
-      <a lay-href="{:url('SystemSet/notice')}" layadmin-event="message" lay-text="消息中心">
+      <a lay-href="{:route('SystemSet/notice')}" layadmin-event="message" lay-text="消息中心">
         <i class="layui-icon layui-icon-notice"></i>   -->
         
         <!-- 如果有新消息，则显示小圆点 -->
@@ -53,8 +53,8 @@
         <cite>{$nickname}</cite>
       </a>
       <dl class="layui-nav-child">
-        <dd><a lay-href="{:url('SystemSet/userInfo')}">基本资料</a></dd>
-        <dd><a lay-href="{:url('SystemSet/password')}">修改密码</a></dd>
+        <dd><a lay-href="{:route('SystemSet/userInfo')}">基本资料</a></dd>
+        <dd><a lay-href="{:route('SystemSet/password')}">修改密码</a></dd>
         <hr>
         <dd id="logout" style="text-align: center;"><a href="javascript:;">退出</a></dd>
       </dl>

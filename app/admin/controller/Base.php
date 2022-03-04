@@ -1,7 +1,7 @@
 <?php
 namespace app\admin\controller;
 
-use think\Controller;
+use app\common\BaseController;
 use PHPExcel;
 use PHPExcel_IOFactory;
 
@@ -9,7 +9,7 @@ use PHPExcel_IOFactory;
  * 业务基类
  * @author asuma(lishuaiqiu) <sqiu_li@163.com>
  */
-class Base extends Controller
+class Base extends BaseController
 {
     protected $uid = NULL;
     protected $uname = NULL;

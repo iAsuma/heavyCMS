@@ -5,7 +5,7 @@
 {/block}
 {block name="content"}
 <div id="gouWuZhiFu" class="fs0 layui-form" v-cloak>
-	<a href="{:url('User/address', ['preorder' => $Request.get.buy])}">
+	<a href="{:route('User/address', ['preorder' => $Request.get.buy])}">
     <div class="gwz-top">
         <div class="gwz-top-left">
             <div class="fs14 cl33">收货人: <span>{$address.name}</span> <span class="ml20">{$address.phone}</span></div>
@@ -116,7 +116,7 @@ new Vue({
     methods: {
         sub() {
             vant.Toast.loading({ forbidClick: true });
-            axios.post('{:url(\'make\')}', {
+            axios.post('{:route(\'make\')}', {
                 buy_list: this.buy_list,
                 freight: this.freight,
                 order_price: this.total,
@@ -125,7 +125,7 @@ new Vue({
             }).then(res => {
                 vant.Toast.clear();
                 if (res.data.code == 1) {
-                	window.location.replace('{:url('detail')}?from=pre&no='+res.data.result)
+                	window.location.replace('{:route('detail')}?from=pre&no='+res.data.result)
                 }else{
                 	vant.Toast.fail('系统错误');
                 }

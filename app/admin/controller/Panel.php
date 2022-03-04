@@ -2,14 +2,14 @@
 
 namespace app\admin\controller;
 
-use think\Controller;
-use think\Request;
+use app\common\BaseController;
+use think\facade\View;
 
-class Panel extends Controller
+class Panel extends BaseController
 {
 
     public function index()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 }

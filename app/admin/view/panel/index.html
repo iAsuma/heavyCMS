@@ -26,7 +26,7 @@
                 <tr>
                   <td>当前浏览器</td>
                   <td colspan="4">
-                    <?php $browser = getBrowser(); $msg=''; if ($browser != 'Firefox' && $browser != 'Chrome'){ $msg = '<span style="color: red;">当前浏览器可能不兼容，推荐使用火狐浏览器</span>';} echo $browser.' '.$msg; ?>
+                    <?php $browser = get_user_browser(); $msg=''; if ($browser != 'Firefox' && $browser != 'Chrome'){ $msg = '<span style="color: red;">当前浏览器可能不兼容，推荐使用火狐浏览器</span>';} echo $browser.' '.$msg; ?>
                   </td>
                 </tr>
                 <tr>

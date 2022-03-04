@@ -106,7 +106,7 @@ new Vue({
                 vant.Notify("手机号码有误");
             } else {
                 this.ing = true;
-                axios.post('{:url(\'newAddress\')}', {
+                axios.post('{:route(\'newAddress\')}', {
                     userName: this.username,
                     userPhone: this.phone,
                     area: this.area_value,

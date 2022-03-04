@@ -1,8 +1,10 @@
 <?php
 namespace app\admin\controller;
 
+use think\facade\Cache;
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 /**
  * 权限基础控制器
@@ -13,8 +15,8 @@ class AuthSet extends Base
     public function admins()
     {
         $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, 'admin_role')->where('status', 1)->select();
-        $this->assign('roles', $roles);
-    	return $this->fetch();
+        View::assign('roles', $roles);
+    	return View::fetch();
     }
 
     public function adminList()
@@ -69,10 +71,10 @@ class AuthSet extends Base
 
         $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, 'admin_role')->where('status', 1)->select();
 
-        $this->assign('admin', $adminInfo ?? []);
-        $this->assign('hasrole', $hasRoleId ?? []);
-        $this->assign('roles', $roles);
-        return $this->fetch();
+        View::assign('admin', $adminInfo ?? []);
+        View::assign('hasrole', $hasRoleId ?? []);
+        View::assign('roles', $roles);
+        return View::fetch();
     }
 
     public function pulladmin(Request $request)
@@ -208,8 +210,8 @@ class AuthSet extends Base
                     $result = Db::name('auth_group_access')->insertAll($access);
 
                     $cacheKey = 'group_1_'.$request->post('admin_id');
-                    \think\facade\Cache::rm($cacheKey); //清除用户组缓存，权限实时生效
-                    \think\facade\Cache::clear('admin_user'); //清除用户数据缓存
+                    Cache::rm($cacheKey); //清除用户组缓存，权限实时生效
+                    Cache::tag('admin_user')->clear(); //清除用户数据缓存
 
                     if(!$result){
                         Db::rollback();
@@ -258,13 +260,13 @@ class AuthSet extends Base
             Hook::listen('admin_log', ['权限', $status == -2 ? '冻结了管理员'.$this->request->post('name').'的账号' : '开启了管理员'.$this->request->post('name').'的账号']);
         }
         
-        \think\facade\Cache::clear('admin_user'); //清除用户数据缓存
+        Cache::tag('admin_user')->clear(); //清除用户数据缓存
         return res_json(1);
     }
 
     public function roles()
     {
-    	return $this->fetch();
+    	return View::fetch();
     }
 
     public function roleList()
@@ -292,11 +294,11 @@ class AuthSet extends Base
         if($request->get('id')){
             $roleInfo = Db::name('auth_group')->where('id', (int)$request->get('id'))->find();
 
-            $this->assign('role', $roleInfo);
-            return $this->fetch('role_edit');
+            View::assign('role', $roleInfo);
+            return View::fetch('role_edit');
         }
 
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function allrules()
@@ -365,8 +367,8 @@ class AuthSet extends Base
                 Hook::listen('admin_log', ['权限', '添加了角色组'.$data['title']]);
             }
             
-            \think\facade\Cache::clear('auth_rule');
-            \think\facade\Cache::clear('admin_role'); //清除规则缓存，让列表实时生效
+            Cache::tag('auth_rule')->clear();
+            Cache::tag('admin_role')->clear(); //清除规则缓存，让列表实时生效
             destroyFormToken($post);
             return res_json(1);
         } catch (\Exception $e) {
@@ -407,13 +409,13 @@ class AuthSet extends Base
             Hook::listen('admin_log', ['权限', ($status == -2 ? '关闭了角色组' :'开启了角色组').$this->request->post('name')]);
         }
         
-        \think\facade\Cache::clear('admin_role'); //清除规则缓存，让列表实时生效
+        Cache::tag('admin_role')->clear(); //清除规则缓存，让列表实时生效
         return res_json(1);
     }
 
     public function permissions()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function permissionsList()
@@ -457,7 +459,7 @@ class AuthSet extends Base
 
     public function authAdd()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function modsTree()
@@ -521,7 +523,7 @@ class AuthSet extends Base
             !$result && exit(res_json_native(-1, '添加失败'));
 
             destroyFormToken($post);
-            \think\facade\Cache::clear('auth_rule'); //清除规则缓存，让列表实时生效
+            Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
             return res_json(1);
         } catch (\Exception $e) {
             $msg = false !== strpos($e->getMessage(), '1062') ? '权限标识重复' : $e->getMessage();
@@ -536,7 +538,7 @@ class AuthSet extends Base
 
         $is_logged = $is_logged == 'true' ? 1 : 0;
         $res = Db::name('auth_rule')->where('id', '=', $id)->update(['is_logged' => $is_logged]);
-        \think\facade\Cache::clear('auth_rule'); //清除规则缓存，让列表实时生效
+        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
         !$res && exit(res_json_native(-3, '切换失败'));
 
         return res_json(1);
@@ -549,7 +551,7 @@ class AuthSet extends Base
 
         $post['id'] && $res = Db::name('auth_rule')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
         !$res && exit(res_json_native(-3, '修改失败'));
-        \think\facade\Cache::clear('auth_rule'); //清除规则缓存，让列表实时生效
+        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
 
         return res_json(1);
     }
@@ -587,7 +589,7 @@ class AuthSet extends Base
             !$res && exit(res_json_native(-3, '状态切换失败'));
         }
         
-        \think\facade\Cache::clear('auth_rule'); //清除规则缓存，让列表实时生效
+        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
 
         return res_json(1);
     }
@@ -597,9 +599,9 @@ class AuthSet extends Base
         $id = (int)$this->request->get('rule');
         $id && $info = Db::name('auth_rule')->where(['id' => $id])->find();
 
-        isset($info) && $this->assign('info', $info);
+        isset($info) && View::assign('info', $info);
         
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function editRule(Request $request)
@@ -637,7 +639,7 @@ class AuthSet extends Base
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 
             destroyFormToken($post);
-            \think\facade\Cache::clear('auth_rule'); //清除规则缓存，让列表实时生效
+            Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
             return res_json(1);
         } catch (\Exception $e) {
             return res_json(-100, $e->getMessage());
@@ -646,7 +648,7 @@ class AuthSet extends Base
 
     public function operationLog()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function logList()

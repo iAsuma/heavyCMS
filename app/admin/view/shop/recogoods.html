@@ -68,7 +68,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
 
     var tableIns =  table.render({
       elem: '#goods'
-      ,url: "{:url('recogoodsList')}?rid="+"{$rid}" //数据接口
+      ,url: "{:route('recogoodsList')}?rid="+"{$rid}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -123,7 +123,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
     table.on('tool(goods)', function(obj){
         switch(obj.event){
           case 'add':   
-             $.post("{:url('Shop/addrecogoods')}", {gid:obj.data.id,rid:"{$rid}"}, function(res){
+             $.post("{:route('Shop/addrecogoods')}", {gid:obj.data.id,rid:"{$rid}"}, function(res){
                 if(res.code == 1){
                   layer.msg('添加成功');
                   window.parent.location.reload();//再执行关闭 

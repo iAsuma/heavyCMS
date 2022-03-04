@@ -1,6 +1,7 @@
 <?php
 namespace app\shop\controller;
-use think\Db;
+use think\facade\Db;
+use think\facade\View;
 use think\Request;
 /**
  * 购物车相关
@@ -56,8 +57,8 @@ class Cart extends Base
 	{
 		$cart = Db::table('shop_shopping_cart')->field('c.*,s.price,s.stocks')->alias('c')->join('shop_goods_sku s', 'c.goods_sku_id=s.id')->join('shop_goods g', 's.goods_id=g.id')->where(['s.status' => 1, 'g.status' => 1, 'user_id' => $this->userId])->select();
 		
-		$this->assign('cart', $cart);
-		return $this->fetch();
+		View::assign('cart', $cart);
+		return View::fetch();
 	}
 
 	/**

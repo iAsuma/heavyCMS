@@ -53,7 +53,7 @@
 
    var tableIns =  table.render({
       elem: '#user'
-      ,url: "{:url('userList')}" //数据接口
+      ,url: "{:route('userList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -98,7 +98,7 @@
 
     $('.export').click(function(){
         var _get = $('#searchForm').serialize()
-        var turl = "{:url('export_excel')}";
+        var turl = "{:route('export_excel')}";
         window.open(turl+'?'+_get);
     })
 
@@ -120,7 +120,7 @@
               layer.open({
                 type: 2
                 ,title: '编辑用户'
-                ,content: "{:url('userEdit')}?id="+obj.data.id
+                ,content: "{:route('userEdit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['25%', '60%']
                 ,btn: ['确定', '取消']
@@ -136,7 +136,7 @@
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('User/del')}", {uid:obj.data.id}, function(res){
+                   $.post("{:route('User/del')}", {uid:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('user'); //重载表格

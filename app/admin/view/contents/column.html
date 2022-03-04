@@ -31,7 +31,7 @@
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:url('changeColumnStatus')}">
+<script type="text/html" id="statusTpl" data-url="{:route('changeColumnStatus')}">
   <input type="checkbox" name="status" value="{{d.id}}" title="开启" lay-filter="optstatus" {{d.status == 1 ? 'checked' : ''}}>
 </script>
 
@@ -50,7 +50,7 @@
 
    var tableIns =  table.render({
       elem: '#column'
-      ,url: "{:url('Contents/columnList')}" //数据接口
+      ,url: "{:route('Contents/columnList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -101,7 +101,7 @@
          layer.open({
           type: 2
           ,title: '添加栏目'
-          ,content: "{:url('columnAdd')}"
+          ,content: "{:route('columnAdd')}"
           ,maxmin: true
           ,area: ['40%', '30%']
           ,btn: ['确定', '取消']
@@ -127,7 +127,7 @@
           str=str.substring(0,str.length-1);
 
         layer.confirm('确定删除吗？', function(index) {
-           $.post("{:url('Contents/columnDel')}", {id:str}, function(res){
+           $.post("{:route('Contents/columnDel')}", {id:str}, function(res){
               if(res.code == 1){
                 layer.msg('删除成功');
                 table.reload('column'); //重载表格
@@ -146,7 +146,7 @@
               layer.open({
                   type: 2
                   ,title: '编辑栏目'
-                  ,content: "{:url('columnEdit')}?id="+obj.data.id
+                  ,content: "{:route('columnEdit')}?id="+obj.data.id
                   ,maxmin: true
                   ,area: ['40%', '30%']
                   ,btn: ['确定', '取消']
@@ -161,7 +161,7 @@
               break;
           case 'del':
               layer.confirm('确定删除？？', function(index){
-                  $.post("{:url('Contents/columnDel')}", {id:obj.data.id}, function(res){
+                  $.post("{:route('Contents/columnDel')}", {id:obj.data.id}, function(res){
                     if(res.code == 1){
                       layer.msg('删除成功');
                       table.reload('column'); //重载表格

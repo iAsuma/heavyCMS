@@ -49,7 +49,7 @@ function listHtml(name, data){
         html += '<div class="fenlei-tuijian fs0">'
                     +'<span class="fs14 cl33">'+i+'</span>'
         if(v[1].length == 6){
-            html  += '<a class="fs13 cl6e dfbtc" href="{:url(\'search\')}?pid='+v[0]+'">全部 <img src="__MOD__/shop/images/right.png" alt=""></a>'
+            html  += '<a class="fs13 cl6e dfbtc" href="{:route(\'search\')}?pid='+v[0]+'">全部 <img src="__MOD__/shop/images/right.png" alt=""></a>'
         }
 
         html += '</div>';
@@ -73,7 +73,7 @@ function listHtml(name, data){
     return html;
 }
 function classData(id, name){
-    $.post('{:url(\'getSecondClass2\')}', {id:id}, function(data){
+    $.post('{:route(\'getSecondClass2\')}', {id:id}, function(data){
         var list = listHtml(name, data.result)
         $('#fenleiShipin').html(list)
     })
@@ -116,7 +116,7 @@ $(function() {
     $('#search').on('click', function(){
         var content = $(this).siblings('input').val()
         if(content != '' && content != null){
-            window.location.href = '{:url(\'search\')}?wd='+content
+            window.location.href = '{:route(\'search\')}?wd='+content
         }
     })
 
@@ -124,7 +124,7 @@ $(function() {
         if (e.keyCode == '13') {
             var content = $(this).val()
             if(content != '' && content != null){
-                window.location.href = '{:url(\'search\')}?wd='+content
+                window.location.href = '{:route(\'search\')}?wd='+content
             }
         }
     })

@@ -1,6 +1,8 @@
 <?php
 namespace app\shop\controller;
-use think\Db;
+use think\facade\Db;
+use think\facade\View;
+
 /**
  * 用户操作相关及个人中心(我的)
  * @author asuma(lishuaiqiu)
@@ -35,8 +37,8 @@ class User extends Base
 	{
 		$report = $this->orderCount();
 
-		$this->assign('report', $report);
-		return $this->fetch();
+		View::assign('report', $report);
+		return View::fetch();
 	}
 
 	/**
@@ -62,8 +64,8 @@ class User extends Base
 		$type = $this->request->get('o');
 		($type == '' || !in_array($type, [0,1,2,3])) && $type = 'all';
 
-		$this->assign('type', $type);
-		return $this->fetch();
+		View::assign('type', $type);
+		return View::fetch();
 	}
 
 	public function orderList()
@@ -165,7 +167,7 @@ class User extends Base
 
 	public function refund()
 	{
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	/**
@@ -190,9 +192,9 @@ class User extends Base
 			$this->redirect('/shop');
 		}
 
-		$this->assign('order', $order);
-		$this->assign('orderNo', $orderNo);
-		return $this->fetch();
+		View::assign('order', $order);
+		View::assign('orderNo', $orderNo);
+		return View::fetch();
 	}
 
 	public function uploadReviewsImg()
@@ -253,8 +255,8 @@ class User extends Base
 	{
 		$words = trim($this->request->get('wd'));
 
-		$this->assign('words', $words);
-		return $this->fetch();
+		View::assign('words', $words);
+		return View::fetch();
 	}
 
 	public function collectList()
@@ -300,16 +302,16 @@ class User extends Base
 		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId])->order(['is_default' => 'desc', 'id' => 'desc'])->select();
 
 		if($preorder = $this->request->param('preorder')){
-			$this->assign('preorder', $preorder);
+			View::assign('preorder', $preorder);
 		}
 
-		$this->assign('address', $address);
-		return $this->fetch();
+		View::assign('address', $address);
+		return View::fetch();
 	}
 
 	public function addressAdd()
 	{
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	public function newAddress()
@@ -349,8 +351,8 @@ class User extends Base
 		$info = [];
 		$id && $info = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
 
-		$this->assign('info', $info);
-		return $this->fetch();
+		View::assign('info', $info);
+		return View::fetch();
 	}
 
 	public function editAddress()

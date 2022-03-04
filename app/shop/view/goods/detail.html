@@ -90,7 +90,7 @@ body{background: #f8f8f8 !important;}
     <!-- 底部按钮 -->
     <div class="home-detail-bot" id="bottom_part" data-id="{$info.id}">
         <div class="home-detail-bot-left ">
-            <a href="{:url('shop/Index/index')}" class="dffccb ">
+            <a href="{:route('shop/Index/index')}" class="dffccb ">
                 <img src="__MOD__/shop/images/home.png " alt=" ">
                 <span class="fs10 cl33 ">首页</span>
             </a>
@@ -103,7 +103,7 @@ body{background: #f8f8f8 !important;}
                 <span class="fs10 cl33 ">收藏</span>
                 {/if}
             </div>
-            <a href="{:url('Cart/index')}" class="dffccb ">
+            <a href="{:route('Cart/index')}" class="dffccb ">
                 <img src="__MOD__/shop/images/shop.png " alt=" ">
                 <span class="fs10 cl33 ">购物车</span>
             </a>
@@ -221,7 +221,7 @@ var vue = new Vue({
                     if(mark == 1){
                         this.done_attr = '已选：' + attrSelected.join(' ');
                     }else if(mark == 2){
-                        axios.post('{:url(\'Cart/pushToCart\')}', {
+                        axios.post('{:route(\'Cart/pushToCart\')}', {
                             goods_id: this.goods_id,
                             attrs: attrSelected,
                             buyNum: this.buyNum
@@ -239,12 +239,12 @@ var vue = new Vue({
                         let goods_sku_id = this.goods_sku_id
                         let buy_num = this.buyNum
                         let buy =  mark + '_' + time + '_' + '00' + '_' + goods_id + '_' + buy_num + '_' + goods_sku_id
-                        window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
+                        window.location.href = '{:route(\'Order/preSure\')}?buy='+buy
                     }
 
                 },
                 onLoad() {
-                    axios.post('{:url(\'getGoodsReviews\')}', {
+                    axios.post('{:route(\'getGoodsReviews\')}', {
                         goods_id: this.goods_id,
                         pageStart: this.reviewsPage,
                         perpage: this.reviewsPageLimit
@@ -277,7 +277,7 @@ $(function() {
         var _this = $(this)
         var mark = _this.children('img').data('mark');
         var id = $('#bottom_part').data('id')
-        $.post('{:url(\'User/dogGoodsCollected\')}', {mark: mark, id: id}, function(res){
+        $.post('{:route(\'User/dogGoodsCollected\')}', {mark: mark, id: id}, function(res){
             if(res.code == 1){
                 if(mark == 1){
                     vant.Toast('已取消收藏')
@@ -318,7 +318,7 @@ $(function() {
 
         if(vue.attr_len == vue.attrSelected.length){
             vue.attr_selected_str = vue.attrSelected.join(' ');
-            $.post('{:url(\'getAttrInfo\')}', {goods_id: vue.goods_id, attrs: vue.attrSelected}, function(res){
+            $.post('{:route(\'getAttrInfo\')}', {goods_id: vue.goods_id, attrs: vue.attrSelected}, function(res){
                 if(res.code == 1){
                     vue.goods_sku_id = res.result.id
                     $('.sku_img').attr('src', '__FILEROOT__/thumb'+res.result.sku_img)

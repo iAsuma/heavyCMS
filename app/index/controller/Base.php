@@ -1,8 +1,9 @@
 <?php
 namespace app\index\controller;
-use think\Controller;
+use app\common\BaseController;
+use think\facade\View;
 
-class Base extends Controller
+class Base extends BaseController
 {
 	protected function initialize()
 	{
@@ -33,6 +34,6 @@ class Base extends Controller
     */
 	public function defaultTpl($code="404|页面飞走了！", $type="error")
 	{
-		return $this->fetch('public/tips', ['type' => $type, 'code' => $code]);
+		return View::fetch('public/tips', ['type' => $type, 'code' => $code]);
 	}
 }

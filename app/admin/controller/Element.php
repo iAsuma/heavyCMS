@@ -1,7 +1,8 @@
 <?php
 namespace app\admin\controller;
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 /**
  * 
@@ -11,7 +12,7 @@ class Element extends Base
 	
 	public function banner()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function bannerList()
@@ -35,7 +36,7 @@ class Element extends Base
 
      public function bannerAdd()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function addBanner(Request $request)
@@ -83,8 +84,8 @@ class Element extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('banners')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
-        return $this->fetch();
+        isset($info) && View::assign('info', $info);
+        return View::fetch();
     }
 
 

@@ -51,7 +51,7 @@
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:url('changeSold')}">
+<script type="text/html" id="statusTpl" data-url="{:route('changeSold')}">
   <input type="checkbox" name="is_sold" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="optstatus" {{d.is_sold == 1 ? 'checked' : ''}}>
 </script>
 
@@ -74,7 +74,7 @@
 
    var tableIns =  table.render({
       elem: '#order'
-      ,url: "{:url('orderList')}"
+      ,url: "{:route('orderList')}"
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -163,7 +163,7 @@
               var d_index = layer.open({
                 type: 2
                 ,title: '订单详情：'+obj.data.order_no
-                ,content: "{:url('detail')}?order_no="+obj.data.order_no
+                ,content: "{:route('detail')}?order_no="+obj.data.order_no
                 ,maxmin: true
                 ,area: ['80%', '90%']
                 ,success: function (layero, index) {
@@ -176,7 +176,7 @@
                 layer.open({
                   type: 2
                   ,title: '订单发货: '+ obj.data.order_no
-                  ,content: '{:url(\'delivery\')}'
+                  ,content: '{:route(\'delivery\')}'
                   ,area: ['420px', '280px']
                   ,btn: ['确定', '取消']
                   ,yes: function(index, layero){
@@ -189,7 +189,7 @@
                       var field = data.field;
                       field.order_no = obj.data.order_no
                       
-                      $.post('{:url(\'makeDelivery\')}', field, function(res){
+                      $.post('{:route(\'makeDelivery\')}', field, function(res){
                         if(res.code == 1){
                           layer.msg('发货成功', {icon: 1}, function(){
                             table.reload('order');
@@ -207,7 +207,7 @@
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('order/del')}", {uid:obj.data.id}, function(res){
+                   $.post("{:route('order/del')}", {uid:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('order'); //重载表格

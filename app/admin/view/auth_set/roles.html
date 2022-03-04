@@ -8,11 +8,11 @@
 {block name="content"}
   <div class="layui-fluid">   
     <div class="layui-card">
-      <div class=" layui-card-header layuiadmin-card-header-auto" id="addOpt" data-url="{:url('roleAdd')}">
+      <div class=" layui-card-header layuiadmin-card-header-auto" id="addOpt" data-url="{:route('roleAdd')}">
         <button class="layui-btn layui-btn-asuma layuiadmin-btn-role" data-type="add">添加</button>
       </div>
       <div class="layui-card-body">
-        <table id="udzan-role" lay-filter="udzan-role" data-url="{:url('roleList')}" data-sturl="{:url('changeRoleStatus')}"></table>  
+        <table id="udzan-role" lay-filter="udzan-role" data-url="{:route('roleList')}" data-sturl="{:route('changeRoleStatus')}"></table>
       </div>
     </div>
   </div>

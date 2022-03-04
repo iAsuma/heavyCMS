@@ -2,8 +2,9 @@
 
 namespace app\admin\controller;
 
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 use PHPExcel;
 use PHPExcel_IOFactory;
@@ -21,7 +22,7 @@ class User extends Base
      */
     public function index()
     {
-        return $this->fetch();
+        return think\facadeView::fetch();
     }
 
     public function userList()
@@ -53,9 +54,9 @@ class User extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('users')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
+        isset($info) && View::assign('info', $info);
         
-        return $this->fetch();
+        return View::fetch();
     }
 
 

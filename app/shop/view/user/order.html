@@ -37,7 +37,7 @@ function orderHtml(data) {
     $.each(data, function(i, v){
         var sumGds = 0;
         html += '<div class="geren-daifukuan" data-id="'+v[0].order_no+'">'
-                    +'<div class="geren-daifukuan-box"><a href="'+'{:url(\'Order/detail\')}?no='+v[0].order_no+'" >';
+                    +'<div class="geren-daifukuan-box"><a href="'+'{:route(\'Order/detail\')}?no='+v[0].order_no+'" >';
 
         $.each(v[1], function(ii, vv){
             sumGds += vv.goods_num
@@ -134,7 +134,7 @@ function changeOrderStatus(orderNo, status, callback) {
     }
 
     var idx = layer_loading();
-    $.post('{:url(\'User/changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
+    $.post('{:route(\'User/changeOrderStatus\')}', {order_no: orderNo, status: status}, function(res){
         if(res.code == 1){
             if(typeof callback == 'function'){
                 callback()
@@ -153,7 +153,7 @@ function changeOrderStatus(orderNo, status, callback) {
 $(function() {
     $(".liebiao-ul li").click(function() {
         var type = $(this).data('type')
-        var reloadUrl = '{:url(\'order\')}?o='+type
+        var reloadUrl = '{:route(\'order\')}?o='+type
         window.location.replace(reloadUrl)
     })
 
@@ -172,7 +172,7 @@ $(function() {
             var result = '';
             $.ajax({
                 type: 'POST',
-                url: '{:url("orderList")}',
+                url: '{:route("orderList")}',
                 dataType: 'json',
                 data:{perpage: perpage, pageStart: pageStart, type: $('.liebiao-ul').data('mark')},
                 success: function(res) {
@@ -220,7 +220,7 @@ $(function() {
                 changeOrderStatus(order_no, 4)
             }, ['是', '否'])
         }else if(opt == '002'){
-            window.location.href = '{:url(\'Order/detail\')}?from=list&no='+order_no;
+            window.location.href = '{:route(\'Order/detail\')}?from=list&no='+order_no;
         }else if(opt == '101'){
             layer_confirm('确认退款？<br/><span style="font-size:.24rem;">申请退款后请耐心等待，若有疑问请联系客服。</span>', function(idx){
                 layer.close(idx);
@@ -237,7 +237,7 @@ $(function() {
                 changeOrderStatus(order_no, 3)
             })
         }else if(opt == '301'){
-            window.location.href = '{:url(\'User/reviews\')}?no='+order_no;
+            window.location.href = '{:route(\'User/reviews\')}?no='+order_no;
         }else if(opt == '401'){
             layer_confirm('删除订单', function(idx){
                 layer.close(idx);

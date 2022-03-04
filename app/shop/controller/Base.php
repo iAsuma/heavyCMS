@@ -1,13 +1,15 @@
 <?php
 namespace app\shop\controller;
-use think\Controller;
+use app\common\BaseController;
 use think\facade\Session;
-use think\Db;
+use think\facade\Db;
+use think\facade\View;
+
 /**
  * 基础控制器
  * @author asuma(lishuaiqiu)
  */
-class Base extends Controller
+class Base extends BaseController
 {
 	protected $userId = NULL;
 	protected $userName = NULL;
@@ -27,7 +29,7 @@ class Base extends Controller
     */
 	public function defaultTpl($code="404|页面飞走了！", $type="error")
 	{
-		return $this->fetch('public/tips', ['type' => $type, 'code' => $code]);
+		return View::fetch('public/tips', ['type' => $type, 'code' => $code]);
 	}
 
 	/**

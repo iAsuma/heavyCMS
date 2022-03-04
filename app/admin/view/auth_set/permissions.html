@@ -39,24 +39,24 @@
 
   <div class="layui-card-body">
   	<div class="layui-tab-content">
-	    <div style="padding-bottom: 10px;" id="authOpt" data-add="{:url('authAdd')}" data-edit="{:url('authEdit')}">
+	    <div style="padding-bottom: 10px;" id="authOpt" data-add="{:route('authAdd')}" data-edit="{:route('authEdit')}">
 	      <button class="layui-btn layui-btn-asuma layuiadmin-btn-list" data-type="add">添加</button>
 	    </div>
-	    <table id="udzan-rule" lay-filter="udzan-rule" data-url="{:url('permissionsList')}" data-sturl="{:url('changeWeight')}"></table> 
+	    <table id="udzan-rule" lay-filter="udzan-rule" data-url="{:route('permissionsList')}" data-sturl="{:route('changeWeight')}"></table>
 	</div>
   </div>
 </div>
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="loggedTpl" data-url="{:url('changeLogStatus')}">
+<script type="text/html" id="loggedTpl" data-url="{:route('changeLogStatus')}">
   {{# if(d.run_type == 2){ }}
   <input type="checkbox" name="is_logged" value="{{d.id}}" lay-filter="logSwitch" lay-skin="switch" lay-text="是|否" {{d.is_logged == 1 ? 'checked' : ''}}>
   {{# }else{ }}
   <button class="layui-btn layui-btn-xs layui-btn-disabled">限制</button>
   {{# } }}
 </script>
-<script type="text/html" id="statusTpl" data-url="{:url('changeRuleStatus')}">
+<script type="text/html" id="statusTpl" data-url="{:route('changeRuleStatus')}">
   {{# if(d.name == 'AuthSet/permissions'){ }}
   <button class="layui-btn layui-btn-xs layui-btn-disabled">限制</button>
   {{# }else{ }}

@@ -164,7 +164,7 @@ var longajax = null;
 
 function longPolling(idx) {
     $.ajax({
-        url: '{:url(\'getOrderStatus\')}',
+        url: '{:route(\'getOrderStatus\')}',
         type: 'post',
         data: {order: $('#orderBox').data('num')},
         dataType: "json",
@@ -195,7 +195,7 @@ function longPolling(idx) {
 }
 
 function openPay(){
-	$.post('{:url(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
+	$.post('{:route(\'pay\')}', {order: $('#orderBox').data('num')}, function(res){
 		if(res.code == 1){
 			wx.chooseWXPay({
 			  timestamp: res.result.timestamp,
@@ -218,7 +218,7 @@ function openPay(){
 
 function changeOrderStatus(status, callback) {
     var idx = layer_loading();
-    $.post('{:url(\'User/changeOrderStatus\')}', {order_no: $('#orderBox').data('num'), status: status}, function(res){
+    $.post('{:route(\'User/changeOrderStatus\')}', {order_no: $('#orderBox').data('num'), status: status}, function(res){
         if(res.code == 1){
             if(typeof callback == 'function'){
                 callback()
@@ -258,7 +258,7 @@ $(function() {
     })
 
     $('#reviews').on('click', function(){
-        window.location.href = '{:url(\'User/reviews\')}?no='+$('#orderBox').data('num');
+        window.location.href = '{:route(\'User/reviews\')}?no='+$('#orderBox').data('num');
     })
 
     $('#returnGoods').on('click', function(){

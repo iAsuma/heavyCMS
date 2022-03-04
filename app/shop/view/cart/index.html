@@ -78,7 +78,7 @@ new Vue({
             let time = Date.parse(new Date()).toString().slice(0, -3);
             let buy =  2 + '_' + time + '_' + '00' + '_' + param.slice(0, -1)
             
-            window.location.href = '{:url(\'Order/preSure\')}?buy='+buy
+            window.location.href = '{:route(\'Order/preSure\')}?buy='+buy
         },
         del(){
             var hasSelected = this.hasSelected
@@ -97,7 +97,7 @@ new Vue({
                     }
                     cart_ids = cart_ids.slice(0, -1)
 
-                    axios.post('{:url(\'delGoodsInCart\')}', {
+                    axios.post('{:route(\'delGoodsInCart\')}', {
                         cart_ids: cart_ids
                     }).then(res => {
                         done();
@@ -141,7 +141,7 @@ new Vue({
         bugNumChange(index){
             vant.Toast.loading({ forbidClick: true });
             
-            axios.post('{:url(\'changeStock\')}', {
+            axios.post('{:route(\'changeStock\')}', {
                 cart_id: this.cart_list[index].id,
                 goods_num: this.cart_list[index].goods_num
             }).then(res => {

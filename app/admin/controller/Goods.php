@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
-use think\Db;
+use think\facade\Db;
+use think\facade\View;
 use think\Request;
 use think\facade\Hook;
 /**
@@ -17,8 +18,8 @@ class Goods extends Base
 		$tree = new \util\Tree($classifyArr);
 		$classify = $tree->leaf();
 		
-		$this->assign('classify', $classify);
-		return $this->fetch();
+		View::assign('classify', $classify);
+		return View::fetch();
 	}
 
 	public function save(Request $request)
@@ -115,10 +116,10 @@ class Goods extends Base
 
 		$imgArr = $imgs ? explode(',', $imgs) : [];
 		
-		$this->assign('imgArr', $imgArr);
-		$this->assign('max', $max);
-		$this->assign('idx', $upIdx);
-		return $this->fetch();
+		View::assign('imgArr', $imgArr);
+		View::assign('max', $max);
+		View::assign('idx', $upIdx);
+		return View::fetch();
 	}
 
 	public function pictureList()
@@ -209,11 +210,11 @@ class Goods extends Base
 		$info['skus_str'] = json_encode($skus_arr_json, JSON_UNESCAPED_UNICODE);
 		$info['skus_val'] = json_encode($skus_val, JSON_UNESCAPED_SLASHES );
 
-		$this->assign('classify', $classify);
-		$this->assign('goods', $info ?? []);
-		$this->assign('skus', $skus);
-		$this->assign('skus_arr', $skus_arr_json);
-		return $this->fetch();
+		View::assign('classify', $classify);
+		View::assign('goods', $info ?? []);
+		View::assign('skus', $skus);
+		View::assign('skus_arr', $skus_arr_json);
+		return View::fetch();
 	}
 
 	public function modify(Request $request)

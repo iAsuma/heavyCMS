@@ -1,6 +1,6 @@
 <?php
 //判断浏览器
-function check_browser(): string
+function get_user_browser(): string
 {
     if (empty($_SERVER['HTTP_USER_AGENT'])) {
         return 'can not sign client';

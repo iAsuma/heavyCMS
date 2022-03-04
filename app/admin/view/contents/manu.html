@@ -46,7 +46,7 @@
     
     <div class="layui-card-body">
         <div style="padding-bottom: 10px;">
-            <!-- <a href="{:url('articlesAdd')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加</a> -->
+            <!-- <a href="{:route('articlesAdd')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加</a> -->
             <button class="layui-btn layui-btn-danger layuiadmin-btn-role" id="delAll">删除</button>
         </div>
         <table id="articles" lay-filter="articles"></table>  
@@ -55,7 +55,7 @@
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:url('changeArticlesStatus')}">
+<script type="text/html" id="statusTpl" data-url="{:route('changeArticlesStatus')}">
   {{# if(d.status == 0){ }}
   待审核
   {{# }else{ }}
@@ -81,7 +81,7 @@
 
     var tableIns =  table.render({
       elem: '#articles'
-      ,url: "{:url('Contents/manusList')}" //数据接口
+      ,url: "{:route('Contents/manusList')}" //数据接口
       ,page: {curr:location.hash.replace('#!pg=', ''), hash:'pg'} //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -148,7 +148,7 @@
 
         layer.confirm('确定删除吗？', function(index) {
 
-           $.post("{:url('Contents/del')}", {uid:str}, function(res){
+           $.post("{:route('Contents/del')}", {uid:str}, function(res){
               if(res.code == 1){
                 layer.msg('删除成功');
                 table.reload('articles'); //重载表格
@@ -176,7 +176,7 @@
               btn: btns,
               shadeClose: true,
               area: ['380px', '90%'],
-              content: '{:url(\'Contents/articleDetail\')}?id='+id,
+              content: '{:route(\'Contents/articleDetail\')}?id='+id,
               yes: function(index){
                 $.post($('#statusTpl').data('url'),{id:id, status: true}, function(res){
                   if(res.code != 1){
@@ -201,7 +201,7 @@
           break;
           case 'del':
               layer.confirm('确定删除？？', function(index){
-                  $.post("{:url('Contents/del')}", {id:obj.data.id}, function(res){
+                  $.post("{:route('Contents/del')}", {id:obj.data.id}, function(res){
                     if(res.code == 1){
                       layer.msg('删除成功');
                       table.reload('articles'); //重载表格

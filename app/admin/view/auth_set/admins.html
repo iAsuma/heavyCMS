@@ -37,17 +37,17 @@
     </div>
     
     <div class="layui-card-body">
-      <div style="padding-bottom: 10px;" id="addOpt" data-url="{:url('adminEdit')}">
+      <div style="padding-bottom: 10px;" id="addOpt" data-url="{:route('adminEdit')}">
         <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" data-type="add">添加</button>
       </div>
       
-      <table id="udzan-admin" lay-filter="udzan-admin" data-url="{:url('adminList')}" data-sturl="{:url('changeAdminStatus')}"></table>  
+      <table id="udzan-admin" lay-filter="udzan-admin" data-url="{:route('adminList')}" data-sturl="{:route('changeAdminStatus')}"></table>
       
     </div>
   </div>
 </div>
-<input type="hidden" name="a" id="optInsert" data-url="{:url('pulladmin')}">
-<input type="hidden" name="b" id="optUpdate" data-url="{:url('updateAdmin')}">
+<input type="hidden" name="a" id="optInsert" data-url="{:route('pulladmin')}">
+<input type="hidden" name="b" id="optUpdate" data-url="{:route('updateAdmin')}">
 {/block}
 {block name="footjs"}
 <script type="text/html" id="statusTpl">

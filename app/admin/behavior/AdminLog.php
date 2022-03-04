@@ -1,7 +1,7 @@
 <?php
 namespace app\admin\behavior;
 use think\Request;
-use think\Db;
+use think\facade\Db;
 use think\Exception;
 use think\facade\Log as ThinkLog;
 /**

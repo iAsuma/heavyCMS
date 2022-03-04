@@ -16,7 +16,7 @@ body{background: #f8f8f8 !important;}
     </div>
 </div>
 
-<div class="collect" data-wd="{$words}" data-url="{:url('collect')}">
+<div class="collect" data-wd="{$words}" data-url="{:route('collect')}">
 	<div class="shoucang-content"></div>
 </div>
 {/block}
@@ -61,7 +61,7 @@ function collectHtml(data){
             var result = '';
             $.ajax({
                 type: 'POST',
-                url: '{:url("collectList")}',
+                url: '{:route("collectList")}',
                 dataType: 'json',
                 data:{perpage: perpage, pageStart: pageStart, words: words},
                 success: function(res) {
@@ -120,7 +120,7 @@ function collectHtml(data){
         var _this = $(this)
         layer_confirm('确认取消', function(idx){
             layer.close(idx);
-            $.post('{:url(\'cancelCollcet\')}',{id: _this.data('id')}, function(res){
+            $.post('{:route(\'cancelCollcet\')}',{id: _this.data('id')}, function(res){
                 if(res.code == 1){
                     _this.parents('.fenleilist-content-item').remove()
                     layer_msg('取消成功')

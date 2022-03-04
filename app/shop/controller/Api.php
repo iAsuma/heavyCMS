@@ -1,6 +1,6 @@
 <?php
 namespace app\shop\controller;
-use think\Db;
+use think\facade\Db;
 use wechat\facade\Loader as WeChat;
 /**
  * 支付接口相关

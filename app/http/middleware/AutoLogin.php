@@ -9,7 +9,7 @@ namespace app\http\middleware;
 use app\common\Request;
 use Session;
 use Url;
-use think\Db;
+use think\facade\Db;
 
 class AutoLogin
 {

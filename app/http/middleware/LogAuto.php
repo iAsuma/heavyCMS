@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace app\http\middleware;
 //use think\facade\Hook;
-use think\Db;
+use think\facade\Db;
 
 class LogAuto
 {

@@ -59,7 +59,7 @@
               <div class="layui-input-block">
                 <input type="hidden" name="id" value="{$info.id}">
                 <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
-                <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:url('editArticles')}">修改</button>
+                <button class="layui-btn layui-btn-asuma" lay-submit lay-filter="setmyinfo" data-url="{:route('editArticles')}">修改</button>
                 <a href="javascript:history.back(-1)" class="layui-btn layui-btn-primary">返回</a>
               </div>
             </div>

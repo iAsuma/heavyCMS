@@ -1,6 +1,8 @@
 <?php
 namespace app\shop\controller;
-use think\Db;
+use think\facade\Db;
+use think\facade\View;
+
 /**
  * 商城
  * @author asuma(lishuaiqiu)
@@ -14,10 +16,10 @@ class Index extends Base
 		$flashSale = $this->flashSale();
 		$reco = $this->recommended();
 		
-		$this->assign('banner', $banners);
-		$this->assign('flashSale', $flashSale);
-		$this->assign('reco', $reco);
-		return $this->fetch();
+		View::assign('banner', $banners);
+		View::assign('flashSale', $flashSale);
+		View::assign('reco', $reco);
+		return View::fetch();
 	}
 
 	/*轮播图*/
@@ -65,9 +67,9 @@ class Index extends Base
 	{
 		$levelOne = Db::table('shop_classification')->where(['pid' => 0])->select();
 
-		$this->assign('from', $this->request->get('from') ?? '');
-		$this->assign('levelOne', $levelOne);
-		return $this->fetch();
+		View::assign('from', $this->request->get('from') ?? '');
+		View::assign('levelOne', $levelOne);
+		return View::fetch();
 	}
 
 	public function getSecondClass()
@@ -96,9 +98,9 @@ class Index extends Base
 	{
 		$levelOne = Db::table('shop_classification')->where(['pid' => 0])->select();
 		
-		$this->assign('from', $this->request->get('from') ?? '');
-		$this->assign('levelOne', $levelOne);
-		return $this->fetch();
+		View::assign('from', $this->request->get('from') ?? '');
+		View::assign('levelOne', $levelOne);
+		return View::fetch();
 	}
 
 	public function getSecondClass2()
@@ -136,10 +138,10 @@ class Index extends Base
 			$info = ['name' => '搜索-'.$wd, 'id' => ''];
 		}
 
-		$this->assign('words', $words);
-		$this->assign('info', $info);
-		$this->assign('t', $type);
-		return $this->fetch();
+		View::assign('words', $words);
+		View::assign('info', $info);
+		View::assign('t', $type);
+		return View::fetch();
 	}
 
 	public function searchList()

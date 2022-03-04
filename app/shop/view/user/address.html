@@ -15,13 +15,13 @@
                     {$vo.province}{$vo.city}{$vo.district}{$vo.address}
                 </div>
             </div>
-            <a href="{:url('addressEdit', ['id' => $vo.id])}"><div class="fs14 cldb">编辑</div></a>
+            <a href="{:route('addressEdit', ['id' => $vo.id])}"><div class="fs14 cldb">编辑</div></a>
         </div>
         {/volist}
     </div>
 
     <div class="shdz-sub-btn-box tc">
-        <button type="button" class="shdz-sub-btn" id="add" data-url="{:url('addressAdd')}">添加新地址</button>
+        <button type="button" class="shdz-sub-btn" id="add" data-url="{:route('addressAdd')}">添加新地址</button>
     </div>
 
 </div>
@@ -40,7 +40,7 @@
             orderArr[2] = id
             // var param = $(this).data('order').replace('_00_', '_'+$(this).data('id')+'_')
             
-            var url = "{:url('Order/preSure')}?buy="+orderArr.join('_')
+            var url = "{:route('Order/preSure')}?buy="+orderArr.join('_')
             window.location.replace(url);
         }
     })

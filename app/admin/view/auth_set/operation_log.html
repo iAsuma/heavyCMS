@@ -26,11 +26,11 @@
     </div>
     
     <div class="layui-card-body">
-      <div style="padding-bottom: 10px;" id="addOpt" data-url="{:url('addAdmin')}">
-        <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" data-type="batchDel" data-url="{:url('batchDeleteLogs')}">删除</button>
+      <div style="padding-bottom: 10px;" id="addOpt" data-url="{:route('addAdmin')}">
+        <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" data-type="batchDel" data-url="{:route('batchDeleteLogs')}">删除</button>
       </div>
       
-      <table id="operation-log" lay-filter="operation-log" data-url="{:url('logList')}"></table>
+      <table id="operation-log" lay-filter="operation-log" data-url="{:route('logList')}"></table>
       
     </div>
   </div>

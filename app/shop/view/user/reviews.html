@@ -72,7 +72,7 @@ layui.use(['rate', 'form', 'upload'], function() {
 
     var uploadInst = upload.render({
 	    elem: '#uploadBtn' 
-	    ,url: '{:url(\'uploadReviewsImg\')}'
+	    ,url: '{:route(\'uploadReviewsImg\')}'
 	    ,multiple: true
 	    ,number: 3
 	    ,auto: false
@@ -127,7 +127,7 @@ layui.use(['rate', 'form', 'upload'], function() {
 
 		var layIdx = layer.load()
 		if(typeof uploadInst.config.files == 'undefined' || uploadInst.config.files == null){
-			$.post('{:url(\'makeReviews\')}', fields, function(res){
+			$.post('{:route(\'makeReviews\')}', fields, function(res){
 				if(res.code == 1){
 					layer.close(layIdx)
 					layer.msg('评价成功', {icon: 1}, function(){

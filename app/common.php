@@ -15,6 +15,23 @@
 
 //error_reporting(E_ALL ^ E_NOTICE); // 除了 E_NOTICE，报告其他所有错误
 
+use think\route\Url as UrlBuild;
+
+if (!function_exists('route')) {
+    /**
+     * Url生成
+     * @param string      $url    路由地址
+     * @param array       $vars   变量
+     * @param bool|string $suffix 生成的URL后缀
+     * @param bool|string $domain 域名
+     * @return UrlBuild
+     */
+    function route(string $url = '', array $vars = []): UrlBuild
+    {
+        return url($url, $vars, false);
+    }
+}
+
 /**
  * @author lishuaiqiu
  * 美化输出print_r

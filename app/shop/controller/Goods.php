@@ -1,7 +1,8 @@
 <?php
 namespace app\shop\controller;
+use think\facade\View;
 use think\Request;
-use think\Db;
+use think\facade\Db;
 /**
  * 商品
  * @author asuma(lishuaiqiu)
@@ -13,7 +14,7 @@ class Goods extends Base
 	{
 		$id = (int)$request->param('id');
 		if(empty($id)){
-			return $this->fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在']);
+			return View::fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在']);
 		}
 
 		$where = [
@@ -25,7 +26,7 @@ class Goods extends Base
 		$info = Db::table('shop_goods')->alias('g')->field('g.*,s.price,s.market_price,s.stocks')->join('(SELECT a.*,b.market_price,b.stocks FROM (SELECT goods_id,MIN(price) as price FROM shop_goods_sku WHERE status = 1 AND is_sold = 1 GROUP BY goods_id)a,shop_goods_sku b WHERE a.price=b.price AND a.goods_id=b.goods_id) s', 'g.id=s.goods_id')->where($where)->find();
 
 		if(empty($info)){
-			return $this->fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在或已下架']);
+			return View::fetch('index@public/tips', ['type' => 'little', 'code' => '商品不存在或已下架']);
 		}
 
 		$info['attrs'] = json_decode($info['goods_sku_attributes'], true);
@@ -38,8 +39,8 @@ class Goods extends Base
 
 		$info['collectd'] = $this->isCollected($id);
 		
-		$this->assign('info', $info);
-		return $this->fetch();
+		View::assign('info', $info);
+		return View::fetch();
 	}
 
 	public function getAttrInfo(Request $request)

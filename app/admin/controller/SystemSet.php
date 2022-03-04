@@ -1,7 +1,9 @@
 <?php
 namespace app\admin\controller;
 use auth\facade\Permissions;
-use think\Db;
+use think\facade\Db;
+use think\facade\Cache;
+use think\facade\View;
 use think\Request;
 /**
  * 系统相关设置
@@ -18,9 +20,9 @@ class SystemSet extends Base
 		$rolesArr = array_column($roles, 'title');
 		$rolesStr = implode("，", $rolesArr);
 
-		$this->assign('user', $userInfo);
-		$this->assign('roles', $rolesStr);
-		return $this->fetch();
+		View::assign('user', $userInfo);
+		View::assign('roles', $rolesStr);
+		return View::fetch();
 	}
 
 	public function updateUserInfo(Request $request)
@@ -62,7 +64,7 @@ class SystemSet extends Base
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
                 $update === false && exit(res_json_native(-6, '修改失败'));
 
-                \think\facade\Cache::clear('admin_user'); //清除用户数据缓存
+                Cache::tag('admin_user')->clear(); //清除用户数据缓存
                 
                 destroyFormToken($request->post());
                 return res_json(1);
@@ -76,7 +78,7 @@ class SystemSet extends Base
 
 	public function password()
 	{
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	public function changePwd(Request $request)
@@ -103,7 +105,7 @@ class SystemSet extends Base
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
                 $update === false && exit(res_json_native(-6, '修改失败'));
 
-                \think\facade\Cache::clear('admin_user'); //清除用户数据缓存
+                Cache::tag('admin_user')->clear(); //清除用户数据缓存
                 
                 destroyFormToken($request->post());
                 return res_json(1);

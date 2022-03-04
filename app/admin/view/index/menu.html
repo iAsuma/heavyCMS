@@ -1,7 +1,7 @@
 <!-- 侧边菜单 -->
 <div class="layui-side layui-side-menu">
   <div class="layui-side-scroll">
-    <div class="layui-logo" lay-href="{:url(isset($menu[0]['child']) ? $menu[0]['child'][0]['name'] : 'emptyAuth')}">
+    <div class="layui-logo" lay-href="{:route(isset($menu[0]['child']) ? $menu[0]['child'][0]['name'] : 'emptyAuth')}">
       <span>企业服务通用平台</span>
     </div>
     
@@ -17,14 +17,14 @@
           {volist name="$a.child" id="b" key="k"}
           {if $b.type ==3}
           <dd {if $i == 1 and $k == 1}class="layui-this"{/if}>
-          <a lay-href="{:url($b.name)}">{$b.title}</a>
+          <a lay-href="{:route($b.name)}">{$b.title}</a>
           </dd>
           {else /}
           <dd class="layui-nav-itemed">
             <a href="javascript:;">{$b.title}</a>
             <dl class="layui-nav-child">
               {volist name=":$b.child ?? '' " id="c"}
-              <dd><a lay-href="{:url($c.name)}">{$c.title}</a></dd>
+              <dd><a lay-href="{:route($c.name)}">{$c.title}</a></dd>
               {/volist}
             </dl>
           </dd>

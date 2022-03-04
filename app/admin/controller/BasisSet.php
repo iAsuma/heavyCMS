@@ -2,8 +2,10 @@
 
 namespace app\admin\controller;
 
+use think\facade\Cache;
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 
 class BasisSet extends Base
@@ -14,7 +16,7 @@ class BasisSet extends Base
      */
     public function appset()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function dataList()
@@ -31,7 +33,7 @@ class BasisSet extends Base
 
      public function add()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function addApp(Request $request)
@@ -67,8 +69,8 @@ class BasisSet extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('application_config')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
-        return $this->fetch();
+        isset($info) && View::assign('info', $info);
+        return View::fetch();
     }
 
 
@@ -92,7 +94,7 @@ class BasisSet extends Base
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 
             Hook::listen('admin_log', ['基础设置', '修改了应用配置']);
-            \think\facade\Cache::clear('developer');  //清除配置缓存，让列表实时生效
+            Cache::tag('developer')->clear();  //清除配置缓存，让列表实时生效
 
             destroyFormToken($post);
             return res_json(1);

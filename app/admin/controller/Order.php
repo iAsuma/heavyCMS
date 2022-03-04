@@ -1,8 +1,9 @@
 <?php
 namespace app\admin\controller;
 
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 use wechat\facade\Loader as WeChat;
 
@@ -19,7 +20,7 @@ class Order extends Base
      */
     public function index()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     /**
@@ -80,18 +81,18 @@ class Order extends Base
 
         //订单基本信息
         $order = Db::table('shop_order')->alias('o')->field('o.*,u.nickname')->leftJoin('users u', 'o.user_id=u.id')->where(['o.order_no' => $order_no, 'o.status' => 1])->find();
-        $this->assign('order', $order);
+        View::assign('order', $order);
 
         //商品信息
         $orderDetail = Db::table('shop_order_detail')->field('id,goods_name,unit_price,goods_num,goods_sku')->where(['order_no' => $order_no])->select();
-        $this->assign('detail', $orderDetail);
+        View::assign('detail', $orderDetail);
 
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function delivery()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     /**
@@ -120,7 +121,7 @@ class Order extends Base
      */
     public function returnOrder()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     /**
@@ -204,11 +205,11 @@ class Order extends Base
 
         if(in_array($info['order_status'], [5,6,11,31])){
             $ret = Db::table('shop_order_return')->where(['order_no' => $info['order_no']])->find();
-            $this->assign('ret', $ret);
+            View::assign('ret', $ret);
         }
 
-        $this->assign('info', $info);
-        return $this->fetch();
+        View::assign('info', $info);
+        return View::fetch();
     }
 
     //订单评价
@@ -219,13 +220,13 @@ class Order extends Base
 
         $isRe = Db::table('shop_goods_reviews')->where(['user_id' => 0, 'order_id' => $id])->find();
         if($isRe){
-            $this->assign('hasRe', $isRe);
+            View::assign('hasRe', $isRe);
         }else{
-            $this->assign('hasRe', false);
+            View::assign('hasRe', false);
         }
-        $this->assign('info', $info);
-        $this->assign('order_no', $this->request->get('order_no'));
-        return $this->fetch();
+        View::assign('info', $info);
+        View::assign('order_no', $this->request->get('order_no'));
+        return View::fetch();
     }
 
     /**

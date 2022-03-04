@@ -157,7 +157,7 @@
             <div class="layui-input-block">
               <input type="hidden" name="{:config('this.form_token')}" value="{$Request.token}" />
               <input type="hidden" name="gid" value="{$goods.id}">
-              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:url('modify')}">确认</button>
+              <button type="button" class="layui-btn layui-btn-asuma" lay-submit lay-filter="save" data-url="{:route('modify')}">确认</button>
               <button type="reset" class="layui-btn layui-btn-primary">取消</button>
             </div>
           </div>
@@ -413,7 +413,7 @@ layui.config({
   $('#openUploadMain').on('click', function(){
     var selectImgs = $('input[name=goods_imgs]').val()
 
-    $.post('{:url(\'pictures\')}', {imgs:selectImgs}, function(str){
+    $.post('{:route(\'pictures\')}', {imgs:selectImgs}, function(str){
       imgBox = layer.open({
         type: 1,
         area: ['830px', '600px'],
@@ -424,7 +424,7 @@ layui.config({
             elem: '#pics-content' 
             ,isLazyimg: true
             ,done: function(page, next){ 
-              $.post('{:url(\'pictureList\')}',{page:page},function(res){
+              $.post('{:route(\'pictureList\')}',{page:page},function(res){
                 let imgHtml = '';
                 let list = res.result[1];
                 for (var i = 0; i < list.length; i++) {
@@ -437,7 +437,7 @@ layui.config({
 
           upload.render({
             elem: '#uploadMain'
-            ,url: '{:url(\'uploadMainImg\')}'
+            ,url: '{:route(\'uploadMainImg\')}'
             ,field: 'image'
             ,multiple: true
             ,number: 5
@@ -651,7 +651,7 @@ layui.config({
     var selectImgs = $(this).siblings('img').attr('src').replace('__FILEROOT__/thumb', '')
     var upIdx = $(this).parents('tr').index();
     
-    $.post('{:url(\'pictures\')}', {imgs:selectImgs, max:1,upIdx: upIdx}, function(str){
+    $.post('{:route(\'pictures\')}', {imgs:selectImgs, max:1,upIdx: upIdx}, function(str){
       imgBox = layer.open({
         type: 1,
         area: ['830px', '600px'],
@@ -662,7 +662,7 @@ layui.config({
             elem: '#pics-content' 
             ,isLazyimg: true
             ,done: function(page, next){ 
-              $.post('{:url(\'pictureList\')}',{page:page},function(res){
+              $.post('{:route(\'pictureList\')}',{page:page},function(res){
                 let imgHtml = '';
                 let list = res.result[1];
                 for (var i = 0; i < list.length; i++) {
@@ -675,7 +675,7 @@ layui.config({
 
           upload.render({
             elem: '#uploadMain'
-            ,url: '{:url(\'uploadMainImg\')}'
+            ,url: '{:route(\'uploadMainImg\')}'
             ,field: 'image'
             ,size: 900
             ,done: function(res){

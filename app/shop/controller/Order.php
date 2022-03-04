@@ -1,7 +1,8 @@
 <?php
 namespace app\shop\controller;
+use think\facade\View;
 use think\Request;
-use think\Db;
+use think\facade\Db;
 use wechat\facade\Loader as WeChat;
 use think\facade\Cache;
 /**
@@ -37,8 +38,8 @@ class Order extends Base
 
 		$this->getUserAddress($buy);
 
-		$this->assign('from', $buy[0]);
-		return $this->fetch();
+		View::assign('from', $buy[0]);
+		return View::fetch();
 	}
 
 	private function fromBuyNow($buy)
@@ -59,8 +60,8 @@ class Order extends Base
 		$goods['sku'] = trim($sku_str, ',');
 		$goods['buynum'] = $buy[4];
 
-		$this->assign('goods', [$goods]);
-		$this->assign('freight', $goods['freight']);
+		View::assign('goods', [$goods]);
+		View::assign('freight', $goods['freight']);
 	}
 
 	private function fromCart($buy)
@@ -116,9 +117,9 @@ class Order extends Base
 		//查询最大运费作为最终运费
 		$forFreight = Db::table('shop_goods')->field('freight')->where('id', 'IN', $goods_ids)->order('freight', 'desc')->find();
 
-		$this->assign('goods', $goods);
-		$this->assign('freight', $forFreight['freight']);
-		$this->assign('cart_ids', $cart_ids);
+		View::assign('goods', $goods);
+		View::assign('freight', $forFreight['freight']);
+		View::assign('cart_ids', $cart_ids);
 	}
 
 	private function getUserAddress($buy)
@@ -132,7 +133,7 @@ class Order extends Base
 			$address = $this->userDefaultAddress();
 		}
 		
-		$this->assign('address', $address);
+		View::assign('address', $address);
 	}
 
 	/*
@@ -230,11 +231,11 @@ class Order extends Base
 
 		$orderDetail = Db::table('shop_order_detail')->where('order_no', '=', $no)->select();
 
-		$this->assign('order', [$orderBase, $orderDetail]);
+		View::assign('order', [$orderBase, $orderDetail]);
 		if($orderBase['order_status'] == 0 && $this->request->InApp == 'WeChat'){
-			$this->assign('payJsConfig', $this->payJsConfig());
+			View::assign('payJsConfig', $this->payJsConfig());
 		}
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	/*

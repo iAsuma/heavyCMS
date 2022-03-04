@@ -39,7 +39,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
 
    var tableIns =  table.render({
       elem: '#classify'
-      ,url: "{:url('classList')}" //数据接口
+      ,url: "{:route('classList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -105,7 +105,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
          layer.open({
           type: 2
           ,title: '添加分类'
-          ,content: "{:url('classadd')}"
+          ,content: "{:route('classadd')}"
           ,maxmin: true
           ,area: ['35%', '60%']
           ,btn: ['确定', '取消']
@@ -122,7 +122,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
               layer.open({
                 type: 2
                 ,title: '编辑分类'
-                ,content: "{:url('classedit')}?id="+obj.data.id
+                ,content: "{:route('classedit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['35%', '50%']
                 ,btn: ['确定', '取消']
@@ -139,7 +139,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
               layer.open({
                 type: 2
                 ,title: "新增二级分类"
-                ,content: "{:url('classSecond')}?pid="+obj.data.id
+                ,content: "{:route('classSecond')}?pid="+obj.data.id
                 ,maxmin: true
                 ,area: ['35%', '50%']
                 ,btn: ['确定', '取消']
@@ -155,7 +155,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:url('Shop/classDel')}", {id:obj.data.id}, function(res){
+                   $.post("{:route('Shop/classDel')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('classify'); //重载表格

@@ -107,7 +107,7 @@ new Vue({
                 vant.Notify("手机号码有误");
             } else {
                 this.ing = true;
-                axios.post('{:url(\'editAddress\')}', {
+                axios.post('{:route(\'editAddress\')}', {
                     id: this.edit_id,
                     userName: this.username,
                     userPhone: this.phone,

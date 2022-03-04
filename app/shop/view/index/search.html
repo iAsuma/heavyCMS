@@ -36,7 +36,7 @@ body{background: #f8f8f8 !important;}
         </li>
     </ul>
 </div>
-<div class="class-content" data-url="{:url('search')}">
+<div class="class-content" data-url="{:route('search')}">
 	<div class="fenleilist-content" data-pid="{$info.id}" data-wd="{$words}" data-type="{$t}"></div>
 </div>
 {/block}
@@ -84,7 +84,7 @@ function goodsHtml(data){
             var result = '';
             $.ajax({
                 type: 'POST',
-                url: '{:url("searchList")}',
+                url: '{:route("searchList")}',
                 dataType: 'json',
                 data:{perpage: perpage, pageStart: pageStart, pid: pid, words: words, type: type},
                 success: function(res) {

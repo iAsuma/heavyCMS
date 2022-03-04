@@ -2,8 +2,9 @@
 
 namespace app\admin\controller;
 
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 /**
 * 微商城
@@ -17,8 +18,8 @@ class Shop extends Base
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
         
-        $this->assign('classify', $classify);
-        return $this->fetch();
+        View::assign('classify', $classify);
+        return View::fetch();
     }
 
     public function goodsList()
@@ -68,7 +69,7 @@ class Shop extends Base
      */
     public function classification()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function classList()
@@ -90,7 +91,7 @@ class Shop extends Base
 
     public function classAdd()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function addClass(Request $request)
@@ -131,10 +132,10 @@ class Shop extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('shop_classification')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
+        isset($info) && View::assign('info', $info);
         $pidname = Db::table('shop_classification')->field('name')->where(['id' => $info['pid']])->find();
-        isset($pidname) && $this->assign('pidname', $pidname);
-        return $this->fetch();
+        isset($pidname) && View::assign('pidname', $pidname);
+        return View::fetch();
     }
 
 
@@ -182,8 +183,8 @@ class Shop extends Base
     {
         $pid = (int)$this->request->get('pid');
         $pid && $info = Db::table('shop_classification')->field('name,id')->where(['id' => $pid])->find();
-        isset($info) && $this->assign('info', $info);
-        return $this->fetch();
+        isset($info) && View::assign('info', $info);
+        return View::fetch();
     }
 
     public function secondClass(Request $request)
@@ -276,7 +277,7 @@ class Shop extends Base
      */
     public function banner()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function bannerList()
@@ -301,7 +302,7 @@ class Shop extends Base
 
      public function bannerAdd()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function addBanner(Request $request)
@@ -349,8 +350,8 @@ class Shop extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('shop_banner')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
-        return $this->fetch();
+        isset($info) && View::assign('info', $info);
+        return View::fetch();
     }
 
 
@@ -429,7 +430,7 @@ class Shop extends Base
      */
     public function recommended()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
      public function recoList()
@@ -447,7 +448,7 @@ class Shop extends Base
 
      public function recoAdd()
     {
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function addReco(Request $request)
@@ -487,8 +488,8 @@ class Shop extends Base
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::table('shop_reco_place')->where(['id' => $id])->find();
-        isset($info) && $this->assign('info', $info);
-        return $this->fetch();
+        isset($info) && View::assign('info', $info);
+        return View::fetch();
     }
 
     public function changeRecoWeight()
@@ -548,9 +549,9 @@ class Shop extends Base
 
         $info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where($where)->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
 
-        $this->assign('info', $info);
-        $this->assign('reco_id', $reco_id);
-        return $this->fetch();
+        View::assign('info', $info);
+        View::assign('reco_id', $reco_id);
+        return View::fetch();
     }
 
     public function recoDel(Request $request)
@@ -586,16 +587,16 @@ class Shop extends Base
     public function recogoods()
     {    
         $rid = (int)$this->request->get('rid');
-        $this->assign('rid', $rid);
+        View::assign('rid', $rid);
 
         $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
 
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
         
-        $this->assign('classify', $classify);
+        View::assign('classify', $classify);
 
-        return $this->fetch();
+        return View::fetch();
     }
 
     public function recogoodsList()
@@ -670,8 +671,8 @@ class Shop extends Base
             $list[$k]['skus'] = $str;
             $str=''; 
         }
-        $this->assign('data', $list);
-        return $this->fetch();
+        View::assign('data', $list);
+        return View::fetch();
     }
 
     public function addsold()
@@ -709,8 +710,8 @@ class Shop extends Base
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
         
-        $this->assign('classify', $classify);
-        return $this->fetch();
+        View::assign('classify', $classify);
+        return View::fetch();
     }
 
     public function goodsSkuList()
@@ -775,8 +776,8 @@ class Shop extends Base
         $id = $this->request->get('id');
         $skuInfo = Db::table('shop_goods_sku')->where(['id' => (int)$id])->field('id,stocks,price,market_price')->find();
 
-        $this->assign('sku', $skuInfo);
-        return $this->fetch();
+        View::assign('sku', $skuInfo);
+        return View::fetch();
     }
 
     public function modifySku()

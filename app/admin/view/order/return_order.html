@@ -58,7 +58,7 @@
 
    var tableIns =  table.render({
       elem: '#order'
-      ,url: "{:url('returnOrderList')}" //数据接口
+      ,url: "{:route('returnOrderList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -127,7 +127,7 @@
               layer.open({
                 type: 2
                 ,title: obj.data.order_no
-                ,content: "{:url('detail')}?order_no="+obj.data.order_no
+                ,content: "{:route('detail')}?order_no="+obj.data.order_no
                 ,maxmin: true
                 ,area: ['80%', '90%']
                 ,success: function (layero, index) {
@@ -138,7 +138,7 @@
           case 'change':
               layer.confirm('确认退款？', function(index){
                     var load = layer.msg('正在查询退款状态', {icon: 16, shade: 0.01, time:0});
-                    $.post("{:url('Order/backMoney')}", {order_no:obj.data.order_no}, function(res){
+                    $.post("{:route('Order/backMoney')}", {order_no:obj.data.order_no}, function(res){
                       if(res.code == 1){
                         layer.msg('审核成功');
                         table.reload('order'); //重载表格

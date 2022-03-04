@@ -1,8 +1,8 @@
 <?php
 namespace app\common;
 
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
+use think\facade\Db\exception\DataNotFoundException;
+use think\facade\Db\exception\ModelNotFoundException;
 use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;

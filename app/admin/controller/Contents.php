@@ -1,8 +1,9 @@
 <?php
 namespace app\admin\controller;
 
+use think\facade\View;
 use think\Request;
-use Db;
+use think\facade\Db;
 use think\facade\Hook;
 
 /**
@@ -16,8 +17,8 @@ class Contents extends Base
 	public function articles()
 	{	
 		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
-		$this->assign('column', $column);
-		return $this->fetch();
+		View::assign('column', $column);
+		return View::fetch();
 	}
 
 	public function articlesList()
@@ -45,15 +46,15 @@ class Contents extends Base
 	public function articlesAdd()
 	{
 		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
-		$this->assign('column', $column);
-		return $this->fetch();
+		View::assign('column', $column);
+		return View::fetch();
 	}
 
 	public function articlesAdd2()
 	{
 		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
-		$this->assign('column', $column);
-		return $this->fetch();
+		View::assign('column', $column);
+		return View::fetch();
 	}
 
 	public function addArticles(Request $request)
@@ -101,12 +102,12 @@ class Contents extends Base
 	{
 		$id = (int)$this->request->get('id');
 		$id && $info = Db::table('articles')->where(['id' => $id])->find();
-		isset($info) && $this->assign('info', $info);
+		isset($info) && View::assign('info', $info);
 
 		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
-		$this->assign('column', $column);
+		View::assign('column', $column);
 		
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	public function editArticles(Request $request)
@@ -182,8 +183,8 @@ class Contents extends Base
     public function manu()
     {
     	$column = Db::table('article_column')->where('id', '=', 5)->where('status',1)->select();
-		$this->assign('column', $column);
-		return $this->fetch();
+		View::assign('column', $column);
+		return View::fetch();
     }
 
     public function manusList()
@@ -211,7 +212,7 @@ class Contents extends Base
 	public function articleDetail(Request $request, int $id)
 	{
 		if(empty($id)){
-            return $this->fetch('index@public/404', ['msg' => '文章不存在']);
+            return View::fetch('index@public/404', ['msg' => '文章不存在']);
         }
 
         $data = [
@@ -220,11 +221,11 @@ class Contents extends Base
 
         $info = Db::name('articles')->field('id,title,content,create_time')->where($data)->find();
         if(empty($info)){
-            return $this->fetch('index@public/404', ['msg' => '文章不存在']);
+            return View::fetch('index@public/404', ['msg' => '文章不存在']);
         }
 
-        $this->assign('info', $info);
-        return $this->fetch();
+        View::assign('info', $info);
+        return View::fetch();
 	}
 
 	/**
@@ -232,7 +233,7 @@ class Contents extends Base
 	 */
 	public function column()
 	{
-	   return $this->fetch();
+	   return View::fetch();
 	}
 
 	public function columnList()
@@ -257,7 +258,7 @@ class Contents extends Base
 
 	public function columnAdd()
 	{
-		return $this->fetch();
+		return View::fetch();
 	}
 
 	public function addColumn(Request $request)
@@ -293,9 +294,9 @@ class Contents extends Base
 		$id = (int)$this->request->get('id');
 		$id && $info = Db::table('article_column')->where(['id' => $id])->find();
 
-		isset($info) && $this->assign('info', $info);
+		isset($info) && View::assign('info', $info);
 		
-		return $this->fetch();
+		return View::fetch();
 	}
 
 

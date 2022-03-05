@@ -28,8 +28,8 @@ class Element extends Base
  
         $formWhere = $this->parseWhere($where);
         
-        $count = Db::table('banners')->where($formWhere)->count();
-        $data = Db::table('banners')->where($formWhere)->page($page, $limit)->order(['sorted', 'id'=>'desc' ])->select();
+        $count = Db::name('banners')->where($formWhere)->count();
+        $data = Db::name('banners')->where($formWhere)->page($page, $limit)->order(['sorted', 'id'=>'desc' ])->select();
 
         return table_json($data, $count);
     }
@@ -66,7 +66,7 @@ class Element extends Base
                     'status' => 1
                 ];
 
-                $result = Db::table('banners') -> insert($data);
+                $result = Db::name('banners') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['首页轮播图', '添加了banner']);
 
@@ -83,7 +83,7 @@ class Element extends Base
     public function bannerEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('banners')->where(['id' => $id])->find();
+        $id && $info = Db::name('banners')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
@@ -116,7 +116,7 @@ class Element extends Base
                     $image = app('upload')->base64ToImage4Banner($request->post('image'), [700, 350]);
                     $data['img'] = $image[1] ;
                 }
-                $result = Db::table('banners')->where('id', (int)$post['id'])->update($data);
+                $result = Db::name('banners')->where('id', (int)$post['id'])->update($data);
                 !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
                 Hook::listen('admin_log', ['首页轮播图', '修改了banner']);
 
@@ -137,7 +137,7 @@ class Element extends Base
         
         $id = $request->post('id');
         $data = ['status' => -1];
-        if (Db::table('banners') ->where('id', '=', $id) -> update($data)) { 
+        if (Db::name('banners') ->where('id', '=', $id) -> update($data)) { 
             Hook::listen('admin_log', ['首页轮播图', '删除了轮播图']);
             return res_json(1); 
         } else {

@@ -20,7 +20,7 @@ class Api
 				['status', '=', 1],
 				['order_status', '=', 0]
 			];
-			$orderInfo = Db::table('shop_order')->field('id,order_no,price')->where($where)->find();
+			$orderInfo = Db::name('shop_order')->field('id,order_no,price')->where($where)->find();
 			if(!$orderInfo){
 				return true; //查询不到订单不再通知
 			}
@@ -36,18 +36,18 @@ class Api
 		            	'third_trade_no' => $message['transaction_id'],
 		            	'order_status' => 1
 		            ];
-		            $res = Db::table('shop_order')->where($where)->update($data);
+		            $res = Db::name('shop_order')->where($where)->update($data);
 		            !$res && i_log('订单支付状态更新失败');
 
 		            //2.支付成功扣减库存
-		            $detail = Db::table('shop_order_detail')->field('order_no,goods_num,goods_sku_id')->where('order_no', '=', $message['out_trade_no'])->select();
+		            $detail = Db::name('shop_order_detail')->field('order_no,goods_num,goods_sku_id')->where('order_no', '=', $message['out_trade_no'])->select();
 		            foreach ($detail as $v) {
-		            	$change = Db::table('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['stocks' => Db::raw('stocks-'.$v['goods_num'])]);
+		            	$change = Db::name('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['stocks' => Db::raw('stocks-'.$v['goods_num'])]);
 		            	!$change && i_log('商品sku：'.$v['goods_sku_id'].'库存扣减失败');
 
-		            	$sku = Db::table('shop_goods_sku')->field('id,stocks')->where('id', '=', $v['goods_sku_id'])->find();
+		            	$sku = Db::name('shop_goods_sku')->field('id,stocks')->where('id', '=', $v['goods_sku_id'])->find();
 		            	if($sku['stocks'] < 1){
-		            		Db::table('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['is_sold' => 0]);
+		            		Db::name('shop_goods_sku')->where('id', '=', $v['goods_sku_id'])->update(['is_sold' => 0]);
 		            	}
 		            }
 

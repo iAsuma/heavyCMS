@@ -53,8 +53,8 @@ class Order extends Base
         
         $formWhere = $this->parseWhere($where);
 
-        $countQuery = Db::table('shop_order')->alias('o')->where($formWhere);
-        $query = Db::table('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") pay_time,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit);
+        $countQuery = Db::name('shop_order')->alias('o')->where($formWhere);
+        $query = Db::name('shop_order')->alias('o')->leftJoin('users u','u.id = o.user_id')->field('o.id,o.order_no,o.price,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") pay_time,o.pay_money,o.pay_type,o.receiver_name,o.receiver_phone,o.order_status,u.nickname,FROM_UNIXTIME(o.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit);
 
         if($get['order_status'] == 1){
             $query->order('o.pay_time', 'DESC');
@@ -80,11 +80,11 @@ class Order extends Base
         }
 
         //订单基本信息
-        $order = Db::table('shop_order')->alias('o')->field('o.*,u.nickname')->leftJoin('users u', 'o.user_id=u.id')->where(['o.order_no' => $order_no, 'o.status' => 1])->find();
+        $order = Db::name('shop_order')->alias('o')->field('o.*,u.nickname')->leftJoin('users u', 'o.user_id=u.id')->where(['o.order_no' => $order_no, 'o.status' => 1])->find();
         View::assign('order', $order);
 
         //商品信息
-        $orderDetail = Db::table('shop_order_detail')->field('id,goods_name,unit_price,goods_num,goods_sku')->where(['order_no' => $order_no])->select();
+        $orderDetail = Db::name('shop_order_detail')->field('id,goods_name,unit_price,goods_num,goods_sku')->where(['order_no' => $order_no])->select();
         View::assign('detail', $orderDetail);
 
         return View::fetch();
@@ -110,7 +110,7 @@ class Order extends Base
             'express_code' => $request->post('express_code'),
             'delivery_time' => time()
         ];
-        $res = Db::table('shop_order')->where(['order_no' => $order_no, 'status' => 1])->update($data);
+        $res = Db::name('shop_order')->where(['order_no' => $order_no, 'status' => 1])->update($data);
         !$res && exit(res_json_native(-1));
 
         return res_json(1);
@@ -143,9 +143,9 @@ class Order extends Base
 
         $fromWhere = $this->parseWhere($where);
 
-        $count = Db::table('shop_order_return')->alias('r')->join('shop_order o', 'r.order_no=o.order_no')->where($fromWhere)->count();
+        $count = Db::name('shop_order_return')->alias('r')->join('shop_order o', 'r.order_no=o.order_no')->where($fromWhere)->count();
 
-        $list = Db::table('shop_order_return')->alias('r')->field('r.return_order_no,FROM_UNIXTIME(r.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.order_status,u.nickname,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") AS pay_time')->join('shop_order o', 'r.order_no=o.order_no')->leftJoin('users u','u.id = r.user_id')->where($fromWhere)->page($page, $limit)->order('r.id', 'desc')->select();
+        $list = Db::name('shop_order_return')->alias('r')->field('r.return_order_no,FROM_UNIXTIME(r.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,o.id,o.order_no,o.price,o.pay_money,o.pay_type,o.order_status,u.nickname,FROM_UNIXTIME(o.pay_time, "%Y-%m-%d %H:%i:%s") AS pay_time')->join('shop_order o', 'r.order_no=o.order_no')->leftJoin('users u','u.id = r.user_id')->where($fromWhere)->page($page, $limit)->order('r.id', 'desc')->select();
  
         return table_json($list, $count);
     }
@@ -161,27 +161,27 @@ class Order extends Base
 
         Db::startTrans();
         try {
-            $up = Db::table('shop_order_return')->where('order_no', '=', $order_no) -> update(['status' => 2, 'audit_time' => time()]);
+            $up = Db::name('shop_order_return')->where('order_no', '=', $order_no) -> update(['status' => 2, 'audit_time' => time()]);
             if(!$up){
                 return res_json(-1, '审核状态更新失败1');
             }
 
-            $res = Db::table('shop_order')->where('order_no', '=', $order_no) -> update(['order_status' => 5]);
+            $res = Db::name('shop_order')->where('order_no', '=', $order_no) -> update(['order_status' => 5]);
             if(!$res){
                 Db::rollback();
                 return res_json(-2, '审核状态更新失败2');
             }
 
             // 发起微信退款            
-            $refund = Db::table('shop_order_return')->where('order_no', '=', $order_no)->find();
+            $refund = Db::name('shop_order_return')->where('order_no', '=', $order_no)->find();
             $result = WeChat::refundByOrderNo($order_no, $refund['return_order_no'], $refund['refund_fee'], $refund['refund_fee']);
             if(!$result[0]){
                 Db::rollback();
                 return res_json(-4, '微信退款失败');
             }
 
-            $re1 = Db::table('shop_order')->where('order_no', '=', $order_no)->update(['order_status' => 6]);
-            $re2 = Db::table('shop_order_return')->where('order_no', '=', $order_no)->update(['status' => 1, 'complete_time' => time()]);
+            $re1 = Db::name('shop_order')->where('order_no', '=', $order_no)->update(['order_status' => 6]);
+            $re2 = Db::name('shop_order_return')->where('order_no', '=', $order_no)->update(['status' => 1, 'complete_time' => time()]);
             if(!$re1 || !$re2){
                 Db::rollback();
                 return res_json(-5, '退款状态修改失败');
@@ -201,10 +201,10 @@ class Order extends Base
     public function track()
     {   
         $id = $this->request->get('id');
-        $info = Db::table('shop_order')->field('order_no,order_status,create_time,pay_time,delivery_time,complete_time')->where(['id' => $id])->find();
+        $info = Db::name('shop_order')->field('order_no,order_status,create_time,pay_time,delivery_time,complete_time')->where(['id' => $id])->find();
 
         if(in_array($info['order_status'], [5,6,11,31])){
-            $ret = Db::table('shop_order_return')->where(['order_no' => $info['order_no']])->find();
+            $ret = Db::name('shop_order_return')->where(['order_no' => $info['order_no']])->find();
             View::assign('ret', $ret);
         }
 
@@ -216,9 +216,9 @@ class Order extends Base
     public function reviews()
     {
         $id = $this->request->get('id');
-        $info = Db::table('shop_goods_reviews')->field('content,id,stars,order_id')->where(['order_id' => $id])->find();
+        $info = Db::name('shop_goods_reviews')->field('content,id,stars,order_id')->where(['order_id' => $id])->find();
 
-        $isRe = Db::table('shop_goods_reviews')->where(['user_id' => 0, 'order_id' => $id])->find();
+        $isRe = Db::name('shop_goods_reviews')->where(['user_id' => 0, 'order_id' => $id])->find();
         if($isRe){
             View::assign('hasRe', $isRe);
         }else{
@@ -249,7 +249,7 @@ class Order extends Base
 
             $data = [];
 
-            $orderGoods = Db::table('shop_order_detail')->field('goods_id,goods_sku_id')->where(['order_no' => $request->post('order_no')])->select();
+            $orderGoods = Db::name('shop_order_detail')->field('goods_id,goods_sku_id')->where(['order_no' => $request->post('order_no')])->select();
             
             foreach ($orderGoods as $v) {
                 $data[] = [
@@ -265,7 +265,7 @@ class Order extends Base
             Db::startTrans();
             try {
 
-                $result = Db::table('shop_goods_reviews') -> insertAll($data);
+                $result = Db::name('shop_goods_reviews') -> insertAll($data);
 
                 if(!$result || $result != count($data)){
                     Db::rollback();

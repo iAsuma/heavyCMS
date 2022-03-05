@@ -18,9 +18,9 @@ class User extends Base
 		$mark = $this->request->post('mark');
 
 		if($mark == 1 && $this->isCollected($goods_id)){
-			$res = Db::table('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->delete();
+			$res = Db::name('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->delete();
 		}else{
-			$res = Db::table('user_goods_collection')->insert(['user_id' => $this->userId, 'goods_id' => $goods_id, 'create_time' => date('Y-m-d H:i:s')]);
+			$res = Db::name('user_goods_collection')->insert(['user_id' => $this->userId, 'goods_id' => $goods_id, 'create_time' => date('Y-m-d H:i:s')]);
 		}
 
 		if($res){
@@ -52,9 +52,9 @@ class User extends Base
 			'status' => 1
 		];
 
-		$data['nopay'] = Db::table('shop_order')->where($where)->where(['order_status' => 0])->count();
-		$data['nosend'] = Db::table('shop_order')->where($where)->where(['order_status' => 1])->count();
-		$data['noget'] = Db::table('shop_order')->where($where)->where(['order_status' => 2])->count();
+		$data['nopay'] = Db::name('shop_order')->where($where)->where(['order_status' => 0])->count();
+		$data['nosend'] = Db::name('shop_order')->where($where)->where(['order_status' => 1])->count();
+		$data['noget'] = Db::name('shop_order')->where($where)->where(['order_status' => 2])->count();
 		
 		return $data;
 	}
@@ -96,9 +96,9 @@ class User extends Base
 				break;
 		}
 
-		$table = Db::table('shop_order')->where($where)->order('id', 'desc')->page($page, $limit)->buildSql();
+		$table = Db::name('shop_order')->where($where)->order('id', 'desc')->page($page, $limit)->buildSql();
 
-		$list = Db::table($table)->alias('o')->field('o.order_no,o.price,o.pay_money,o.order_status,d.goods_name,d.goods_sku,d.goods_img,d.unit_price,d.goods_num')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where('d.status', '=', 1)->order('o.id', 'desc')->select();
+		$list = Db::name($table)->alias('o')->field('o.order_no,o.price,o.pay_money,o.order_status,d.goods_name,d.goods_sku,d.goods_img,d.unit_price,d.goods_num')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where('d.status', '=', 1)->order('o.id', 'desc')->select();
 
 		$result = [];
 		foreach ($list as $v) {
@@ -134,7 +134,7 @@ class User extends Base
 		}else if($status == '11'){
 			$data['order_status'] = $status;
 			$data['complete_time'] = NULL;
-			$order = Db::table('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->find();
+			$order = Db::name('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->find();
 			$refund = [
 				'return_order_no' => '',
 				'order_no' => $orderNo,
@@ -145,21 +145,21 @@ class User extends Base
 				'status' => 0
 			];
 
-			$refundId = Db::table('shop_order_return')->insertGetId($refund);
+			$refundId = Db::name('shop_order_return')->insertGetId($refund);
 			if($refundId){
-				Db::table('shop_order_return')->where(['id' => $refundId])->update(['return_order_no' => $orderNo.str_pad($refundId, 4, 0, STR_PAD_LEFT)]);
+				Db::name('shop_order_return')->where(['id' => $refundId])->update(['return_order_no' => $orderNo.str_pad($refundId, 4, 0, STR_PAD_LEFT)]);
 			}
 			if(!$refundId) return res_json(-2);
 		}else if($status == '12'){
 			$data['order_status'] = 1;
 
-			$del = Db::table('shop_order_return')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->delete();
+			$del = Db::name('shop_order_return')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->delete();
 			if(!$del) return res_json(-3);
 		}else{
 			$data['order_status'] = $status;
 		}
 
-		$res = Db::table('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->update($data);
+		$res = Db::name('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->update($data);
 		!$res && exit(res_json_native(-1));
 
 		return res_json(1);
@@ -187,7 +187,7 @@ class User extends Base
 			'status' => 1,
 			'order_status' => 3
 		];
-		$order = Db::table('shop_order')->field('id')->where($where)->find();
+		$order = Db::name('shop_order')->field('id')->where($where)->find();
 		if(!$order){
 			$this->redirect('/shop');
 		}
@@ -212,7 +212,7 @@ class User extends Base
 	public function makeReviews()
 	{
 		$post = $this->request->post();
-		$goods = Db::table('shop_order')->alias('o')->field('o.id,d.goods_id,d.goods_sku_id')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where(['o.id' => $post['order_id']])->select();
+		$goods = Db::name('shop_order')->alias('o')->field('o.id,d.goods_id,d.goods_sku_id')->leftjoin('shop_order_detail d', 'o.order_no=d.order_no')->where(['o.id' => $post['order_id']])->select();
 
 		$data = [];
 
@@ -232,13 +232,13 @@ class User extends Base
 
 		Db::startTrans();
 
-		$res = Db::table('shop_goods_reviews')->insertAll($data);
+		$res = Db::name('shop_goods_reviews')->insertAll($data);
 		if($res <  count($data)){
 			Db::rollback();
 			return res_json(-1);
 		}
 
-		$update = Db::table('shop_order')->where(['id' => $post['order_id']])->update(['order_status' => 32]);
+		$update = Db::name('shop_order')->where(['id' => $post['order_id']])->update(['order_status' => 32]);
 		if(!$update){
 			Db::rollback();
 			return res_json(-2);
@@ -277,7 +277,7 @@ class User extends Base
 			$where[] =  ['g.goods_name', 'LIKE', '%'.$words.'%'];
 		}
 
-		$list = Db::table('user_goods_collection')->alias('c')->field('c.id,g.id goods_id,g.goods_name,min(s.price) price,s.sku_img')->join('shop_goods g', 'c.goods_id=g.id')->join('shop_goods_sku s', 'g.id=s.goods_id')->where($where)->group('g.id')->page($page, $limit)->select();
+		$list = Db::name('user_goods_collection')->alias('c')->field('c.id,g.id goods_id,g.goods_name,min(s.price) price,s.sku_img')->join('shop_goods g', 'c.goods_id=g.id')->join('shop_goods_sku s', 'g.id=s.goods_id')->where($where)->group('g.id')->page($page, $limit)->select();
 		empty($list) && exit(res_json_native(-1));
 
 		return res_json(1, $list);
@@ -288,7 +288,7 @@ class User extends Base
 		$id = $this->request->post('id');
 		empty($id) && exit(res_json_native(-1));
 
-		$res = Db::table('user_goods_collection')->where(['id' => $id])->delete();
+		$res = Db::name('user_goods_collection')->where(['id' => $id])->delete();
 		!$res && exit(res_json_native(-2));
 
 		return res_json(1);
@@ -299,7 +299,7 @@ class User extends Base
 	*/
 	public function address()
 	{
-		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId])->order(['is_default' => 'desc', 'id' => 'desc'])->select();
+		$address = Db::name('shop_receiver_address')->where(['user_id' => $this->userId])->order(['is_default' => 'desc', 'id' => 'desc'])->select();
 
 		if($preorder = $this->request->param('preorder')){
 			View::assign('preorder', $preorder);
@@ -333,10 +333,10 @@ class User extends Base
 		Db::startTrans();
 
 		if($post['isdefault'] == 1){
-			Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
+			Db::name('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
 		}
 
-		$res = Db::table('shop_receiver_address')->insert($data);
+		$res = Db::name('shop_receiver_address')->insert($data);
 		if(!$res){
 			Db::rollback();
 			return res_json(-1, 'fail');
@@ -349,7 +349,7 @@ class User extends Base
 	public function addressEdit(int $id)
 	{
 		$info = [];
-		$id && $info = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
+		$id && $info = Db::name('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
 
 		View::assign('info', $info);
 		return View::fetch();
@@ -374,10 +374,10 @@ class User extends Base
 		Db::startTrans();
 
 		if($post['isdefault'] == 1){
-			Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
+			Db::name('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->update(['is_default' => 0]);
 		}
 
-		$res = Db::table('shop_receiver_address')->where(['id' => $post['id']])->update($data);
+		$res = Db::name('shop_receiver_address')->where(['id' => $post['id']])->update($data);
 		
 		if(!is_numeric($res)){
 			Db::rollback();

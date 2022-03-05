@@ -26,8 +26,8 @@ class BasisSet extends Base
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
  
-        $count = Db::table('application_config')->count();
-        $data = Db::table('application_config')->page($page, $limit)->cache('appset', 0, 'developer')->order('id', 'desc')->select();
+        $count = Db::name('application_config')->count();
+        $data = Db::name('application_config')->page($page, $limit)->cache('appset', 0, 'developer')->order('id', 'desc')->select();
         return table_json($data, $count);
     }
 
@@ -51,7 +51,7 @@ class BasisSet extends Base
                     'type' => $request->post('type')
                 ];
 
-                $result = Db::table('application_config') -> insert($data);
+                $result = Db::name('application_config') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['基础设置', '添加了应用配置']);
 
@@ -68,7 +68,7 @@ class BasisSet extends Base
     public function edit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('application_config')->where(['id' => $id])->find();
+        $id && $info = Db::name('application_config')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
@@ -90,7 +90,7 @@ class BasisSet extends Base
                 ];
 
 
-            $result = Db::table('application_config')->where('id', (int)$post['id'])->update($data);
+            $result = Db::name('application_config')->where('id', (int)$post['id'])->update($data);
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 
             Hook::listen('admin_log', ['基础设置', '修改了应用配置']);
@@ -107,7 +107,7 @@ class BasisSet extends Base
     public function del(Request $request)
     {
         $id = $request->post('id');
-        if (Db::table('application_config') ->where('id', '=', $id) -> delete()) { 
+        if (Db::name('application_config') ->where('id', '=', $id) -> delete()) { 
             Hook::listen('admin_log', ['基础设置', '删除了应用配置']);
             return res_json(1); 
         } else {

@@ -50,7 +50,7 @@ class Order extends Base
 			['s.goods_id', '=', $buy[3]],
 			['s.id', '=', $buy[5]]
 		];
-		$goods = Db::table('shop_goods_sku')->field('s.goods_id,s.id sku_id,g.goods_name,g.freight,s.sku,s.price,s.sku_img,s.stocks')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($where)->find();
+		$goods = Db::name('shop_goods_sku')->field('s.goods_id,s.id sku_id,g.goods_name,g.freight,s.sku,s.price,s.sku_img,s.stocks')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($where)->find();
 		
 		$sku = json_decode($goods['sku'], true);
 		$sku_str = '';
@@ -87,7 +87,7 @@ class Order extends Base
 		$goods_sku_ids = rtrim($goods_sku_ids, ',');
 
 		/******与数据库数据比对，防止人为串改***/
-		$cart_info = Db::table('shop_shopping_cart')->where('user_id', '=', $this->userId)->where('id', 'IN', $cart_ids)->select();
+		$cart_info = Db::name('shop_shopping_cart')->where('user_id', '=', $this->userId)->where('id', 'IN', $cart_ids)->select();
 		foreach ($cart_info as $v) {
 			if($v['goods_id'] != $newSelected[$v['goods_sku_id']][1] || $v['goods_sku_id'] != $newSelected[$v['goods_sku_id']][2] || $v['goods_num'] != $newSelected[$v['goods_sku_id']][3]){
 				$this->redirect('/shop');
@@ -103,7 +103,7 @@ class Order extends Base
 			['s.id', 'IN', $goods_sku_ids]
 		];
 
-		$goods = Db::table('shop_goods_sku')->field('s.goods_id,s.id sku_id,g.goods_name,g.freight,s.sku,s.price,s.sku_img,s.stocks')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($where)->select();
+		$goods = Db::name('shop_goods_sku')->field('s.goods_id,s.id sku_id,g.goods_name,g.freight,s.sku,s.price,s.sku_img,s.stocks')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($where)->select();
 		foreach ($goods as &$v) {
 			$v['buynum'] = $newSelected[$v['sku_id']][3];
 			$sku = json_decode($v['sku'], true);
@@ -115,7 +115,7 @@ class Order extends Base
 		}
 
 		//查询最大运费作为最终运费
-		$forFreight = Db::table('shop_goods')->field('freight')->where('id', 'IN', $goods_ids)->order('freight', 'desc')->find();
+		$forFreight = Db::name('shop_goods')->field('freight')->where('id', 'IN', $goods_ids)->order('freight', 'desc')->find();
 
 		View::assign('goods', $goods);
 		View::assign('freight', $forFreight['freight']);
@@ -166,7 +166,7 @@ class Order extends Base
 				'freight' => $freight
 			];
 
-			$orderId = Db::table('shop_order')->insertGetId($data1);
+			$orderId = Db::name('shop_order')->insertGetId($data1);
 			if(!$orderId){
 				Db::rollback();	
 				return res_json(-1);
@@ -174,7 +174,7 @@ class Order extends Base
 
 			//生成实际订单号
 			$orderNo = make_order_no($orderId);
-			$res = Db::table('shop_order')->where('id', '=', $orderId)->update(['order_no'=>$orderNo]);
+			$res = Db::name('shop_order')->where('id', '=', $orderId)->update(['order_no'=>$orderNo]);
 			if(!$res){
 				Db::rollback();	
 				return res_json(-2);
@@ -196,7 +196,7 @@ class Order extends Base
 					'status' => 1
 				];
 			}
-			$detail = Db::table('shop_order_detail')->insertAll($data2);
+			$detail = Db::name('shop_order_detail')->insertAll($data2);
 			if($detail != count($data2)){
 				Db::rollback();	
 				return res_json(-3);
@@ -204,7 +204,7 @@ class Order extends Base
 
 			//删除购物车中的相应商品
 			if($request->post('cart_ids')){
-				Db::table('shop_shopping_cart')->where('id', 'IN', $request->post('cart_ids'))->delete();
+				Db::name('shop_shopping_cart')->where('id', 'IN', $request->post('cart_ids'))->delete();
 			}
 
 			Db::commit();
@@ -224,12 +224,12 @@ class Order extends Base
 			$this->redirect('/shop');
 		}
 
-		$orderBase = Db::table('shop_order')->where('order_no', '=', $no)->where('status', '=', 1)->find();
+		$orderBase = Db::name('shop_order')->where('order_no', '=', $no)->where('status', '=', 1)->find();
 		if(empty($orderBase)){
 			$this->redirect('/shop');	
 		}
 
-		$orderDetail = Db::table('shop_order_detail')->where('order_no', '=', $no)->select();
+		$orderDetail = Db::name('shop_order_detail')->where('order_no', '=', $no)->select();
 
 		View::assign('order', [$orderBase, $orderDetail]);
 		if($orderBase['order_status'] == 0 && $this->request->InApp == 'WeChat'){
@@ -285,7 +285,7 @@ class Order extends Base
 			['order_status', '=', 0],
 			['user_id', '=', $this->userId]
 		];
-		$orderInfo = Db::table('shop_order')->field('id,order_no,price')->where($where)->find();
+		$orderInfo = Db::name('shop_order')->field('id,order_no,price')->where($where)->find();
 		!$orderInfo && exit(res_json_native(-3, '订单错误'));
 
 		//获取预支付订单
@@ -315,7 +315,7 @@ class Order extends Base
 			['user_id', '=', $this->userId]
 		];
 
-		$orderInfo = Db::table('shop_order')->field('id,order_no,order_status')->where($where)->find();
+		$orderInfo = Db::name('shop_order')->field('id,order_no,order_status')->where($where)->find();
 		!$orderInfo && exit(res_json_native(-1));
 
 		if($orderInfo['order_status'] == 1){

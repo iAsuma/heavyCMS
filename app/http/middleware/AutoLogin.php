@@ -50,7 +50,7 @@ class AutoLogin
                 }
                 
                 $where = ['wx_openid' => Session::get('wapUser.wx_openid')];
-                $user = Db::table('users')->where($where)->where('status', '=', 1)->find();
+                $user = Db::name('users')->where($where)->where('status', '=', 1)->find();
 
                 if(!$user){
                     //微信自动注册
@@ -66,7 +66,7 @@ class AutoLogin
                         'wx_openid' => Session::get('wapUser.wx_openid')
                     ];
 
-                    $userid = Db::table('users')->insertGetId($data);
+                    $userid = Db::name('users')->insertGetId($data);
 
                     $user = [
                         'id' => $userid,

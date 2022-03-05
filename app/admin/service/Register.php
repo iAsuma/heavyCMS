@@ -49,7 +49,7 @@ class Register
 			exit(res_json_str(-1, $validate->getError()));
 		}
 
-		$loginUser = Db::table('admin_user')->field('id,name,login_name,phone,email,password,head_img,status')->where('login_name|email|phone', '=', $post['username'])->where('status' ,'<>', -1)->findOrEmpty();
+		$loginUser = Db::name('admin_user')->field('id,name,login_name,phone,email,password,head_img,status')->where('login_name|email|phone', '=', $post['username'])->where('status' ,'<>', -1)->findOrEmpty();
 
 		empty($loginUser) && exit(res_json_str(-2, '账号不存在'));
 		md5safe($post['password']) != $loginUser['password'] && exit(res_json_str(-3, '密码错误'));
@@ -103,7 +103,7 @@ class Register
 			static $user = [];
 			if(!isset($user['id'])){
 				$pwd = substr($secret[2], 4, -4);
-				$user = Db::table('admin_user')->field('id,name,login_name,head_img')->where('id', '=', $secret[0])->where('login_name', '=', $secret[1])->where('password','=', $pwd)->findOrEmpty();
+				$user = Db::name('admin_user')->field('id,name,login_name,head_img')->where('id', '=', $secret[0])->where('login_name', '=', $secret[1])->where('password','=', $pwd)->findOrEmpty();
 			}
 
 			return $user ?: false;

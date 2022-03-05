@@ -13,7 +13,7 @@ class Shop extends Base
 {
     public function goods()
     {
-        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+        $classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
@@ -36,9 +36,9 @@ class Shop extends Base
         ];
  
         $formWhere = $this->parseWhere($where);
-        $count = Db::table('shop_goods')->where($formWhere)->count();
+        $count = Db::name('shop_goods')->where($formWhere)->count();
 
-        $data = Db::table('shop_goods')->alias('g')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,c.name cname,cc.name ccname')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
+        $data = Db::name('shop_goods')->alias('g')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time,c.name cname,cc.name ccname')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
 
         foreach ($data as $k => $val) {
             $arr = explode(',',$val['goods_imgs']);
@@ -51,9 +51,9 @@ class Shop extends Base
     public function del(Request $request)
     {
         $id = $request->post('id');
-        $del = Db::table('shop_goods')->where('id', '=', $id)->update(['status' => -1]);
+        $del = Db::name('shop_goods')->where('id', '=', $id)->update(['status' => -1]);
 
-        Db::table('shop_goods_sku')->where('goods_id', '=', $id)->update(['status' => -1]);
+        Db::name('shop_goods_sku')->where('goods_id', '=', $id)->update(['status' => -1]);
 
         if ($del) { 
             Hook::listen('admin_log', ['商品管理', '删除了商品']);
@@ -114,7 +114,7 @@ class Shop extends Base
                     'pid' => 0,
                 ];
 
-                $result = Db::table('shop_classification') -> insert($data);
+                $result = Db::name('shop_classification') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['商品分类', '添加了分类'.$data['name']]);
 
@@ -131,9 +131,9 @@ class Shop extends Base
     public function classEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('shop_classification')->where(['id' => $id])->find();
+        $id && $info = Db::name('shop_classification')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
-        $pidname = Db::table('shop_classification')->field('name')->where(['id' => $info['pid']])->find();
+        $pidname = Db::name('shop_classification')->field('name')->where(['id' => $info['pid']])->find();
         isset($pidname) && View::assign('pidname', $pidname);
         return View::fetch();
     }
@@ -164,7 +164,7 @@ class Shop extends Base
                     $data['main_img'] = $img[1];
                 }
                
-                $result = Db::table('shop_classification')->where('id', (int)$post['id'])->update($data);
+                $result = Db::name('shop_classification')->where('id', (int)$post['id'])->update($data);
                 !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
                 Hook::listen('admin_log', ['商品分类', '修改了类别'.$data['name']]);
 
@@ -182,7 +182,7 @@ class Shop extends Base
     public function classSecond()
     {
         $pid = (int)$this->request->get('pid');
-        $pid && $info = Db::table('shop_classification')->field('name,id')->where(['id' => $pid])->find();
+        $pid && $info = Db::name('shop_classification')->field('name,id')->where(['id' => $pid])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
@@ -212,7 +212,7 @@ class Shop extends Base
                     'pid' => $request->post('id')
                 ];
 
-                $result = Db::table('shop_classification') -> insert($data);
+                $result = Db::name('shop_classification') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['商品分类', '添加了二级分类'.$data['name']]);
 
@@ -230,11 +230,11 @@ class Shop extends Base
     public function classDel(Request $request)
     {
         $id = $request->post('id');
-        $info = Db::table('shop_classification')->field('id')->where(['pid' => $id])->find();
+        $info = Db::name('shop_classification')->field('id')->where(['pid' => $id])->find();
         if($info){
            return json(['code' => -2, 'result' => '请先删除子类']);
         }
-        if (Db::table('shop_classification') ->where('id','=', $id) -> delete()) {  
+        if (Db::name('shop_classification') ->where('id','=', $id) -> delete()) {  
             Hook::listen('admin_log', ['商品分类', '删除了类别']);        
             return res_json(1); 
         } else {
@@ -261,10 +261,10 @@ class Shop extends Base
         $id && $res = Db::name('shop_goods')->where('id', '=', $id)->update(['is_sold' => $sold]);
         !$res && exit(json(['code' => -1, 'result' => '失败']));
 
-        $count = Db::table('shop_goods_sku')->where(['goods_id' => $id, 'status' => 1])->count();
+        $count = Db::name('shop_goods_sku')->where(['goods_id' => $id, 'status' => 1])->count();
         if($count == 1){
             //同时上下架sku
-            Db::table('shop_goods_sku')->where(['goods_id' => $id])->update(['is_sold' => $sold]);
+            Db::name('shop_goods_sku')->where(['goods_id' => $id])->update(['is_sold' => $sold]);
         }
 
         return json(['code' => 1, 'result' => '成功']);
@@ -293,8 +293,8 @@ class Shop extends Base
         ];
  
         $formWhere = $this->parseWhere($where);
-        $countQuery = Db::table('shop_banner')->where($formWhere);
-        $query = Db::table('shop_banner')->where($formWhere)->page($page, $limit)->order(['sorted', 'id'=>'desc' ]);
+        $countQuery = Db::name('shop_banner')->where($formWhere);
+        $query = Db::name('shop_banner')->where($formWhere)->page($page, $limit)->order(['sorted', 'id'=>'desc' ]);
         $count = $countQuery->count();
         $data = $query->select();
         return table_json($data, $count);
@@ -332,7 +332,7 @@ class Shop extends Base
                     'status' => 1
                 ];
 
-                $result = Db::table('shop_banner') -> insert($data);
+                $result = Db::name('shop_banner') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['首页管理', '添加了banner']);
 
@@ -349,7 +349,7 @@ class Shop extends Base
     public function bannerEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('shop_banner')->where(['id' => $id])->find();
+        $id && $info = Db::name('shop_banner')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
@@ -382,7 +382,7 @@ class Shop extends Base
                     $image = app('upload')->base64ToImage4Banner($request->post('image'), [600, 340]);
                     $data['img'] = $image[1] ;
                 }
-                $result = Db::table('shop_banner')->where('id', (int)$post['id'])->update($data);
+                $result = Db::name('shop_banner')->where('id', (int)$post['id'])->update($data);
                 !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
                 Hook::listen('admin_log', ['首页管理', '修改了banner']);
 
@@ -403,7 +403,7 @@ class Shop extends Base
         
         $id = $request->post('id');
          $data = ['status' => -1];
-        if (Db::table('shop_banner') ->where('id', '=', $id) -> update($data)) { 
+        if (Db::name('shop_banner') ->where('id', '=', $id) -> update($data)) { 
             Hook::listen('admin_log', ['首页管理', '删除了轮播图']);
             return res_json(1); 
         } else {
@@ -440,8 +440,8 @@ class Shop extends Base
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;       
 
-        $count = Db::table('shop_reco_place')->count();
-        $data = Db::table('shop_reco_place')->page($page, $limit)->order(['sorted', 'id'])->select();
+        $count = Db::name('shop_reco_place')->count();
+        $data = Db::name('shop_reco_place')->page($page, $limit)->order(['sorted', 'id'])->select();
 
         return table_json($data, $count);
     }
@@ -470,7 +470,7 @@ class Shop extends Base
                     'name' => $request->post('name')
                 ];
 
-                $result = Db::table('shop_reco_place') -> insert($data);
+                $result = Db::name('shop_reco_place') -> insert($data);
                 !$result && exit(res_json_native(-3, '添加失败'));
                 Hook::listen('admin_log', ['首页管理', '添加了banner']);
 
@@ -487,7 +487,7 @@ class Shop extends Base
     public function recoEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('shop_reco_place')->where(['id' => $id])->find();
+        $id && $info = Db::name('shop_reco_place')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
@@ -524,7 +524,7 @@ class Shop extends Base
                         'name' => $request->post('name')
                 ];
 
-                $result = Db::table('shop_reco_place')->where('id', (int)$post['id'])->update($data);
+                $result = Db::name('shop_reco_place')->where('id', (int)$post['id'])->update($data);
                 !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
                 Hook::listen('admin_log', ['首页管理', '修改了banner']);
 
@@ -547,7 +547,7 @@ class Shop extends Base
             'a.rec_id' => $reco_id
         ];
 
-        $info = Db::table('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where($where)->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
+        $info = Db::name('shop_reco_goods')->alias('a')->field('c.*,d.name rec_name')->leftjoin('(SELECT g.id goods_id,g.goods_name,min(s.price) price,s.market_price,s.sku_img FROM shop_goods g LEFT JOIN shop_goods_sku s ON g.id=s.goods_id WHERE g.status =1 AND g.is_sold=1 AND s.status = 1 AND s.is_sold =1 GROUP BY g.id) c', 'a.goods_id=c.goods_id')->leftjoin('shop_reco_place d', 'd.id=a.rec_id')->where('c.goods_id', 'NOT NULL')->where($where)->order(['d.sorted' ,'a.rec_id', 'a.create_time' => 'desc'])->select();
 
         View::assign('info', $info);
         View::assign('reco_id', $reco_id);
@@ -559,8 +559,8 @@ class Shop extends Base
         $recoId = $request->post('id');
         Db::startTrans();
 
-        $res1 = Db::table('shop_reco_place')->where(['id' => $recoId])->delete();
-        $res2 = Db::table('shop_reco_goods')->where(['rec_id'=>$recoId])->delete();
+        $res1 = Db::name('shop_reco_place')->where(['id' => $recoId])->delete();
+        $res2 = Db::name('shop_reco_goods')->where(['rec_id'=>$recoId])->delete();
         if($res1 && $res2){
             Db::commit();
             return res_json(1);
@@ -575,7 +575,7 @@ class Shop extends Base
         
         $gid = $request->post('gid');
         $rid = $request->post('rid');
-        if (Db::table('shop_reco_goods') ->where(['goods_id'=>$gid,'rec_id'=>$rid]) -> delete()) { 
+        if (Db::name('shop_reco_goods') ->where(['goods_id'=>$gid,'rec_id'=>$rid]) -> delete()) { 
             Hook::listen('admin_log', ['首页管理', '删除了推荐位的商品']);
             return res_json(1);
         } else {
@@ -589,7 +589,7 @@ class Shop extends Base
         $rid = (int)$this->request->get('rid');
         View::assign('rid', $rid);
 
-        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+        $classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
@@ -614,16 +614,16 @@ class Shop extends Base
         ];
  
         $formWhere = $this->parseWhere($where);
-        $countQuery = Db::table('shop_goods')->where($formWhere);
+        $countQuery = Db::name('shop_goods')->where($formWhere);
 
-        $query = Db::table('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
+        $query = Db::name('shop_goods')->alias('g')->leftJoin('shop_classification c','c.id = g.classification_id')->field('g.id,g.goods_name,g.goods_imgs,g.post_type,g.freight,c.name,c.pid,g.status,g.is_sold,FROM_UNIXTIME(g.create_time, "%Y-%m-%d %H:%i:%s") AS create_time')->where($formWhere)->page($page, $limit)->order('g.id', 'desc');
 
         $count = $countQuery->count();
         $data = $query->select();
         $rid = $get['rid'];
 
         foreach ($data as $k => $v) {
-            $res = Db::table('shop_reco_goods')->where(['goods_id'=>$v['id'],'rec_id'=>$rid])->find();
+            $res = Db::name('shop_reco_goods')->where(['goods_id'=>$v['id'],'rec_id'=>$rid])->find();
             if($res){
                 $data[$k]['fin'] = 1;
             }else{
@@ -632,7 +632,7 @@ class Shop extends Base
 
             $arr = explode(',',$v['goods_imgs']);
             $data[$k]['imgs'] = $arr[0];
-            $pid = Db::table('shop_classification')->where('id','=',$v['pid'])->find();
+            $pid = Db::name('shop_classification')->where('id','=',$v['pid'])->find();
             $data[$k]['classfy'] = $pid['name'].' || '.$v['name'];
            
         }
@@ -646,8 +646,8 @@ class Shop extends Base
         $gid =  $data['goods_id'] = $request->post('gid');
         $rid = $data['rec_id']  = $request->post('rid');
         $data['create_time'] = date('Y-m-d H:i:s');
-        $res = Db::table('shop_reco_goods')->where(['goods_id'=>$gid,'rec_id'=>$rid])->find();
-        if (!$res && Db::table('shop_reco_goods') ->insert($data)) { 
+        $res = Db::name('shop_reco_goods')->where(['goods_id'=>$gid,'rec_id'=>$rid])->find();
+        if (!$res && Db::name('shop_reco_goods') ->insert($data)) { 
             Hook::listen('admin_log', ['首页管理', '添加了推荐位的商品']);
             return res_json(1); 
         } else {
@@ -660,7 +660,7 @@ class Shop extends Base
     {
         $gid = (int)$this->request->get('id');
 
-        $list = Db::table('shop_goods_sku')->where(['goods_id'=>$gid])->select();
+        $list = Db::name('shop_goods_sku')->where(['goods_id'=>$gid])->select();
         $str = '';
         foreach ($list as $k => $v) {
             $arr = json_decode($v['sku'],true);
@@ -693,7 +693,7 @@ class Shop extends Base
             $data['stocks']=$v[1];
             $data['market_price']=$v[2];
             $data['price']=$v[3];
-            $re = Db::table('shop_goods_sku')->where(['id'=>$v[0]])->update($data);
+            $re = Db::name('shop_goods_sku')->where(['id'=>$v[0]])->update($data);
         }
         if($re){
             return res_json(1); 
@@ -705,7 +705,7 @@ class Shop extends Base
 
     public function goodsSku()
     {
-        $classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+        $classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
@@ -736,9 +736,9 @@ class Shop extends Base
         }
  
         $formWhere = $this->parseWhere($where);
-        $count = Db::table('shop_goods_sku')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($formWhere)->count();
+        $count = Db::name('shop_goods_sku')->alias('s')->leftjoin('shop_goods g', 's.goods_id=g.id')->where($formWhere)->count();
 
-        $data =Db::table('shop_goods_sku')->alias('s')->field('s.*,g.goods_name,c.name cname,cc.name ccname,g.is_sold main_sold')->leftjoin('shop_goods g', 's.goods_id=g.id')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
+        $data =Db::name('shop_goods_sku')->alias('s')->field('s.*,g.goods_name,c.name cname,cc.name ccname,g.is_sold main_sold')->leftjoin('shop_goods g', 's.goods_id=g.id')->leftJoin('shop_classification c','c.id = g.classification_id')->leftJoin('shop_classification cc', 'c.pid=cc.id')->where($formWhere)->page($page, $limit)->order('g.id', 'desc')->select();
      
         return table_json($data, $count);
     }
@@ -759,10 +759,10 @@ class Shop extends Base
                 break;
         }
 
-        $count = Db::table('shop_goods_sku')->where(['goods_id' => $goods_id, 'status' => 1, 'is_sold'=> 1])->count();
+        $count = Db::name('shop_goods_sku')->where(['goods_id' => $goods_id, 'status' => 1, 'is_sold'=> 1])->count();
         if($count == 1){
             //同时上下架商品
-            Db::table('shop_goods')->where(['id' => $goods_id])->update(['is_sold' => $sold]);
+            Db::name('shop_goods')->where(['id' => $goods_id])->update(['is_sold' => $sold]);
         }
 
         $id && $res = Db::name('shop_goods_sku')->where('id', '=', $id)->update(['is_sold' => $sold]);
@@ -774,7 +774,7 @@ class Shop extends Base
     public function skuSet()
     {
         $id = $this->request->get('id');
-        $skuInfo = Db::table('shop_goods_sku')->where(['id' => (int)$id])->field('id,stocks,price,market_price')->find();
+        $skuInfo = Db::name('shop_goods_sku')->where(['id' => (int)$id])->field('id,stocks,price,market_price')->find();
 
         View::assign('sku', $skuInfo);
         return View::fetch();
@@ -790,7 +790,7 @@ class Shop extends Base
             'stocks' => (int)$post['stocks']
         ];
 
-        $res = Db::table('shop_goods_sku')->where(['id' => (int)$post['sku_id']])->update($data);
+        $res = Db::name('shop_goods_sku')->where(['id' => (int)$post['sku_id']])->update($data);
         !$res && exit(res_json_native(-1, '系统错误'));
 
         return res_json(1);
@@ -799,16 +799,16 @@ class Shop extends Base
     public function skuDel()
     {
         $sku_id = (int)$this->request->post('id');
-        // $del = Db::table('shop_goods_sku')->where(['id' => $sku_id])->update(['status' => -1]);
+        // $del = Db::name('shop_goods_sku')->where(['id' => $sku_id])->update(['status' => -1]);
         // dump($del);
 
-        $skuInfo = Db::table('shop_goods_sku')->alias('s')->field('s.id AS sku_id,s.goods_id,s.sku,g.goods_sku_attributes')->join('shop_goods g', 's.goods_id=g.id')->where(['s.id' => $sku_id])->find();
+        $skuInfo = Db::name('shop_goods_sku')->alias('s')->field('s.id AS sku_id,s.goods_id,s.sku,g.goods_sku_attributes')->join('shop_goods g', 's.goods_id=g.id')->where(['s.id' => $sku_id])->find();
         dump($skuInfo);
 
-        $skuS = Db::table('shop_goods_sku')->where(['goods_id' => $skuInfo['goods_id']])->count();
+        $skuS = Db::name('shop_goods_sku')->where(['goods_id' => $skuInfo['goods_id']])->count();
         // if(1 == count($skuS)){
             //若果只有一个SKU直接删除商品
-            // Db::table('shop_goods')->where(['id' => $skuInfo['goods_id']])->update(['status' => -1]);
+            // Db::name('shop_goods')->where(['id' => $skuInfo['goods_id']])->update(['status' => -1]);
         // }else{
             $sku = json_decode($skuInfo['sku'], true);
             $skuArr = json_decode($skuInfo['goods_sku_attributes'], true);

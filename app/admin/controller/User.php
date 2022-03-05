@@ -40,8 +40,8 @@ class User extends Base
  
         $formWhere = $this->parseWhere($where);
 
-        $countQuery = Db::table('users')->alias('u')->where($formWhere);
-        $userQuery = Db::table('users')->field('id,nickname,name,phone,gender,status,create_time,country,province,city')->where($formWhere)->page($page, $limit)->order('id', 'asc');
+        $countQuery = Db::name('users')->alias('u')->where($formWhere);
+        $userQuery = Db::name('users')->field('id,nickname,name,phone,gender,status,create_time,country,province,city')->where($formWhere)->page($page, $limit)->order('id', 'asc');
 
         $count = $countQuery->count();
         $user = $userQuery->select();
@@ -53,7 +53,7 @@ class User extends Base
     public function userEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::table('users')->where(['id' => $id])->find();
+        $id && $info = Db::name('users')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         
         return View::fetch();
@@ -92,7 +92,7 @@ class User extends Base
                         'gender' => $request->post('gender')
                 ];
 
-                $update = Db::table('users') ->where('id', (int)$post['id']) -> update($data);
+                $update = Db::name('users') ->where('id', (int)$post['id']) -> update($data);
                  
                 if(!is_numeric($update)){
                     Db::rollback();
@@ -118,7 +118,7 @@ class User extends Base
         $id = $request->post('uid');
         $data['status'] = -1 ;
     
-        if (Db::table('users') ->where('id', '=', $id) -> update($data)) { 
+        if (Db::name('users') ->where('id', '=', $id) -> update($data)) { 
             Hook::listen('admin_log', ['用户管理', '删除了用户']);
             return res_json(1); 
         } else {
@@ -140,7 +140,7 @@ class User extends Base
         ];
         
         $formWhere = $this->parseWhere($where);
-        $data = Db::table('users')->where($formWhere)->order('id asc')->select();
+        $data = Db::name('users')->where($formWhere)->order('id asc')->select();
 
         // 导出到excel
         foreach ($data as $k=>&$v) {

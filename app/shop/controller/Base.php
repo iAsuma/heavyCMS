@@ -41,7 +41,7 @@ class Base extends BaseController
 			return false;
 		}
 
-		$res = Db::table('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->find();
+		$res = Db::name('user_goods_collection')->where(['user_id' => $this->userId, 'goods_id' => $goods_id])->find();
 		if($res){
 			return true;
 		}else{
@@ -54,7 +54,7 @@ class Base extends BaseController
     */
 	public function goodsStock($goods_id)
 	{
-		// $stock = Db::table('')
+		// $stock = Db::name('')
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Base extends BaseController
     */
 	public function userDefaultAddress()
 	{
-		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->find();
+		$address = Db::name('shop_receiver_address')->where(['user_id' => $this->userId, 'is_default' => 1])->find();
 		return $address;
 	}
 
@@ -71,7 +71,7 @@ class Base extends BaseController
     */
 	public function userAddressById($id)
 	{
-		$address = Db::table('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
+		$address = Db::name('shop_receiver_address')->where(['user_id' => $this->userId, 'id' => $id])->find();
 		return $address;
 	}
 }

@@ -13,7 +13,7 @@ class Goods extends Base
 	
 	public function create()
 	{
-		$classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+		$classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
 		$tree = new \util\Tree($classifyArr);
 		$classify = $tree->leaf();
@@ -129,8 +129,8 @@ class Goods extends Base
         $page = $post['page'] ?? 1;
         $limit = $post['limit'] ?? 16;
         
-        $count = Db::table('shop_goods_pics')->count();
-        $list = Db::table('shop_goods_pics')->page($page, $limit)->order('id', 'desc')->select();
+        $count = Db::name('shop_goods_pics')->count();
+        $list = Db::name('shop_goods_pics')->page($page, $limit)->order('id', 'desc')->select();
 
         $page = ceil($count/$limit);
  
@@ -144,7 +144,7 @@ class Goods extends Base
 
 	    !$info && exit(res_json_native(-1, '上传失败'));
 
-	    Db::table('shop_goods_pics')->insert(['good_img_url' => $info[0]]);
+	    Db::name('shop_goods_pics')->insert(['good_img_url' => $info[0]]);
 
 	    return res_json(1, $info);
 	}
@@ -154,7 +154,7 @@ class Goods extends Base
 		$imgUrl = $this->request->post('imgUrl');
 		$img = str_replace('/uploads/thumb', '', $imgUrl);
 		
-		$res = Db::table('shop_goods_pics')->where('good_img_url', $img)->delete();
+		$res = Db::name('shop_goods_pics')->where('good_img_url', $img)->delete();
 
 		if($res){
 			$env_path = env('FILE_ROOT_PATH').env('FILE_UPLOAD_PATH');
@@ -171,7 +171,7 @@ class Goods extends Base
 
 	public function edit(int $id)
 	{
-		$classifyArr = Db::table('shop_classification')->field('id,name,pid')->select();
+		$classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
 		$tree = new \util\Tree($classifyArr);
 		$classify = $tree->leaf();
@@ -183,11 +183,11 @@ class Goods extends Base
 
 		!$id && exception('商品不存在');
 
-		$info = Db::table('shop_goods')->where($where)->find();
+		$info = Db::name('shop_goods')->where($where)->find();
 		$info['goodsImgArr'] = explode(',', $info['goods_imgs']);
 		$info['goods_attrs'] = json_decode($info['goods_sku_attributes'], true);
 
-		$skus = Db::table('shop_goods_sku')->field('sku,price,market_price,sku_img,stocks')->where(['goods_id' => (int)$id,
+		$skus = Db::name('shop_goods_sku')->field('sku,price,market_price,sku_img,stocks')->where(['goods_id' => (int)$id,
 			'status' => 1])->select();
 
 		foreach ($info['goods_attrs'] as $v) {

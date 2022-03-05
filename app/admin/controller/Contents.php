@@ -16,7 +16,7 @@ class Contents extends Base
 	 */
 	public function articles()
 	{	
-		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
+		$column = Db::name('article_column')->where('id', '<>', 5)->where('status',1)->select();
 		View::assign('column', $column);
 		return View::fetch();
 	}
@@ -36,23 +36,23 @@ class Contents extends Base
 		];
 		
 		$formWhere = $this->parseWhere($where);
-		$count = Db::table('articles')->alias('a')->where($formWhere)->count();
+		$count = Db::name('articles')->alias('a')->where($formWhere)->count();
 
-		$articles = Db::table('articles')->alias('a')->leftJoin('article_column c','a.column_id=c.id')->field('a.id,a.title,a.author,a.status,c.name,FROM_UNIXTIME(a.create_time, "%Y-%m-%d %H:%i:%S") AS create_time')->where($formWhere)->page($page, $limit)->order('a.id', 'desc')->select();
+		$articles = Db::name('articles')->alias('a')->leftJoin('article_column c','a.column_id=c.id')->field('a.id,a.title,a.author,a.status,c.name,FROM_UNIXTIME(a.create_time, "%Y-%m-%d %H:%i:%S") AS create_time')->where($formWhere)->page($page, $limit)->order('a.id', 'desc')->select();
 	
 		return table_json($articles, $count);
 	}
 	
 	public function articlesAdd()
 	{
-		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
+		$column = Db::name('article_column')->where('id', '<>', 5)->where('status',1)->select();
 		View::assign('column', $column);
 		return View::fetch();
 	}
 
 	public function articlesAdd2()
 	{
-		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
+		$column = Db::name('article_column')->where('id', '<>', 5)->where('status',1)->select();
 		View::assign('column', $column);
 		return View::fetch();
 	}
@@ -78,7 +78,7 @@ class Contents extends Base
 	                exit(res_json_str(-1, $validate->getError()));
 	            }
 
-				$result = Db::table('articles') -> insert($data);
+				$result = Db::name('articles') -> insert($data);
 
 				if(!$result){
 					Db::rollback();
@@ -101,10 +101,10 @@ class Contents extends Base
 	public function articlesEdit()
 	{
 		$id = (int)$this->request->get('id');
-		$id && $info = Db::table('articles')->where(['id' => $id])->find();
+		$id && $info = Db::name('articles')->where(['id' => $id])->find();
 		isset($info) && View::assign('info', $info);
 
-		$column = Db::table('article_column')->where('id', '<>', 5)->where('status',1)->select();
+		$column = Db::name('article_column')->where('id', '<>', 5)->where('status',1)->select();
 		View::assign('column', $column);
 		
 		return View::fetch();
@@ -131,7 +131,7 @@ class Contents extends Base
                 exit(res_json_str(-1, $validate->getError()));
             }
 
-			$result = Db::table('articles') ->where('id', (int)$post['id']) -> update($data);
+			$result = Db::name('articles') ->where('id', (int)$post['id']) -> update($data);
 			!is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 			Hook::listen('admin_log', ['文章管理', '修改了文章"'.$data['title'].'"']);
 	
@@ -149,7 +149,7 @@ class Contents extends Base
 		$id = $request->post('id');
 		$data['status'] = -1 ;
 	
-		if (Db::table('articles') ->where('id', 'IN', $id) -> update($data)) { 	
+		if (Db::name('articles') ->where('id', 'IN', $id) -> update($data)) { 	
 			Hook::listen('admin_log', ['文章管理', '删除了文章']);	
 			return res_json(1); 
 		} else {
@@ -182,7 +182,7 @@ class Contents extends Base
 
     public function manu()
     {
-    	$column = Db::table('article_column')->where('id', '=', 5)->where('status',1)->select();
+    	$column = Db::name('article_column')->where('id', '=', 5)->where('status',1)->select();
 		View::assign('column', $column);
 		return View::fetch();
     }
@@ -202,9 +202,9 @@ class Contents extends Base
 		];
 		
 		$formWhere = $this->parseWhere($where);
-		$count = Db::table('articles')->alias('a')->where($formWhere)->count();
+		$count = Db::name('articles')->alias('a')->where($formWhere)->count();
 
-		$articles = Db::table('articles')->alias('a')->leftJoin('article_column c','a.column_id=c.id')->field('a.id,a.title,a.author,a.status,c.name,FROM_UNIXTIME(a.create_time, "%Y-%m-%d %H:%i:%S") AS create_time')->where($formWhere)->page($page, $limit)->order('a.id', 'desc')->select();
+		$articles = Db::name('articles')->alias('a')->leftJoin('article_column c','a.column_id=c.id')->field('a.id,a.title,a.author,a.status,c.name,FROM_UNIXTIME(a.create_time, "%Y-%m-%d %H:%i:%S") AS create_time')->where($formWhere)->page($page, $limit)->order('a.id', 'desc')->select();
 	
 		return table_json($articles, $count);
 	}
@@ -249,8 +249,8 @@ class Contents extends Base
 		];
 		
 		$formWhere = $this->parseWhere($where);
-		$count = Db::table('article_column')->where($formWhere)->count();
-		$user = Db::table('article_column')->field('id,name,status')->where($formWhere)->page($page, $limit)->order('id', 'desc')->select();
+		$count = Db::name('article_column')->where($formWhere)->count();
+		$user = Db::name('article_column')->field('id,name,status')->where($formWhere)->page($page, $limit)->order('id', 'desc')->select();
 		
 		return table_json($user, $count);
 	}
@@ -275,7 +275,7 @@ class Contents extends Base
 					'status' => $request->post('status') ?: -2
 				];
 
-				$result = Db::table('article_column') -> insert($data);
+				$result = Db::name('article_column') -> insert($data);
 				!$result && exit(res_json_native(-3, '添加失败'));
 				Hook::listen('admin_log', ['栏目管理', '新增了栏目'.$data['name']]);
 
@@ -292,7 +292,7 @@ class Contents extends Base
 	public function columnEdit()
 	{
 		$id = (int)$this->request->get('id');
-		$id && $info = Db::table('article_column')->where(['id' => $id])->find();
+		$id && $info = Db::name('article_column')->where(['id' => $id])->find();
 
 		isset($info) && View::assign('info', $info);
 		
@@ -316,7 +316,7 @@ class Contents extends Base
 					'status' => $request->post('status') ?: -2
 			];
 
-			$result = Db::table('article_column')->where('id', (int)$post['id'])->update($data);
+			$result = Db::name('article_column')->where('id', (int)$post['id'])->update($data);
 			!is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 			Hook::listen('admin_log', ['栏目管理', '修改了栏目'.$data['name']]);
 
@@ -333,7 +333,7 @@ class Contents extends Base
 		$id = $request->post('id');
 		$data['status'] = -1 ;
 	
-		if (Db::table('article_column') ->where('id', 'IN', $id) -> update($data)) { 
+		if (Db::name('article_column') ->where('id', 'IN', $id) -> update($data)) { 
 			Hook::listen('admin_log', ['栏目管理', '删除了栏目']);		
 			return res_json(1); 
 		} else {

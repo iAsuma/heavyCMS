@@ -83,7 +83,7 @@ function i_log($output, $filename = '', $suffix = ".log")
 
     !is_dir($logUrl) && mkdir($logUrl , 0777 , true);
     
-    $head_str = '['.date('H:i:s').'] '.think\facade\Request::module().'/'.think\facade\Request::controller().'/'.think\facade\Request::action().' '.ucfirst(gettype($output))."\r\n";
+    $head_str = '['.date('H:i:s').'] '.app('http')->getName().'/'.think\facade\Request::controller().'/'.think\facade\Request::action().' '.ucfirst(gettype($output))."\r\n";
 
     if(!is_string($output)){
         try {

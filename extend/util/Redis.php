@@ -1,6 +1,6 @@
 <?php
 namespace util;
-use Config;
+use think\facade\Config;
 use Exception;
 /**
  * Redis 连接

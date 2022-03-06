@@ -1,11 +1,12 @@
 <?php
 namespace app\admin\controller;
+use app\admin\event\UserLog;
 use auth\facade\Permissions;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Event;
 use think\facade\View;
 use think\Request;
+
 /**
  * 系统相关设置
  */
@@ -13,10 +14,6 @@ class SystemSet extends Base
 {
 	public function userInfo()
 	{
-
-        Event::listen('UserListen', 'app\listener\UserListen');
-        event('app\admin\event\UserLog');
-
 		$uid = $this->request->uid;
 		$cacheKey= md5('adminUser_'.$uid);
 		$userInfo = $uid ? Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, 'admin_user')->find() : '';

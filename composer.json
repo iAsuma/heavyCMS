@@ -1,13 +1,13 @@
 {
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
+    "name": "iasuma/heavyCMS",
+    "description": "企业通用解决方案tp6版",
     "type": "project",
     "keywords": [
         "framework",
         "thinkphp",
         "ORM"
     ],
-    "homepage": "http://thinkphp.cn/",
+    "homepage": "https://iasuma.github.io/",
     "license": "Apache-2.0",
     "authors": [
         {
@@ -26,7 +26,8 @@
         "topthink/think-multi-app": "^1.0",
         "topthink/think-view": "^1.0",
         "topthink/think-template": "^2.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-redis": "*"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

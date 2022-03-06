@@ -10,7 +10,9 @@ return [
         'HttpEnd'  => [],
         'LogLevel' => [],
         'LogWrite' => [],
-        'UserListen' => ['app\admin\listener\UserListen']
+        'admin_log' => [
+            'app\admin\listener\AdminLog'
+        ]
     ],
 
     'subscribe' => [

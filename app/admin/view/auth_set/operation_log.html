@@ -27,10 +27,10 @@
     
     <div class="layui-card-body">
       <div style="padding-bottom: 10px;" id="addOpt" data-url="{:route('addAdmin')}">
-        <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" data-type="batchDel" data-url="{:route('batchDeleteLogs')}">删除</button>
+        <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" data-type="batchDel" data-url="{:route('AuthSet/batchDeleteLogs')}">删除</button>
       </div>
       
-      <table id="operation-log" lay-filter="operation-log" data-url="{:route('logList')}"></table>
+      <table id="operation-log" lay-filter="operation-log" data-url="{:route('AuthSet/logList')}"></table>
       
     </div>
   </div>

@@ -31,7 +31,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
         </div>
    
-        <table id="banner" lay-filter="banner" data-sturl="{:route('changeWeight')}"></table>
+        <table id="banner" lay-filter="banner" data-sturl="{:route('Element/changeWeight')}"></table>
     </div>
   </div>
 </div>
@@ -57,7 +57,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
 
    var tableIns =  table.render({
       elem: '#banner'
-      ,url: "{:route('bannerList')}" //数据接口
+      ,url: "{:route('Element/bannerList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -99,7 +99,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
          layer.open({
           type: 2
           ,title: '添加轮播图'
-          ,content: "{:route('banneradd')}"
+          ,content: "{:route('Element/bannerAdd')}"
           ,maxmin: true
           ,area: ['520px', '480px']
           ,btn: ['确定', '取消']
@@ -146,7 +146,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
               layer.open({
                 type: 2
                 ,title: '编辑轮播图'
-                ,content: "{:route('bannerEdit')}?id="+obj.data.id
+                ,content: "{:route('Element/bannerEdit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['520px', '480px']
                 ,btn: ['确定', '取消']
@@ -162,7 +162,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
           case 'del':
               layer.confirm('确定删除？？', function(index){
      
-                   $.post("{:route('bannerDel')}", {id:obj.data.id}, function(res){
+                   $.post("{:route('Element/bannerDel')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('banner'); //重载表格

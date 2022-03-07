@@ -1,5 +1,5 @@
 {
-    "name": "iasuma/heavyCMS",
+    "name": "topthink/think",
     "description": "企业通用解决方案tp6版",
     "type": "project",
     "keywords": [
@@ -26,8 +26,8 @@
         "topthink/think-multi-app": "^1.0",
         "topthink/think-view": "^1.0",
         "topthink/think-template": "^2.0",
-        "ext-json": "*",
-        "ext-redis": "*"
+        "phpoffice/phpexcel": "^1.8",
+        "overtrue/wechat": "~4.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
@@ -42,7 +42,10 @@
         }
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "easywechat-composer/easywechat-composer": true
+        }
     },
     "scripts": {
         "post-autoload-dump": [

@@ -31,7 +31,7 @@
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:route('changeColumnStatus')}">
+<script type="text/html" id="statusTpl" data-url="{:route('Contents/changeColumnStatus')}">
   <input type="checkbox" name="status" value="{{d.id}}" title="开启" lay-filter="optstatus" {{d.status == 1 ? 'checked' : ''}}>
 </script>
 
@@ -101,7 +101,7 @@
          layer.open({
           type: 2
           ,title: '添加栏目'
-          ,content: "{:route('columnAdd')}"
+          ,content: "{:route('Contents/columnAdd')}"
           ,maxmin: true
           ,area: ['40%', '30%']
           ,btn: ['确定', '取消']
@@ -146,7 +146,7 @@
               layer.open({
                   type: 2
                   ,title: '编辑栏目'
-                  ,content: "{:route('columnEdit')}?id="+obj.data.id
+                  ,content: "{:route('Contents/columnEdit')}?id="+obj.data.id
                   ,maxmin: true
                   ,area: ['40%', '30%']
                   ,btn: ['确定', '取消']

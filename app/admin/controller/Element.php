@@ -16,7 +16,7 @@ class Element extends Base
     }
 
     public function bannerList()
-    {   
+    {
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
@@ -88,7 +88,6 @@ class Element extends Base
         return View::fetch();
     }
 
-
     public function editBanner(Request $request)
     {   
         if(checkFormToken($request->post())){
@@ -145,7 +144,6 @@ class Element extends Base
         }
       
     }
-
 
     public function changeWeight()
     {

@@ -34,8 +34,8 @@
     
     <div class="layui-card-body">
         <div style="padding-bottom: 10px;">
-            <a href="{:route('articlesAdd')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加</a>
-            <a href="{:route('articlesAdd2')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加2</a>
+            <a href="{:route('Contents/articlesAdd')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加</a>
+            <a href="{:route('Contents/articlesAdd2')}" class="layui-btn layui-btn-asuma layuiadmin-btn-admin" >添加2</a>
             <button class="layui-btn layui-btn-danger layuiadmin-btn-role" id="delAll">删除</button>
         </div>
         <table id="articles" lay-filter="articles"></table>  
@@ -44,7 +44,7 @@
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:route('changeArticlesStatus')}">
+<script type="text/html" id="statusTpl" data-url="{:route('Contents/changeArticlesStatus')}">
   <input type="checkbox" name="status" value="{{d.id}}" title="发布" lay-filter="optstatus" {{d.status == 1 ? 'checked' : ''}}>
 </script>
 

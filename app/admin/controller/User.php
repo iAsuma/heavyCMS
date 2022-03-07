@@ -22,12 +22,11 @@ class User extends Base
      */
     public function index()
     {
-        return think\facadeView::fetch();
+        return View::fetch();
     }
 
     public function userList()
-    {   
-
+    {
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
@@ -62,9 +61,7 @@ class User extends Base
 
     public function editUser(Request $request)
     {
-        
         if(checkFormToken($request->post())){
-
             $validate = \think\Validate::make([
                 'name' => 'require|min:2',
                 'phone' => 'require|mobile',
@@ -144,8 +141,6 @@ class User extends Base
 
         // 导出到excel
         foreach ($data as $k=>&$v) {
-   
-
             switch ($v['gender']) {
                 case 2:
                     $v['gender'] = '女';
@@ -157,7 +152,6 @@ class User extends Base
                     $v['gender'] = '未知';
                     break;
             }
-
         }
 
         $cell  = array(
@@ -177,7 +171,7 @@ class User extends Base
      * @param array $data 要导出的数据
      * @author zhaoyun  
      */
-    public function exportSheet($title, $CellName, $data) 
+    private function exportSheet($title, $CellName, $data)
     {
 
         $objPHPExcel = new PHPExcel();
@@ -209,7 +203,6 @@ class User extends Base
         $objWriter->save('php://output');
         exit;
     }
-
 
 }
 

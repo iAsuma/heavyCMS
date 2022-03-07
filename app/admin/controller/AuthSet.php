@@ -66,7 +66,7 @@ class AuthSet extends Base
             $cacheKey= md5('adminUser_'.(int)$this->request->get('id'));
             $adminInfo = Db::name('admin_user')->where('id', (int)$this->request->get('id'))->cache($cacheKey, 24*60*60, 'admin_user')->find();
             $hasRole = Db::name('auth_group_access')->where('uid', (int)$this->request->get('id'))->select();
-            $hasRoleId = array_column($hasRole, 'group_id');
+            $hasRoleId = array_column($hasRole->toArray(), 'group_id');
         }
 
         $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, 'admin_role')->where('status', 1)->select();
@@ -303,7 +303,7 @@ class AuthSet extends Base
 
     public function allrules()
     {
-        $rules = \Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, 'auth_rule')->select();
+        $rules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, 'auth_rule')->select();
 
         $tree = new \util\Tree($rules);
         $mods = $tree->leaf();

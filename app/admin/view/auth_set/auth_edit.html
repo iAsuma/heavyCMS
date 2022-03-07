@@ -16,7 +16,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">权限类型</label>
       <div class="layui-input-inline">
-        <select name="type" lay-verType="tips" lay-verify="required" lay-filter="typeSel" data-url="{:route('modsTree')}">
+        <select name="type" lay-verType="tips" lay-verify="required" lay-filter="typeSel" data-url="{:route('AuthSet/modsTree')}">
           <option value="">选择一个类型</option>
           <option value="1" {if $info.type==1}selected{/if} >模块</option>
           <option value="2" {if $info.type==2}selected{/if}>子模块</option> <!-- 一般用于左侧有三级菜单的情况 -->
@@ -81,7 +81,7 @@
     <div class="layui-form-item layui-hide">
       <input type="hidden" name="rule_id" value="{$info.id}">
       <input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
-      <input type="button" lay-submit lay-filter="auth-submit" id="auth-submit" value="确认" data-url="{:route('editRule')}">
+      <input type="button" lay-submit lay-filter="auth-submit" id="auth-submit" value="确认" data-url="{:route('AuthSet/editRule')}">
     </div>
   </div>
 {/block}

@@ -18,7 +18,7 @@
         <input type="checkbox" name="" title="全选" lay-skin="primary" lay-filter="allcheck">
       </div>
       <div class="layui-input-block" >
-        <div id="tree_node" data-url="{:route('allrules')}"></div>
+        <div id="tree_node" data-url="{:route('AuthSet/allrules')}"></div>
       </div>
     </div>
     <div class="layui-form-item">
@@ -35,7 +35,7 @@
     </div>
     <div class="layui-form-item layui-hide">
       <input type="hidden" name="{:config('this.form_token')}" value="{:token()}" />
-      <input type="button" lay-submit lay-filter="role-submit" id="role-submit" value="确认" data-url="{:route('addNewRole')}">
+      <input type="button" lay-submit lay-filter="role-submit" id="role-submit" value="确认" data-url="{:route('AuthSet/addNewRole')}">
     </div>
   </div>
 {/block}

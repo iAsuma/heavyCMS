@@ -105,7 +105,7 @@ class Base extends BaseController
 
         for ($i = 0; $i < $dataNum; $i++) {
             for ($j = 0; $j < $cellNum; $j++) {
-                $objPHPExcel->getActiveSheet(0)->setCellValue($cell[$j] . ($i + 2), $data[$i][$CellName[$j][0]]);   
+                $objPHPExcel->getActiveSheet()->setCellValue($cell[$j] . ($i + 2), $data[$i][$CellName[$j][0]]);
             }
         }
       

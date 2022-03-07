@@ -255,7 +255,6 @@ class Contents extends Base
 		return table_json($user, $count);
 	}
 
-
 	public function columnAdd()
 	{
 		return View::fetch();
@@ -299,7 +298,6 @@ class Contents extends Base
 		return View::fetch();
 	}
 
-
 	public function editColumn(Request $request)
 	{
 		try {
@@ -340,7 +338,6 @@ class Contents extends Base
 			return res_json(-1);
 		}
 	}
-
 
 	public function changeColumnStatus()
     {

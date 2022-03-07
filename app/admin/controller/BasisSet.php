@@ -11,7 +11,7 @@ use think\facade\Hook;
 class BasisSet extends Base
 {
 	/**
-     * 轮播图
+     * 应用配置
      * @author zhaoyun  
      */
     public function appset()
@@ -19,9 +19,8 @@ class BasisSet extends Base
         return View::fetch();
     }
 
-    public function dataList()
-    {   
-
+    public function appList()
+    {
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
@@ -31,7 +30,7 @@ class BasisSet extends Base
         return table_json($data, $count);
     }
 
-     public function add()
+     public function appAddIndex()
     {
         return View::fetch();
     }
@@ -65,14 +64,13 @@ class BasisSet extends Base
         return res_json(-2, '请勿重复提交');
     }
 
-    public function edit()
+    public function editAddIndex()
     {
         $id = (int)$this->request->get('id');
         $id && $info = Db::name('application_config')->where(['id' => $id])->find();
         isset($info) && View::assign('info', $info);
         return View::fetch();
     }
-
 
     public function editApp(Request $request)
     {
@@ -104,7 +102,7 @@ class BasisSet extends Base
         
     }
 
-    public function del(Request $request)
+    public function delApp(Request $request)
     {
         $id = $request->post('id');
         if (Db::name('application_config') ->where('id', '=', $id) -> delete()) { 

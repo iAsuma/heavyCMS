@@ -53,7 +53,7 @@
 
    var tableIns =  table.render({
       elem: '#user'
-      ,url: "{:route('userList')}" //数据接口
+      ,url: "{:route('User/userList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -120,7 +120,7 @@
               layer.open({
                 type: 2
                 ,title: '编辑用户'
-                ,content: "{:route('userEdit')}?id="+obj.data.id
+                ,content: "{:route('User/userEdit')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['25%', '60%']
                 ,btn: ['确定', '取消']

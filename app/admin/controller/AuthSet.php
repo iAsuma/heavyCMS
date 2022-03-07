@@ -5,7 +5,7 @@ use think\facade\Cache;
 use think\facade\View;
 use think\Request;
 use think\facade\Db;
-use think\facade\Hook;
+use util\Hook;
 /**
  * 权限基础控制器
  * @author asuma(lishuaiqiu) <sqiu_li@163.com>

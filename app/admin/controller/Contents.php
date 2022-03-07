@@ -4,7 +4,7 @@ namespace app\admin\controller;
 use think\facade\View;
 use think\Request;
 use think\facade\Db;
-use think\facade\Hook;
+use util\Hook;
 
 /**
  * 内容管理

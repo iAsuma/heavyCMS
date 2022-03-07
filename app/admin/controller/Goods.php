@@ -3,7 +3,7 @@ namespace app\admin\controller;
 use think\facade\Db;
 use think\facade\View;
 use think\Request;
-use think\facade\Hook;
+use util\Hook;
 /**
  * 商品创建与编辑
  * @author asuma(li shuaiqiu)

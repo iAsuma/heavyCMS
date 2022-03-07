@@ -5,7 +5,7 @@ namespace app\admin\controller;
 use think\facade\View;
 use think\Request;
 use think\facade\Db;
-use think\facade\Hook;
+use util\Hook;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Worksheet_Drawing;

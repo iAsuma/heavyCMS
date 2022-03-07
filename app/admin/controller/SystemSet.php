@@ -1,6 +1,5 @@
 <?php
 namespace app\admin\controller;
-use app\admin\event\UserLog;
 use auth\facade\Permissions;
 use think\facade\Db;
 use think\facade\Cache;

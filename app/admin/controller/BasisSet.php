@@ -6,7 +6,7 @@ use think\facade\Cache;
 use think\facade\View;
 use think\Request;
 use think\facade\Db;
-use think\facade\Hook;
+use util\Hook;
 
 class BasisSet extends Base
 {

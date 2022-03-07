@@ -3,7 +3,7 @@ namespace app\admin\controller;
 
 use think\Request;
 use app\facade\Register;
-use think\facade\Hook;
+use util\Hook;
 
 class Login 
 {

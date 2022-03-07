@@ -22,8 +22,6 @@ if (!function_exists('route')) {
      * Url生成
      * @param string      $url    路由地址
      * @param array       $vars   变量
-     * @param bool|string $suffix 生成的URL后缀
-     * @param bool|string $domain 域名
      * @return UrlBuild
      */
     function route(string $url = '', array $vars = []): UrlBuild

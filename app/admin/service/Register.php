@@ -37,9 +37,9 @@ class Register
 
 	/**
 	*  验证登录/注册
-	*  @param $post 表单提交信息
-	*  @param $boolval 为true返回值布尔类型
-	*  @param $loginUser 用户信息，facade方法使用会报致命错误
+	*  @param array $post 表单提交信息
+	*  @param bool $boolval 为true返回值布尔类型
+	*  @param array $loginUser 用户信息，facade方法使用会报致命错误
 	*  成功返回用户信息
 	*/
 	public function check(array $post, bool $boolval = false, &$loginUser = [])
@@ -62,8 +62,8 @@ class Register
 
 	/**
 	*  注册用户的登录状态
-	*  @param $user 用户信息
-	*  @param $remembered 是否记住登录状态
+	*  @param array $user 用户信息
+	*  @param bool $remembered 是否记住登录状态
 	*/
 	public function login(array $user, $remembered=false)
 	{

@@ -8,7 +8,9 @@ namespace ueditor\facade;
 use think\Facade;
 
 /**
- * 权限类门面
+ * 百度UEditor门面类
+ * @see \ueditor\UEditor
+ * @method action() 初始化方法
  */
 class UEditor extends Facade
 {

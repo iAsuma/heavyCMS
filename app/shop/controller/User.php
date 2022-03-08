@@ -178,7 +178,7 @@ class User extends Base
 		$orderNo = $this->request->get('no');
 
 		if(!$orderNo){
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 
 		$where = [
@@ -189,7 +189,7 @@ class User extends Base
 		];
 		$order = Db::name('shop_order')->field('id')->where($where)->find();
 		if(!$order){
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 
 		View::assign('order', $order);

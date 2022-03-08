@@ -91,4 +91,11 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    /*
+     * 兼容tp5.1的控制器基类跳转
+     * */
+    protected function redirect(string $url = '', int $code = 302){
+        return redirect($url, $code);
+    }
+
 }

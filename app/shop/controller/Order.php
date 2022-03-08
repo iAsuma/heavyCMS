@@ -17,7 +17,7 @@ class Order extends Base
 	public function preSure(Request $request)
 	{
 		if(!$request->get('buy')){
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 
 		$buy = explode('_', $request->get('buy'));
@@ -25,7 +25,7 @@ class Order extends Base
 		//5分钟后页面失效
 		$interval = (time() - $buy[1])/60;
 		if($interval > 5){
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 		
 		if($buy[0] == 3){
@@ -33,7 +33,7 @@ class Order extends Base
 		}else if($buy[0] == 2){
 			$this->fromCart($buy);
 		}else{
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 
 		$this->getUserAddress($buy);
@@ -90,7 +90,7 @@ class Order extends Base
 		$cart_info = Db::name('shop_shopping_cart')->where('user_id', '=', $this->userId)->where('id', 'IN', $cart_ids)->select();
 		foreach ($cart_info as $v) {
 			if($v['goods_id'] != $newSelected[$v['goods_sku_id']][1] || $v['goods_sku_id'] != $newSelected[$v['goods_sku_id']][2] || $v['goods_num'] != $newSelected[$v['goods_sku_id']][3]){
-				$this->redirect('/shop');
+				return $this->redirect('/shop');
 				break;
 			}
 		}
@@ -221,12 +221,12 @@ class Order extends Base
 	public function detail($no)
 	{
 		if(empty($no)){
-			$this->redirect('/shop');
+			return $this->redirect('/shop');
 		}
 
 		$orderBase = Db::name('shop_order')->where('order_no', '=', $no)->where('status', '=', 1)->find();
 		if(empty($orderBase)){
-			$this->redirect('/shop');	
+			return $this->redirect('/shop');	
 		}
 
 		$orderDetail = Db::name('shop_order_detail')->where('order_no', '=', $no)->select();
@@ -252,7 +252,7 @@ class Order extends Base
 		$result = WeChat::unifyMakeOrder([
 		    'out_trade_no' => $order['order_no'],
 		    'total_fee' => $order['price']*100,
-		    'notify_url' => url('Api/wxPayNotice', '', '', true), 
+		    'notify_url' => url('Api/wxPayNotice', [], '', true),
 		    'openid' => $this->wx_openid,
 		]);
 

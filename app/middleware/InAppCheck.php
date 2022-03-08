@@ -6,12 +6,13 @@
 // +----------------------------------------------------------------------
 
 namespace app\middleware;
+use app\common\Request;
 use think\facade\Session;
 use wechat\facade\Loader as WeChat;
 
 class InAppCheck
 {
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
     	if (preg_match('~micromessenger~i', $request->header('user-agent'))) {
             $request->InApp = 'WeChat';
@@ -32,7 +33,7 @@ class InAppCheck
     	return $next($request);
     }
 
-    public function wechat($request)
+    public function wechat(Request $request)
     {
         if($request->get('code')){
             $app = WeChat::officialAccount();
@@ -53,7 +54,7 @@ class InAppCheck
         }
     }
 
-    protected function getTargetUrl($request): string
+    protected function getTargetUrl(Request $request): string
     {
         $param = $request->get();
         if (isset($param['code'])) {

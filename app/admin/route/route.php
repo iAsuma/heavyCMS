@@ -134,5 +134,6 @@ Route::group('/', function (){
     });
 
 })->middleware([
-    app\admin\middleware\BackAuthLogin::class
+    app\admin\middleware\BackAuthLogin::class,
+    app\admin\middleware\LogAuto::class
 ]);

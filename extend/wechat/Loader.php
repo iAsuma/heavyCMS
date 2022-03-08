@@ -1,7 +1,7 @@
 <?php
 namespace wechat;
 use EasyWeChat\Factory as WeChatFactory;
-use think\Db;
+use think\facade\Db;
 /**
  * EasyWeChat 微信SDK加载器
  */

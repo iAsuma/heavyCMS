@@ -1,4 +1,4 @@
 <?php
 return [
-	'AutoLogin'
+	app\middleware\AutoLogin::class
 ];

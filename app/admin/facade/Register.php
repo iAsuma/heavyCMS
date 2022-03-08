@@ -1,5 +1,5 @@
 <?php
-namespace app\facade;
+namespace app\admin\facade;
 use think\Facade;
 /**
  * 注册/登录门面

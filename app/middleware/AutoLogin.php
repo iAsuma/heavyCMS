@@ -5,10 +5,10 @@
 // | Author: asuma(lishuaiqiu) <sqiu_li@163.com>
 // +----------------------------------------------------------------------
 
-namespace app\http\middleware;
+namespace app\middleware;
 use app\common\Request;
-use Session;
-use Url;
+use think\facade\Session;
+use think\facade\Route;
 use think\facade\Db;
 
 class AutoLogin
@@ -82,7 +82,7 @@ class AutoLogin
                 redirect:
                 if($request->isAjax() || $request->isPost()){
                     header('Ajax-Mark: redirect');
-                    header("Redirect-Path: ".Url::build($this->redirect_url));
+                    header("Redirect-Path: ". (string)Route::buildUrl($this->redirect_url));
                 }else{
                     return redirect($this->redirect_url)->remember();
                 }

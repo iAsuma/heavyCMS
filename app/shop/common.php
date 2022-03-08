@@ -1,8 +1,8 @@
 <?php
 /**
  * @author lishuaiqiu 2019-11-06
- * @param  $unique_id 唯一ID
- * @return 生成订单号 规则：年[0]+时分+年[1]+月日+唯一ID+四位随机数
+ * @param  string $unique_id 唯一ID
+ * @return string 生成订单号 规则：年[0]+时分+年[1]+月日+唯一ID+四位随机数
  */
 function make_order_no($unique_id='')
 {

@@ -5,8 +5,8 @@
 // | Author: asuma(lishuaiqiu) <sqiu_li@163.com>
 // +----------------------------------------------------------------------
 
-namespace app\http\middleware;
-use Session;
+namespace app\middleware;
+use think\facade\Session;
 use wechat\facade\Loader as WeChat;
 
 class InAppCheck

@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Time: 2019-06-21
 // +----------------------------------------------------------------------
-namespace app\http\middleware;
+namespace app\admin\middleware;
 use util\Hook;
 use think\facade\Db;
 
@@ -19,7 +19,7 @@ class LogAuto
     	$authname = $request->controller().'/'.$request->action();
     	$auth = Db::name('auth_rule')->field('id,name,title,is_logged,remark')->cache(md5($authname), 30*24*60*60, 'auth_rule')->where('name', $authname)->find();
 
-    	if($auth['is_logged'] == 1){
+    	if($auth && $auth['is_logged'] == 1){
     		Hook::listen('admin_log', [$auth['title'], $auth['remark']]); 
     	}
     	

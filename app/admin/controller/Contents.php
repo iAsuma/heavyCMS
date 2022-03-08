@@ -65,7 +65,7 @@ class Contents extends Base
 				$data = [
 					'title' => $request->post('title'),
 					'sub_title' => $request->post('sub_title'),
-					'cover_imgs' => catchImg($request->post('content')),
+					'cover_imgs' => catch_img($request->post('content')),
 					'content' => $request->post('content'),
 					'author' => $request->post('author'),
 					'column_id' => trim($request->post('column')),
@@ -75,7 +75,7 @@ class Contents extends Base
 
 				$validate = new \app\admin\validate\Articles;
 	            if(!$validate->scene('articles')->check($data)){
-	                exit(res_json_str(-1, $validate->getError()));
+	                exit(res_json_native(-1, $validate->getError()));
 	            }
 
 				$result = Db::name('articles') -> insert($data);
@@ -119,7 +119,7 @@ class Contents extends Base
 		    $data = [
 				'title' => $request->post('title'),
 				'sub_title' => $request->post('sub_title'),
-				'cover_imgs' => catchImg($request->post('content')),
+				'cover_imgs' => catch_img($request->post('content')),
 				'content' => $request->post('content'),
 				'author' => $request->post('author'),
 				'column_id' => trim($request->post('column')),
@@ -128,7 +128,7 @@ class Contents extends Base
 
 			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('articles')->check($data)){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
 			$result = Db::name('articles') ->where('id', (int)$post['id']) -> update($data);
@@ -265,7 +265,7 @@ class Contents extends Base
 		if(checkFormToken($request->post())){
   			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('column')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
 			try {
@@ -306,7 +306,7 @@ class Contents extends Base
 
 			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('column')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
 			$data = [

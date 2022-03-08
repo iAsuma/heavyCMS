@@ -15,6 +15,7 @@
 
 //error_reporting(E_ALL ^ E_NOTICE); // 除了 E_NOTICE，报告其他所有错误
 
+use think\response\Json;
 use think\route\Url as UrlBuild;
 
 if (!function_exists('route')) {
@@ -31,8 +32,8 @@ if (!function_exists('route')) {
 }
 
 /**
- * @author lishuaiqiu
  * 美化输出print_r
+ * @author lishuaiqiu
  */
 function i_dump($param)
 {
@@ -189,8 +190,8 @@ function destroyFormToken($data=[])
 }
 
 /**
- * @author lishuaiqiu
  * 手机号验证
+ * @author lishuaiqiu
  */
 function checkPhone($mobile)
 {
@@ -201,8 +202,8 @@ function checkPhone($mobile)
 }
 
 /**
- * @author lishuaiqiu
  * 检查座机号码
+ * @author lishuaiqiu
  */
 function checkLandline($landline){
     $phoneNum = preg_match('/^((\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$/', $landline);
@@ -211,10 +212,11 @@ function checkLandline($landline){
 }
 
 /**
- * @author lishuaiqiu
  * 生成随机字符串
+ * @param int $length 字符串长度
+ * @author lishuaiqiu
  */
-function rand_str($length=16)
+function str_rand($length=16): string
 {
     $chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     $str = "";
@@ -225,40 +227,66 @@ function rand_str($length=16)
 }
 
 /**
+ * json数据全局统一返回格式（已弃用）
+ * @deprecated
+ * @see rjson()
  * @param int $code 状态码
  * @author lishuaiqiu
- * json数据全局统一返回格式
  */
-function res_json(int $code=100, $result="")
+function res_json(int $code=100, $result=""): Json
 {
     return json(['code' => $code, 'result' => $result]);
 }
 
-function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE)
+/**
+ * 返回固定json_encode字符串信息（已弃用）
+ * @deprecated
+ * @see rjson_native()
+ * */
+function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE): string
 {
     return json_encode(['code' => $code, 'result' => $result], $option);
 }
 
-function res_json_str($code= 100, $result='')
+/**
+ * @param int $code 状态码
+ * @param string $msg 状态描述信息
+ * @param array $data 返回数据信息
+ * @author lishuaiqiu
+ * json数据全局统一返回格式
+ */
+function rjson(int $code=100, string $message="", array $data = []): Json
 {
-    $data = ['code' => $code, 'result' => $result];
-    return json()->data($data)->getContent();
+    return json(['code' => $code, 'msg' => $message, 'data' => $data]);
 }
 
 /**
  * @param int $code 状态码
+ * @param string $msg 状态描述信息
+ * @param array $data 返回数据信息
+ * @param int $option
  * @author lishuaiqiu
- * Admin后台table数据全局统一返回格式
- */
-function table_json($data = [], $count = 0, $code = 0, $msg = "")
+ * 返回固定json_encode字符串信息
+ * */
+function rjson_native(int $code=100, string $message="", array $data = [], $option = JSON_UNESCAPED_UNICODE): string
 {
-    //$count <= 10 && $count = 0; //小于10条时隐藏layui分页功能
-    return json(['code' => $code, 'msg' => $msg, 'count' => $count, 'data' => $data]);
+    return json_encode(['code' => $code, 'msg' => $message, 'data' => $data], $option);
 }
 
 /**
- * @param string $val 字符串
+ * Admin后台table数据全局统一返回格式
+ * @param int $code 状态码
+ * @author lishuaiqiu
+ */
+function table_json($data = [], $count = 0, $code = 0, $message = "")
+{
+    //$count <= 10 && $count = 0; //小于10条时隐藏layui分页功能
+    return json(['code' => $code, 'msg' => $message, 'count' => $count, 'data' => $data]);
+}
+
+/**
  * xss过滤
+ * @param string $val 字符串
  */
 function off_xss($val) {
     // remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
@@ -317,6 +345,9 @@ function off_xss($val) {
     return htmlspecialchars($val);
 }
 
+/*
+ * 强制转化为两位小数（保留0）
+ * */
 function round2($num = 0)
 {
     return sprintf("%01.2f", $num);
@@ -325,7 +356,7 @@ function round2($num = 0)
 /**
 * 截取内容前N张图片（默认截取前三张）
 */
-function catchImg($content, $num = 3){
+function catch_img($content, $num = 3){
     $imgHtmlReg = '/<img.*\>/isU';
     preg_match_all($imgHtmlReg, $content, $imgHtmlArr);
 

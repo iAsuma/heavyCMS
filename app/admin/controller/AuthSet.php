@@ -82,7 +82,7 @@ class AuthSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('register')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
             Db::startTrans();
@@ -155,7 +155,7 @@ class AuthSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('register')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
             Db::startTrans();

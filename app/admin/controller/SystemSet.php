@@ -34,7 +34,7 @@ class SystemSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('modify')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
             try {
@@ -90,7 +90,7 @@ class SystemSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('changepwd')->check($request->post())){
-                exit(res_json_str(-1, $validate->getError()));
+                exit(res_json_native(-1, $validate->getError()));
             }
 
             try {

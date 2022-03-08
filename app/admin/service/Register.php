@@ -46,16 +46,16 @@ class Register
 	{
 		$validate = new \app\admin\validate\Register;
 		if(!$validate->scene('login')->check($post)){
-			exit(res_json_str(-1, $validate->getError()));
+			exit(res_json_native(-1, $validate->getError()));
 		}
 
 		$loginUser = Db::name('admin_user')->field('id,name,login_name,phone,email,password,head_img,status')->where('login_name|email|phone', '=', $post['username'])->where('status' ,'<>', -1)->findOrEmpty();
 
-		empty($loginUser) && exit(res_json_str(-2, '账号不存在'));
-		md5safe($post['password']) != $loginUser['password'] && exit(res_json_str(-3, '密码错误'));
+		empty($loginUser) && exit(res_json_native(-2, '账号不存在'));
+		md5safe($post['password']) != $loginUser['password'] && exit(res_json_native(-3, '密码错误'));
 
-		$loginUser['status'] == -2 && exit(res_json_str(-4, '账号已被冻结'));
-		$loginUser['status'] == 0 && exit(res_json_str(-5, '账号正在审核'));
+		$loginUser['status'] == -2 && exit(res_json_native(-4, '账号已被冻结'));
+		$loginUser['status'] == 0 && exit(res_json_native(-5, '账号正在审核'));
 
 		return $boolval ? true : $loginUser;
 	}
@@ -79,7 +79,7 @@ class Register
 		//记住登录状态
 		if($remembered){
 			$expire = 24*60*60; //登录状态最长有效时间为24小时
-			$pwd = rand_str(4).$user['password'].rand_str(4);
+			$pwd = str_rand(4).$user['password'].str_rand(4);
 			$cookie_value = i_base64encode($user['id'].'_'.$user['login_name'].'_'.$pwd);
 			Cookie::set($this->cookie_key, $cookie_value, $expire);
 		}

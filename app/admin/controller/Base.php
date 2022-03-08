@@ -44,7 +44,7 @@ class Base extends BaseController
     }
     
     /**
-     * @param $code 状态码
+     * @param int $code 状态码
      * @author lishuaiqiu
      * Admin后台table数据全局统一返回格式
      */
@@ -55,7 +55,7 @@ class Base extends BaseController
     }
 
     /**
-     * @param $code 状态码
+     * @param int $code 状态码
      * @author lishuaiqiu
      * Admin后台json数据全局统一返回格式
      */

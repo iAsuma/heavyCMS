@@ -1,21 +1,27 @@
 <?php
 namespace wechat;
 use EasyWeChat\Factory as WeChatFactory;
+use think\Exception;
 use think\facade\Db;
 /**
  * EasyWeChat 微信SDK加载器
  */
 class Loader 
 {
-	private $appConfig = [];
-	private $config = [];
+	private array $appConfig;
+	private array $config;
 
     public function __construct() {
         $wxConfig = Db::name('application_config')->order('id', 'desc')->cache('wx_config', 0, 'developer')->find();
+        if(empty($wxConfig)){
+            throw new Exception('微信配置获取失败');
+        }
+
+        $wxConfig = $wxConfig->toArray();
 
         $this->config = [
-            'app_id' => $wxConfig['app_id'],
-            'secret' => $wxConfig['app_secret']
+            'app_id' => $wxConfig['app_id'] ?? '',
+            'secret' => $wxConfig['app_secret'] ?? ''
         ];
 
         $this->appConfig = $wxConfig;

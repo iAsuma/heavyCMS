@@ -8,6 +8,7 @@ namespace wechat\facade;
 use think\Facade;
 
 /**
+ * @see \wechat\Loader
  * 权限类门面
  */
 class Loader extends Facade

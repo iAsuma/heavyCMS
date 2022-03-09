@@ -234,7 +234,17 @@ function str_rand($length=16): string
  */
 function res_json(int $code=100, $result=""): Json
 {
-    return json(['code' => $code, 'result' => $result]);
+    $response = ['code' => $code, 'result' => $result];
+
+    //对新的rjson()方法的接口返回兼容
+    if(!is_string($result)){
+        $response['data'] = $result;
+        $response['msg'] = '';
+    }else{
+        $response['msg'] = $result;
+    }
+
+    return json($response);
 }
 
 /**
@@ -244,8 +254,18 @@ function res_json(int $code=100, $result=""): Json
  * */
 function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE): string
 {
+    $response = ['code' => $code, 'result' => $result];
+
+    //对新的rjson()方法的接口返回兼容
+    if(!is_string($result)){
+        $response['data'] = $result;
+        $response['msg'] = '';
+    }else{
+        $response['msg'] = $result;
+    }
+
     header('Content-Type: application/json');
-    return json_encode(['code' => $code, 'result' => $result], $option);
+    return json_encode($response, $option);
 }
 
 /**

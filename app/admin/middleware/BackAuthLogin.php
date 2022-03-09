@@ -41,7 +41,7 @@ class BackAuthLogin
             //用户未登录后跳转
             if($request->isAjax()){
                 //返回head头 ajax的url请求由js接收跳
-                return response()->header([
+                return rjson()->header([
                     'Ajax-Mark' => ' redirect',
                     'Redirect-Path' => (string)Route::buildUrl($this->redirect_url)
                 ]);

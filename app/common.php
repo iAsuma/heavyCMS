@@ -227,10 +227,9 @@ function str_rand($length=16): string
 }
 
 /**
- * json数据全局统一返回格式（已弃用）
+ * json数据全局统一返回格式（已弃用，用rjson()代替）
  * @deprecated
  * @see rjson()
- * @param int $code 状态码
  * @author lishuaiqiu
  */
 function res_json(int $code=100, $result=""): Json
@@ -239,12 +238,13 @@ function res_json(int $code=100, $result=""): Json
 }
 
 /**
- * 返回固定json_encode字符串信息（已弃用）
+ * 返回固定json_encode字符串信息（已弃用，用rjson_native()代替）
  * @deprecated
  * @see rjson_native()
  * */
 function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE): string
 {
+    header('Content-Type: application/json');
     return json_encode(['code' => $code, 'result' => $result], $option);
 }
 
@@ -270,6 +270,7 @@ function rjson(int $code=100, string $message="", array $data = []): Json
  * */
 function rjson_native(int $code=100, string $message="", array $data = [], $option = JSON_UNESCAPED_UNICODE): string
 {
+    header('Content-Type: application/json');
     return json_encode(['code' => $code, 'msg' => $message, 'data' => $data], $option);
 }
 

@@ -7,6 +7,7 @@
 // | Time: 2019-05-06
 // +----------------------------------------------------------------------
 namespace app\admin\middleware;
+use app\admin\facade\Entrance;
 use think\facade\Session;
 use auth\facade\Permissions;
 use think\facade\Route;
@@ -36,7 +37,7 @@ class BackAuthLogin
             return $next($request);
         }
 
-    	if(!app('register')->isLogined()){
+    	if(!Entrance::isLogin()){
             //用户未登录后跳转
             if($request->isAjax()){
                 //返回head头 ajax的url请求由js接收跳

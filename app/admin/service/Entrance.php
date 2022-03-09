@@ -1,9 +1,10 @@
 <?php
 namespace app\admin\service;
+use app\admin\model\AdminUser;
 use think\facade\Session;
 use think\facade\Config;
 use think\facade\Cookie;
-use think\facade\Db;
+
 // +----------------------------------------------------------------------
 // | 注册/登录类库
 // +----------------------------------------------------------------------
@@ -11,7 +12,7 @@ use think\facade\Db;
 // +----------------------------------------------------------------------
 // | Time: 2019-05-08
 // +----------------------------------------------------------------------
-class Register 
+class Entrance
 {
 	protected $key = '';
 	protected $cookie_key = '';
@@ -22,10 +23,10 @@ class Register
 		$this->cookie_key = Config::get('auth.auth_cookie_key');
 	}
 
-	/**
+    /**
 	*  判断用户登录状态
 	*/
-	public function isLogined()
+	public function isLogin()
 	{
 		if(Session::has($this->key.'.uid')){
 			return true;
@@ -35,37 +36,45 @@ class Register
 		}
 	}
 
-	/**
-	*  验证登录/注册
-	*  @param array $post 表单提交信息
-	*  @param bool $boolval 为true返回值布尔类型
-	*  @param array $loginUser 用户信息，facade方法使用会报致命错误
-	*  成功返回用户信息
-	*/
-	public function check(array $post, bool $boolval = false, &$loginUser = [])
-	{
-		$validate = new \app\admin\validate\Register;
-		if(!$validate->scene('login')->check($post)){
-			exit(res_json_native(-1, $validate->getError()));
-		}
+    /**
+     *  验证登录
+     *  @param array $input 表单提交信息
+     *  @param array $loginUser 用户信息
+     *  @param bool $boolval 为true返回值布尔类型，否则返回用户信息
+     *  成功返回用户信息
+     */
+    public function check(array $input, array $loginUser, bool $boolVal = true)
+    {
+        if(empty($input['username'])) return '账号为空';
+        if(empty($loginUser)) return '账号不存在';
 
-		$loginUser = Db::name('admin_user')->field('id,name,login_name,phone,email,password,head_img,status')->where('login_name|email|phone', '=', $post['username'])->where('status' ,'<>', -1)->findOrEmpty();
+        if(empty($loginUser['password']) || md5safe($input['password']) != $loginUser['password']){
+            return '用户名或密码错误';
+        }
 
-		empty($loginUser) && exit(res_json_native(-2, '账号不存在'));
-		md5safe($post['password']) != $loginUser['password'] && exit(res_json_native(-3, '密码错误'));
+        if($loginUser['status'] == -2) return '账号已被冻结';
+        if($loginUser['status'] == 0) return '账号正在审核';
 
-		$loginUser['status'] == -2 && exit(res_json_native(-4, '账号已被冻结'));
-		$loginUser['status'] == 0 && exit(res_json_native(-5, '账号正在审核'));
+        return $boolVal ? true : $loginUser;
+    }
 
-		return $boolval ? true : $loginUser;
-	}
+    /**
+	 * 获取管理员用户信息
+	 * */
+	public function getAdminUserInfo($userName): array
+    {
+        $adminUserModel = new AdminUser();
+        $loginUser = $adminUserModel->getInfo($userName);
+
+        return $loginUser->toArray();
+    }
 
 	/**
 	*  注册用户的登录状态
 	*  @param array $user 用户信息
 	*  @param bool $remembered 是否记住登录状态
 	*/
-	public function login(array $user, $remembered=false)
+	public function login(array $user, $remembered=false): bool
 	{
 		if(empty($user)){
 			return false;
@@ -84,33 +93,33 @@ class Register
 			Cookie::set($this->cookie_key, $cookie_value, $expire);
 		}
 
-		return $user;
+		return true;
 	}
 
 	/**
 	*  从cookie读取用户信息
 	*/
-	public function getUserInfoFromCookie()
+	public function getUserInfoFromCookie(): array
 	{
 		if(Cookie::has($this->cookie_key)){
 			$userCookie = i_base64decode(Cookie::get($this->cookie_key));
 			$secret = explode('_', $userCookie);
 			
 			if(count($secret) != 3){
-				return false;
+				return [];
 			}
 
-			static $user = [];
-			if(!isset($user['id'])){
+			static $cookieUser = [];
+			if(!isset($cookieUser['id'])){
 				$pwd = substr($secret[2], 4, -4);
-				$user = Db::name('admin_user')->field('id,name,login_name,head_img')->where('id', '=', $secret[0])->where('login_name', '=', $secret[1])->where('password','=', $pwd)->findOrEmpty();
+                $adminUserModel = new AdminUser();
+                $cookieUser = $adminUserModel->getForceInfo($secret[0], $secret[1], $pwd)->toArray();
 			}
 
-			return $user ?: false;
-			
+			return $cookieUser ?: [];
 		}
 
-		return false;
+		return [];
 	}
 
 	/**

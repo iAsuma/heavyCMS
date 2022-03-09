@@ -6,6 +6,5 @@ use app\common\Request;
 return [
     'think\Request'          => Request::class,
     'think\exception\Handle' => ExceptionHandle::class,
-    'register' => app\admin\service\Register::class,
     'upload' => util\Upload::class
 ];

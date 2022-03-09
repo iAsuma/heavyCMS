@@ -10,7 +10,7 @@ Route::group('/', function (){
     // 登录路由组
     Route::group('login' ,function (){
         Route::get('/', 'admin/Login/index'); //登录页
-        Route::post('check', 'admin/Login/checkLogin'); //登录
+        Route::post('enter', 'admin/Login/enter'); //登录
         Route::rule('logout', 'admin/Login/logout'); //退出登录
     });
 

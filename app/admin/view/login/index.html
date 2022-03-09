@@ -83,7 +83,7 @@
 
     form.on('submit(admin-login-submit)', function(data){
       if(slider.isOk()){
-          $.post("{:route('Login/checkLogin')}", data.field, function(res){
+          $.post("{:route('Login/enter')}", data.field, function(res){
             if(res.code == 1){
               window.location.replace('/admin')
             }else{

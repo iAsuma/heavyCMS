@@ -16,7 +16,7 @@ class Login
         return view('theme1');
     }
 
-    public function checkLogin(Request $request)
+    public function enter(Request $request)
     {
         $post = $request->post();
         $validate = new \app\admin\validate\Register;

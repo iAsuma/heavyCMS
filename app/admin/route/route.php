@@ -12,6 +12,8 @@ Route::group('/', function (){
         Route::get('/', 'admin/Login/index'); //登录页
         Route::post('enter', 'admin/Login/enter'); //登录
         Route::rule('logout', 'admin/Login/logout'); //退出登录
+        Route::rule('forget', 'admin/Login/forget'); //忘记密码页
+        Route::rule('register', 'admin/Login/register'); //注册页
     });
 
     // 面板路由组

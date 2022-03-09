@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\common\BaseEnum;
 use think\facade\Cache;
 use think\facade\View;
 use think\Request;
@@ -26,7 +27,7 @@ class BasisSet extends Base
         $limit = $get['limit'] ?? 10;
  
         $count = Db::name('application_config')->count();
-        $data = Db::name('application_config')->page($page, $limit)->cache('appset', 0, 'developer')->order('id', 'desc')->select();
+        $data = Db::name('application_config')->page($page, $limit)->cache('appset', 0, BaseEnum::CACHE_TAG_APP_CONFIG)->order('id', 'desc')->select();
         return table_json($data, $count);
     }
 
@@ -92,7 +93,7 @@ class BasisSet extends Base
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 
             Hook::listen('admin_log', ['基础设置', '修改了应用配置']);
-            Cache::tag('developer')->clear();  //清除配置缓存，让列表实时生效
+            Cache::tag(BaseEnum::CACHE_TAG_APP_CONFIG)->clear();  //清除配置缓存，让列表实时生效
 
             destroyFormToken($post);
             return res_json(1);

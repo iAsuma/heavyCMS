@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\controller;
+use auth\enum\AuthEnum;
 use auth\facade\Permissions;
 use think\facade\Db;
 use think\facade\Cache;
@@ -15,7 +16,7 @@ class SystemSet extends Base
 	{
 		$uid = $this->request->uid;
 		$cacheKey= md5('adminUser_'.$uid);
-		$userInfo = $uid ? Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, 'admin_user')->find() : '';
+		$userInfo = $uid ? Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find() : '';
 
 		$roles = Permissions::getGroups($uid);
 		$rolesArr = array_column($roles, 'title');
@@ -65,7 +66,7 @@ class SystemSet extends Base
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
                 $update === false && exit(res_json_native(-6, '修改失败'));
 
-                Cache::tag('admin_user')->clear(); //清除用户数据缓存
+                Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
                 
                 destroyFormToken($request->post());
                 return res_json(1);
@@ -99,14 +100,14 @@ class SystemSet extends Base
                 ];
 
                 $cacheKey= md5('adminUser_'.$uid);
-                $userInfo = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, 'admin_user')->find();
+                $userInfo = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
 
                 $userInfo['password'] != md5safe($request->post('oldPassword')) && exit(res_json_native(-6, '当前密码错误'));
 
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
                 $update === false && exit(res_json_native(-6, '修改失败'));
 
-                Cache::tag('admin_user')->clear(); //清除用户数据缓存
+                Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
                 
                 destroyFormToken($request->post());
                 return res_json(1);

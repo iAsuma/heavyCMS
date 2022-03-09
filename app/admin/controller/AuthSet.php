@@ -1,6 +1,8 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\enum\CacheEnum;
+use auth\enum\AuthEnum;
 use think\facade\Cache;
 use think\facade\View;
 use think\Request;
@@ -14,7 +16,7 @@ class AuthSet extends Base
 {
     public function admins()
     {
-        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, 'admin_role')->where('status', 1)->select();
+        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
         View::assign('roles', $roles);
     	return View::fetch();
     }
@@ -64,12 +66,12 @@ class AuthSet extends Base
     {
         if($this->request->get('id')){
             $cacheKey= md5('adminUser_'.(int)$this->request->get('id'));
-            $adminInfo = Db::name('admin_user')->where('id', (int)$this->request->get('id'))->cache($cacheKey, 24*60*60, 'admin_user')->find();
+            $adminInfo = Db::name('admin_user')->where('id', (int)$this->request->get('id'))->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
             $hasRole = Db::name('auth_group_access')->where('uid', (int)$this->request->get('id'))->select();
             $hasRoleId = array_column($hasRole->toArray(), 'group_id');
         }
 
-        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, 'admin_role')->where('status', 1)->select();
+        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
 
         View::assign('admin', $adminInfo ?? []);
         View::assign('hasrole', $hasRoleId ?? []);
@@ -211,7 +213,7 @@ class AuthSet extends Base
 
                     $cacheKey = 'group_1_'.$request->post('admin_id');
                     Cache::rm($cacheKey); //清除用户组缓存，权限实时生效
-                    Cache::tag('admin_user')->clear(); //清除用户数据缓存
+                    Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
 
                     if(!$result){
                         Db::rollback();
@@ -260,7 +262,7 @@ class AuthSet extends Base
             Hook::listen('admin_log', ['权限', $status == -2 ? '冻结了管理员'.$this->request->post('name').'的账号' : '开启了管理员'.$this->request->post('name').'的账号']);
         }
         
-        Cache::tag('admin_user')->clear(); //清除用户数据缓存
+        Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
         return res_json(1);
     }
 
@@ -283,8 +285,8 @@ class AuthSet extends Base
         $formWhere = $this->parseWhere($where);
         $cacheKey = 'role_'.md5(http_build_query($formWhere));
         
-        $count = Db::name('auth_group')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, 'admin_role')->count('id');
-        $roles = Db::name('auth_group')->where($formWhere)->order('id')->page($page, $limit)->cache($cacheKey.'_'.$page.'_'.$limit, 24*60*60, 'admin_role')->select();
+        $count = Db::name('auth_group')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->count('id');
+        $roles = Db::name('auth_group')->where($formWhere)->order('id')->page($page, $limit)->cache($cacheKey.'_'.$page.'_'.$limit, 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->select();
 
         return table_json($roles, $count);
     }
@@ -303,7 +305,7 @@ class AuthSet extends Base
 
     public function allrules()
     {
-        $rules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, 'auth_rule')->select();
+        $rules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         $tree = new \util\Tree($rules);
         $mods = $tree->leaf();
@@ -315,7 +317,7 @@ class AuthSet extends Base
     {
         $rulesArr = explode(",", $this->request->get('rules'));
 
-        $allrules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, 'auth_rule')->select();
+        $allrules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         foreach ($allrules as &$v) {
             in_array($v['id'], $rulesArr) && $v['checked'] = true;
@@ -367,8 +369,8 @@ class AuthSet extends Base
                 Hook::listen('admin_log', ['权限', '添加了角色组'.$data['title']]);
             }
             
-            Cache::tag('auth_rule')->clear();
-            Cache::tag('admin_role')->clear(); //清除规则缓存，让列表实时生效
+            Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear();
+            Cache::tag(CacheEnum::ADMIN_ROLE_TAG)->clear(); //清除规则缓存，让列表实时生效
             destroyFormToken($post);
             return res_json(1);
         } catch (\Exception $e) {
@@ -383,7 +385,7 @@ class AuthSet extends Base
         $pwd = $this->request->post('password');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, 'admin_user')->find();
+        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         empty($user) && exit(res_json_native(-1, '用户信息获取失败，请重新登录'));
         
         switch ($this->request->post('status')) {
@@ -409,7 +411,7 @@ class AuthSet extends Base
             Hook::listen('admin_log', ['权限', ($status == -2 ? '关闭了角色组' :'开启了角色组').$this->request->post('name')]);
         }
         
-        Cache::tag('admin_role')->clear(); //清除规则缓存，让列表实时生效
+        Cache::tag(CacheEnum::ADMIN_ROLE_TAG)->clear(); //清除规则缓存，让列表实时生效
         return res_json(1);
     }
 
@@ -432,14 +434,14 @@ class AuthSet extends Base
         $formWhere = $this->parseWhere($where);
 
         $cacheKey = 'rule_'.md5(http_build_query($formWhere));
-        $count = Db::name('auth_rule')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, 'auth_rule')->count('id');
+        $count = Db::name('auth_rule')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, AuthEnum::CACHE_RULE_TAG)->count('id');
 
         if(empty($count)){
             return table_json([], 0);
         }
 
         // 查询所有规则，用以排序子父级关系，并存入缓存(tag:auth_rule)
-        $rules = Db::name('auth_rule')->where($formWhere)->order(['sorted', 'id'])->cache($cacheKey, 24*60*60, 'auth_rule')->select();
+        $rules = Db::name('auth_rule')->where($formWhere)->order(['sorted', 'id'])->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         $mark = count($formWhere);
         if(($where[1][2] && $mark > 2) || (!$where[1][2] && $mark > 1)) {
@@ -523,7 +525,7 @@ class AuthSet extends Base
             !$result && exit(res_json_native(-1, '添加失败'));
 
             destroyFormToken($post);
-            Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
+            Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
             return res_json(1);
         } catch (\Exception $e) {
             $msg = false !== strpos($e->getMessage(), '1062') ? '权限标识重复' : $e->getMessage();
@@ -538,7 +540,7 @@ class AuthSet extends Base
 
         $is_logged = $is_logged == 'true' ? 1 : 0;
         $res = Db::name('auth_rule')->where('id', '=', $id)->update(['is_logged' => $is_logged]);
-        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
+        Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
         !$res && exit(res_json_native(-3, '切换失败'));
 
         return res_json(1);
@@ -551,7 +553,7 @@ class AuthSet extends Base
 
         $post['id'] && $res = Db::name('auth_rule')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
         !$res && exit(res_json_native(-3, '修改失败'));
-        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
+        Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
 
         return res_json(1);
     }
@@ -563,7 +565,7 @@ class AuthSet extends Base
         $pwd = $this->request->post('password');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, 'admin_user')->find();
+        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         empty($user) && exit(res_json_native(-1, '用户信息获取失败，请重新登录'));
         
         switch ($this->request->post('status')) {
@@ -589,7 +591,7 @@ class AuthSet extends Base
             !$res && exit(res_json_native(-3, '状态切换失败'));
         }
         
-        Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
+        Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
 
         return res_json(1);
     }
@@ -639,7 +641,7 @@ class AuthSet extends Base
             !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
 
             destroyFormToken($post);
-            Cache::tag('auth_rule')->clear(); //清除规则缓存，让列表实时生效
+            Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
             return res_json(1);
         } catch (\Exception $e) {
             return res_json(-100, $e->getMessage());
@@ -688,7 +690,7 @@ class AuthSet extends Base
         $pwd = $this->request->post('password');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, 'admin_user')->find();
+        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         empty($user) && exit(res_json_native(-1, '用户信息获取失败，请重新登录'));
 
         $user['password'] != md5safe($pwd) && exit(res_json_native(-2, '密码错误'));

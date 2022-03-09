@@ -7,6 +7,7 @@
 // | Time: 2019-06-21
 // +----------------------------------------------------------------------
 namespace app\admin\middleware;
+use auth\enum\AuthEnum;
 use util\Hook;
 use think\facade\Db;
 
@@ -17,7 +18,7 @@ class LogAuto
     	$response = $next($request);
 
     	$authname = $request->controller().'/'.$request->action();
-    	$auth = Db::name('auth_rule')->field('id,name,title,is_logged,remark')->cache(md5($authname), 30*24*60*60, 'auth_rule')->where('name', $authname)->find();
+    	$auth = Db::name('auth_rule')->field('id,name,title,is_logged,remark')->cache(md5($authname), 30*24*60*60, AuthEnum::CACHE_RULE_TAG)->where('name', $authname)->find();
 
     	if($auth && $auth['is_logged'] == 1){
     		Hook::listen('admin_log', [$auth['title'], $auth['remark']]); 

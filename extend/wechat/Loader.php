@@ -1,5 +1,6 @@
 <?php
 namespace wechat;
+use app\common\BaseEnum;
 use EasyWeChat\Factory as WeChatFactory;
 use think\Exception;
 use think\facade\Db;
@@ -12,7 +13,7 @@ class Loader
 	private array $config;
 
     public function __construct() {
-        $wxConfig = Db::name('application_config')->order('id', 'desc')->cache('wx_config', 0, 'developer')->find();
+        $wxConfig = Db::name('application_config')->order('id', 'desc')->cache('wx_config', 0, BaseEnum::CACHE_TAG_APP_CONFIG)->find();
         if(empty($wxConfig)){
             throw new Exception('微信配置获取失败');
         }

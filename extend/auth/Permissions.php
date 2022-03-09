@@ -6,6 +6,7 @@
 // +----------------------------------------------------------------------
 
 namespace auth;
+use auth\enum\AuthEnum;
 use auth\src\Auth;
 use think\facade\Db;
 
@@ -27,7 +28,7 @@ class Permissions extends Auth
 			return parent::check($name, $uid, $relation, $mark, $mode);	
 		}
 		
-		$rule = Db::name($this->_config['auth_rule'])->where('name', $name)->cache($name, 24*60*60, 'auth_rule')->value('id');
+		$rule = Db::name($this->_config['auth_rule'])->where('name', $name)->cache($name, 24*60*60, AuthEnum::CACHE_RULE_TAG)->value('id');
 		if($rule){
 			return parent::check($name, $uid, $relation, $mark, $mode);
 		}
@@ -72,7 +73,7 @@ class Permissions extends Auth
 		}
 
         $cacheKey = 'rule'.$mark.'_'.md5(http_build_query($map));
-        $rules = Db::name($this->_config['auth_rule'])->field('id,name,title,pid,icon,type')->cache($cacheKey, 24*60*60, 'auth_rule')->where($map)->order(['sorted', 'id'])->select();
+        $rules = Db::name($this->_config['auth_rule'])->field('id,name,title,pid,icon,type')->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)->where($map)->order(['sorted', 'id'])->select();
 
         $_menuList[$uid.$mark] = $rules;
         return $rules;

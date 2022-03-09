@@ -12,6 +12,7 @@
 // +----------------------------------------------------------------------
 namespace auth\src;
 
+use auth\enum\AuthEnum;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -118,7 +119,7 @@ class Auth{
             ->join($this->_config['auth_group']." g", "g.id=a.group_id")
             ->where("a.uid='$uid' and g.status='1'")
             ->field('uid,group_id,title,rules')
-            ->cache($cacheKey, 24*60*60, 'auth_rule')
+            ->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)
             ->select()
             ->toArray();
 
@@ -165,7 +166,7 @@ class Auth{
 
         $cacheKey = 'rule'.$mark.'_'.md5(http_build_query($map));
         //读取用户组所有权限规则
-        $rules = Db::name($this->_config['auth_rule'])->field('condition,name')->cache($cacheKey, 24*60*60, 'auth_rule')->where($map)->select();
+        $rules = Db::name($this->_config['auth_rule'])->field('condition,name')->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)->where($map)->select();
 
         //循环规则，判断结果。
         $authList = array();
@@ -201,7 +202,7 @@ class Auth{
 
         if(!isset($userinfo[$uid])){
             $cacheKey= md5('adminUser_'.$uid);
-            $userinfo[$uid] = Db::name($this->_config['auth_user'])->where(array('id' => $uid))->cache($cacheKey, 24*60*60, 'admin_user')->find();
+            $userinfo[$uid] = Db::name($this->_config['auth_user'])->where(array('id' => $uid))->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         }
 
         return $userinfo[$uid];

@@ -6,5 +6,5 @@
 // +----------------------------------------------------------------------
 
 //aliyun/dingtalk类库常量定义
-define("TOP_SDK_WORK_DIR", "../runtime/temp/");
-define("TOP_SDK_DEV_MODE", true);
+//define("TOP_SDK_WORK_DIR", "../runtime/temp/");
+//define("TOP_SDK_DEV_MODE", true);

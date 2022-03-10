@@ -5,7 +5,7 @@
 // | Author: asuma(lishuaiqiu) <sqiu_li@163.com>
 // +----------------------------------------------------------------------
 
-namespace app\middleware;
+namespace app\common\middleware;
 use app\common\Request;
 use think\facade\Session;
 use wechat\facade\Loader as WeChat;

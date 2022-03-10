@@ -8,5 +8,5 @@ Route::group('/', function(){
     });
 
 })->middleware([
-    app\middleware\AutoLogin::class
+    app\common\middleware\AutoLogin::class
 ]);

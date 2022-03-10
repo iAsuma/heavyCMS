@@ -18,6 +18,8 @@
 use think\response\Json;
 use think\route\Url as UrlBuild;
 
+define('APP_VERSION', 'v1.0.0');
+
 if (!function_exists('route')) {
     /**
      * Url生成

@@ -115,7 +115,7 @@ class Shop extends Base
                 ];
 
                 $result = Db::name('shop_classification') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['商品分类', '添加了分类'.$data['name']]);
 
                 destroyFormToken($request->post());
@@ -165,7 +165,7 @@ class Shop extends Base
                 }
                
                 $result = Db::name('shop_classification')->where('id', (int)$post['id'])->update($data);
-                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['商品分类', '修改了类别'.$data['name']]);
 
                 destroyFormToken($post);
@@ -213,7 +213,7 @@ class Shop extends Base
                 ];
 
                 $result = Db::name('shop_classification') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['商品分类', '添加了二级分类'.$data['name']]);
 
                 destroyFormToken($request->post());
@@ -333,7 +333,7 @@ class Shop extends Base
                 ];
 
                 $result = Db::name('shop_banner') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['首页管理', '添加了banner']);
 
                 destroyFormToken($request->post());
@@ -383,7 +383,7 @@ class Shop extends Base
                     $data['img'] = $image[1] ;
                 }
                 $result = Db::name('shop_banner')->where('id', (int)$post['id'])->update($data);
-                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['首页管理', '修改了banner']);
 
                 destroyFormToken($post);
@@ -418,7 +418,7 @@ class Shop extends Base
         $post = $this->request->post();
 
         $post['id'] && $res = Db::name('shop_banner')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);
     }
@@ -471,7 +471,7 @@ class Shop extends Base
                 ];
 
                 $result = Db::name('shop_reco_place') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['首页管理', '添加了banner']);
 
                 destroyFormToken($request->post());
@@ -497,7 +497,7 @@ class Shop extends Base
         $post = $this->request->post();
 
         $post['id'] && $res = Db::name('shop_reco_place')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);
     }
@@ -525,7 +525,7 @@ class Shop extends Base
                 ];
 
                 $result = Db::name('shop_reco_place')->where('id', (int)$post['id'])->update($data);
-                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['首页管理', '修改了banner']);
 
                 destroyFormToken($post);

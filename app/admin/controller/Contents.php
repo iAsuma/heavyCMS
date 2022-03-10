@@ -75,7 +75,7 @@ class Contents extends Base
 
 				$validate = new \app\admin\validate\Articles;
 	            if(!$validate->scene('articles')->check($data)){
-	                exit(res_json_native(-1, $validate->getError()));
+	                return res_json(-1, $validate->getError());
 	            }
 
 				$result = Db::name('articles') -> insert($data);
@@ -128,11 +128,11 @@ class Contents extends Base
 
 			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('articles')->check($data)){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
 			$result = Db::name('articles') ->where('id', (int)$post['id']) -> update($data);
-			!is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+			if($result === false) return res_json(-1, '修改失败');
 			Hook::listen('admin_log', ['文章管理', '修改了文章"'.$data['title'].'"']);
 	
 			destroyFormToken($post);
@@ -175,7 +175,7 @@ class Contents extends Base
         }
 
         $id && $res = Db::name('articles')->where('id', '=', $id)->update(['status' => $status]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);
     }
@@ -265,7 +265,7 @@ class Contents extends Base
 		if(checkFormToken($request->post())){
   			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('column')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
 			try {
@@ -275,7 +275,7 @@ class Contents extends Base
 				];
 
 				$result = Db::name('article_column') -> insert($data);
-				!$result && exit(res_json_native(-3, '添加失败'));
+				if(!$result) return res_json(-3, '添加失败');
 				Hook::listen('admin_log', ['栏目管理', '新增了栏目'.$data['name']]);
 
 				destroyFormToken($request->post());
@@ -306,7 +306,7 @@ class Contents extends Base
 
 			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('column')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
 			$data = [
@@ -315,7 +315,7 @@ class Contents extends Base
 			];
 
 			$result = Db::name('article_column')->where('id', (int)$post['id'])->update($data);
-			!is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+			if($result === false) return res_json(-1, '修改失败');
 			Hook::listen('admin_log', ['栏目管理', '修改了栏目'.$data['name']]);
 
 			destroyFormToken($post);
@@ -356,7 +356,7 @@ class Contents extends Base
         }
 
         $id && $res = Db::name('article_column')->where('id', '=', $id)->update(['status' => $status]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);
     }

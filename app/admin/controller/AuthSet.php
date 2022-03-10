@@ -84,7 +84,7 @@ class AuthSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('register')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                
             }
 
             Db::startTrans();
@@ -157,7 +157,7 @@ class AuthSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('register')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
             Db::startTrans();
@@ -255,7 +255,7 @@ class AuthSet extends Base
         $id && $res = Db::name('admin_user')->where('id', '=', $id)->update(['status' => $status]);
 
         if($status == -1){
-            !$res && exit(res_json_native(-3, '删除失败'));
+            if(!$res) return res_json(-3, '删除失败');
             Hook::listen('admin_log', ['权限', '删除了管理员'.$this->request->post('name')]);
         }else{
             !$res && exit(res_json_native(-3, '状态切换失败'));
@@ -361,7 +361,7 @@ class AuthSet extends Base
 
             if($post['role_id'] ?? ''){
                 $result = Db::name('auth_group') ->where('id', $post['role_id']) -> update($data);
-                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['权限', '修改了角色组'.$data['title'].'的信息']);
             }else{
                 $result = Db::name('auth_group') -> insert($data);
@@ -404,7 +404,7 @@ class AuthSet extends Base
         $id && $res = Db::name('auth_group')->where('id', '=', $id)->update(['status' => $status]);
 
         if($status == -1){
-            !$res && exit(res_json_native(-3, '删除失败'));
+            if(!$res) return res_json(-3, '删除失败');
             Hook::listen('admin_log', ['权限', '删除了角色组'.$this->request->post('name')]);
         }else{
             !$res && exit(res_json_native(-3, '状态切换失败'));
@@ -552,7 +552,7 @@ class AuthSet extends Base
         $post['is_menu'] != 1 && exit(res_json_native(-1, '非菜单无法设置权重'));
 
         $post['id'] && $res = Db::name('auth_rule')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
         Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
 
         return res_json(1);
@@ -585,7 +585,7 @@ class AuthSet extends Base
 
         if($status == -1){
             $id && $res = Db::name('auth_rule')->delete($id);
-            !$res && exit(res_json_native(-3, '删除失败'));
+            if(!$res) return res_json(-3, '删除失败');
         }else{
             $id && $res = Db::name('auth_rule')->where('id', '=', $id)->update(['status' => $status]);
             !$res && exit(res_json_native(-3, '状态切换失败'));
@@ -638,7 +638,7 @@ class AuthSet extends Base
             }
 
             $result = Db::name('auth_rule')->where('id', (int)$post['rule_id'])->update($data);
-            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+            if($result === false) return res_json(-1, '修改失败');
 
             destroyFormToken($post);
             Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效

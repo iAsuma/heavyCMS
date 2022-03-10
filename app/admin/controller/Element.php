@@ -67,7 +67,7 @@ class Element extends Base
                 ];
 
                 $result = Db::name('banners') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['首页轮播图', '添加了banner']);
 
                 destroyFormToken($request->post());
@@ -116,7 +116,7 @@ class Element extends Base
                     $data['img'] = $image[1] ;
                 }
                 $result = Db::name('banners')->where('id', (int)$post['id'])->update($data);
-                !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+                if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['首页轮播图', '修改了banner']);
 
                 destroyFormToken($post);
@@ -150,7 +150,7 @@ class Element extends Base
         $post = $this->request->post();
 
         $post['id'] && $res = Db::name('banners')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
-        !$res && exit(res_json_native(-3, '修改失败'));
+        if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);
     }

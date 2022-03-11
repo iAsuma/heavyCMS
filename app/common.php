@@ -18,6 +18,8 @@
 use think\response\Json;
 use think\route\Url as UrlBuild;
 
+define('APP_VERSION', 'v1.0.0');
+
 if (!function_exists('route')) {
     /**
      * Url生成
@@ -245,27 +247,6 @@ function res_json(int $code=100, $result=""): Json
     }
 
     return json($response);
-}
-
-/**
- * 返回固定json_encode字符串信息（已弃用，用rjson_native()代替）
- * @deprecated
- * @see rjson_native()
- * */
-function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE): string
-{
-    $response = ['code' => $code, 'result' => $result];
-
-    //对新的rjson()方法的接口返回兼容
-    if(!is_string($result)){
-        $response['data'] = $result;
-        $response['msg'] = '';
-    }else{
-        $response['msg'] = $result;
-    }
-
-    header('Content-Type: application/json');
-    return json_encode($response, $option);
 }
 
 /**

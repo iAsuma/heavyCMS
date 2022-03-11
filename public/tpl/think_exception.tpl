@@ -395,7 +395,7 @@ if (!function_exists('echo_value')) {
 
     <div class="copyright">
         <a title="heavyCMS" href="https://github.com/iAsuma/heavyCMS">heavyCMS</a>
-        <span><?php echo VERSION; ?></span>
+        <span><?php echo APP_VERSION; ?></span>
         <span>{ 美好会变的更美好 }</span>
         <span>- <a title="asuma" href="https://weibo.com/770878450">@阿斯玛</a> 提供技术支持</span>
     </div>

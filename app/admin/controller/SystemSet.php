@@ -30,12 +30,12 @@ class SystemSet extends Base
 	public function updateUserInfo(Request $request)
 	{
 		$uid = $request->uid;
-		empty($uid) && exit(res_json_native(-2, '非法修改'));
+		if(empty($uid)) return res_json(-2, '非法修改');
 
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('modify')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
             try {
@@ -60,11 +60,11 @@ class SystemSet extends Base
                 ->where('status', '<>', -1)
                 ->select();
 
-                in_array($data['phone'], array_column($loginUser, 'phone')) && exit(res_json_native(-3, '手机号已注册'));
-                in_array($data['email'], array_column($loginUser, 'email')) && exit(res_json_native(-3, '邮箱已注册'));
+                if(in_array($data['phone'], array_column($loginUser, 'phone'))) return res_json(-3, '手机号已注册');
+                if(in_array($data['email'], array_column($loginUser, 'email'))) return res_json(-3, '邮箱已注册');
 
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
-                $update === false && exit(res_json_native(-6, '修改失败'));
+                if($update === false) return res_json(-6, '修改失败');
 
                 Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
                 
@@ -86,12 +86,12 @@ class SystemSet extends Base
 	public function changePwd(Request $request)
 	{
 		$uid = $request->uid;
-		empty($uid) && exit(res_json_native(-2, '非法修改'));
+		if(empty($uid)) return res_json(-2, '非法修改');
 
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('changepwd')->check($request->post())){
-                exit(res_json_native(-1, $validate->getError()));
+                return res_json(-1, $validate->getError());
             }
 
             try {
@@ -102,10 +102,10 @@ class SystemSet extends Base
                 $cacheKey= md5('adminUser_'.$uid);
                 $userInfo = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
 
-                $userInfo['password'] != md5safe($request->post('oldPassword')) && exit(res_json_native(-6, '当前密码错误'));
+                if($userInfo['password'] != md5safe($request->post('oldPassword'))) return res_json(-6, '当前密码错误');
 
                 $update = Db::name('admin_user') ->where('id', $uid) -> update($data);
-                $update === false && exit(res_json_native(-6, '修改失败'));
+                if($update === false) return res_json(-6, '修改失败');
 
                 Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
                 

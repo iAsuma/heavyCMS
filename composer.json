@@ -17,7 +17,11 @@
         {
             "name": "yunwuxin",
             "email": "448901948@qq.com"
-        }        
+        },
+        {
+            "name": "asuma",
+            "email": "sqiu_li@163.com"
+        }
     ],
     "require": {
         "php": ">=7.4.0",

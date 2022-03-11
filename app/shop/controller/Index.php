@@ -180,7 +180,7 @@ class Index extends Base
 		}
 
 		$list = $query->page($page, $limit)->select();
-		empty($list) && exit(res_json_native(-1));
+		if(empty($list)) return res_json(1);
 
 		return res_json(1, $list);
 	}

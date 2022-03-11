@@ -76,7 +76,7 @@ class Goods extends Base
 			$v['imgs'] = explode(',', $v['imgs']);
 			$v['create_time'] = date('Y-m-d', strtotime($v['create_time']));
 		}
-		empty($list) && exit(res_json_native(-1));
+		if(empty($list)) return res_json(1);
 
 		return res_json(1, $list);
 	}

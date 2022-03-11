@@ -1,7 +1,7 @@
 <!-- 侧边菜单 -->
 <div class="layui-side layui-side-menu">
   <div class="layui-side-scroll">
-    <div class="layui-logo" lay-href="{:route(isset($menu[0]['child']) ? $menu[0]['child'][0]['name'] : 'emptyAuth')}">
+    <div class="layui-logo" lay-href="{:route($menu[0]['child'][0]['name'] ?? '/empty')}">
       <span>企业服务通用平台</span>
     </div>
     

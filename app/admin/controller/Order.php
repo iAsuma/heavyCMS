@@ -102,7 +102,7 @@ class Order extends Base
     public function makeDelivery(Request $request)
     {
         $order_no = $request->post('order_no');
-        !$order_no && exit(res_json_native(-1));
+        if(!$order_no) return res_json(-1);
         
         $data = [
             'order_status' => 2,
@@ -111,7 +111,7 @@ class Order extends Base
             'delivery_time' => time()
         ];
         $res = Db::name('shop_order')->where(['order_no' => $order_no, 'status' => 1])->update($data);
-        !$res && exit(res_json_native(-1));
+        if(!$res) return res_json(-1);
 
         return res_json(1);
     }

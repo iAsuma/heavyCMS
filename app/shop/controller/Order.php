@@ -286,7 +286,7 @@ class Order extends Base
 			['user_id', '=', $this->userId]
 		];
 		$orderInfo = Db::name('shop_order')->field('id,order_no,price')->where($where)->find();
-		!$orderInfo && exit(res_json_native(-3, '订单错误'));
+		if(!$orderInfo) return res_json(-3, '订单错误');
 
 		//获取预支付订单
 		$payOrder = $this->makeWxPreOrder([
@@ -294,14 +294,14 @@ class Order extends Base
 			// 'price' => $orderInfo['price']
 			'price' => 0.01
 		]);
-		!$payOrder && exit(res_json_native(-1, '支付系统错误'));
+		if(!$payOrder) return res_json(-1, '支付系统错误');
 
 		//返回支付配置
 		$payment = WeChat::payment();
 		$jssdk = $payment->jssdk;
 		
-		$config = $jssdk->sdkConfig($payOrder['prepay_id']); 
-		!$config && exit(res_json_native(-2, '微信支付启动失败'));
+		$config = $jssdk->sdkConfig($payOrder['prepay_id']);
+		if(!$config) return res_json(-2, '微信支付启动失败');
 
 		return res_json(1, $config);
 	}
@@ -316,7 +316,7 @@ class Order extends Base
 		];
 
 		$orderInfo = Db::name('shop_order')->field('id,order_no,order_status')->where($where)->find();
-		!$orderInfo && exit(res_json_native(-1));
+		if(!$orderInfo) return res_json(-1);
 
 		if($orderInfo['order_status'] == 1){
 			return res_json(1);

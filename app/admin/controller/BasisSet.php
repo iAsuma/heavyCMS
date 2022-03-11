@@ -52,7 +52,7 @@ class BasisSet extends Base
                 ];
 
                 $result = Db::name('application_config') -> insert($data);
-                !$result && exit(res_json_native(-3, '添加失败'));
+                if(!$result) return res_json(-3, '添加失败');
                 Hook::listen('admin_log', ['基础设置', '添加了应用配置']);
 
                 destroyFormToken($request->post());
@@ -77,7 +77,7 @@ class BasisSet extends Base
     {
         try {
             $post = $request->post();
-            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
+            if(!checkFormToken($post)) return res_json('-2', '请勿重复提交');
               $data = [
                     'app_name' => $request->post('app_name'),
                     'app_id' => $request->post('app_id'),
@@ -90,7 +90,7 @@ class BasisSet extends Base
 
 
             $result = Db::name('application_config')->where('id', (int)$post['id'])->update($data);
-            !is_numeric($result) && exit(res_json_native(-1, '修改失败'));
+            if($result === false) return res_json(-1, '修改失败');
 
             Hook::listen('admin_log', ['基础设置', '修改了应用配置']);
             Cache::tag(BaseEnum::CACHE_TAG_APP_CONFIG)->clear();  //清除配置缓存，让列表实时生效

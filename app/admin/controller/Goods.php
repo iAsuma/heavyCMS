@@ -68,7 +68,7 @@ class Goods extends Base
                 ];
 
                 $new_id = Db::name('shop_goods') -> insertGetId($data);
-                !$new_id && exit(res_json_native(-6, '添加失败'));
+                if(!$new_id) return res_json(-6, '添加失败');
 
                 $skus = json_decode($request->post('goods_skus'), true);
 				$skus_detail = json_decode($request->post('skus_val'), true);
@@ -142,7 +142,7 @@ class Goods extends Base
 	    $file = app('upload')->file('image');
 	    $info = app('upload')->action($file, [800, 800], true, \think\Image::THUMB_SCALING);
 
-	    !$info && exit(res_json_native(-1, '上传失败'));
+	    if(!$info) return res_json(-1, '上传失败');
 
 	    Db::name('shop_goods_pics')->insert(['good_img_url' => $info[0]]);
 
@@ -219,6 +219,10 @@ class Goods extends Base
 
 	public function modify(Request $request)
 	{
+	    if(empty($request->post('gid'))){
+	        return res_json(-3, '缺失参数');
+        }
+
 		if(checkFormToken($request->post())){
             $validate = \think\Validate::make([
                 'goods_name' => 'require|max:150',
@@ -260,13 +264,12 @@ class Goods extends Base
                     'freight' => $request->post('post_type') == 2 ? $request->post('freight') : 0
                 ];
 
-                $request->post('gid') && $res = Db::name('shop_goods') ->where(['id' => $request->post('gid')]) -> update($data);
-                !is_numeric($res) && exit(res_json_native(-6, '修改失败'));
+                $res = Db::name('shop_goods') ->where(['id' => $request->post('gid')]) -> update($data);
+                if($res === false) return res_json(-6, '修改失败');
 
                 $skus = json_decode($request->post('goods_skus'), true);
 				$skus_detail = json_decode($request->post('skus_val'), true);
-				
-				$skusArr = [];
+
 				$result = false;
 				foreach ($skus as $k=>$v) {
 					$sku = json_encode($v, JSON_UNESCAPED_UNICODE);
@@ -296,9 +299,10 @@ class Goods extends Base
 
 						$result = Db::name('shop_goods_sku')->insert($skusArr);
 					}
-					if(!is_numeric($result)){
-						break;
-					}
+
+					if($result === false){
+					    break;
+                    }
 				}
 				
                 if(!is_numeric($result)){

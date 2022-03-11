@@ -25,7 +25,7 @@ class Cart extends Base
 		}
 
 		$sku = $query->find();
-		empty($sku) && exit(res_json_native(-1, '商品不存在'));
+		if(empty($sku)) return res_json(-1, '商品不存在');
 
 		$isExist = Db::name('shop_shopping_cart')->where(['user_id' => $this->userId, 'goods_id' => $goods_id, 'goods_sku_id' => $sku['id']])->find();
 
@@ -47,8 +47,8 @@ class Cart extends Base
 
 			$res = Db::name('shop_shopping_cart')->insert($data);	
 		}
-		
-		!$res && exit(res_json_native(-2, '加入失败'));
+
+		if(!$res) return res_json(-2, '加入失败');
 		
 		return res_json(1, '添加成功');
 	}
@@ -70,7 +70,7 @@ class Cart extends Base
 		$num = $request->post('goods_num');
 
 		$res = Db::name('shop_shopping_cart')->where(['id' => $id, 'user_id' => $this->userId])->update(['goods_num' => $num]);
-		!$res && exit(res_json_native(-1));
+		if(!$res) return res_json(-1);
 		return res_json(1);
 	}
 
@@ -80,10 +80,10 @@ class Cart extends Base
 	public function delGoodsInCart(Request $request)
 	{
 		$ids = $request->post('cart_ids');
-		!$ids && exit(res_json_native(-1));
+		if(!$ids) return res_json(-1);
 		
 		$res = Db::name('shop_shopping_cart')->where('id', 'IN', $ids)->delete();
-		!$res && exit(res_json_native(-2));
+		if(!$res) return res_json(-2);
 
 		return res_json(1);
 	}

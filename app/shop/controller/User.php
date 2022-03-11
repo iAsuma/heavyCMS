@@ -115,7 +115,7 @@ class User extends Base
 			];
 		}
 
-		empty($result) && exit(res_json_native(-1));
+		if(empty($result)) return res_json(-1);
 
 		return res_json(1, array_values($result));
 	}
@@ -160,7 +160,7 @@ class User extends Base
 		}
 
 		$res = Db::name('shop_order')->where(['order_no' => $orderNo, 'user_id' => $this->userId])->update($data);
-		!$res && exit(res_json_native(-1));
+		if(!$res) return res_json(-1);
 
 		return res_json(1);
 	}
@@ -278,7 +278,7 @@ class User extends Base
 		}
 
 		$list = Db::name('user_goods_collection')->alias('c')->field('c.id,g.id goods_id,g.goods_name,min(s.price) price,s.sku_img')->join('shop_goods g', 'c.goods_id=g.id')->join('shop_goods_sku s', 'g.id=s.goods_id')->where($where)->group('g.id')->page($page, $limit)->select();
-		empty($list) && exit(res_json_native(-1));
+		if(empty($list)) return res_json(1);
 
 		return res_json(1, $list);
 	}
@@ -286,10 +286,10 @@ class User extends Base
 	public function cancelCollcet()
 	{
 		$id = $this->request->post('id');
-		empty($id) && exit(res_json_native(-1));
+		if(empty($id)) return res_json(-1);
 
 		$res = Db::name('user_goods_collection')->where(['id' => $id])->delete();
-		!$res && exit(res_json_native(-2));
+		if(!$res) return res_json(-2);
 
 		return res_json(1);
 	}

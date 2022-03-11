@@ -77,7 +77,7 @@ class BasisSet extends Base
     {
         try {
             $post = $request->post();
-            !checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
+            if(!checkFormToken($post)) return res_json('-2', '请勿重复提交');
               $data = [
                     'app_name' => $request->post('app_name'),
                     'app_id' => $request->post('app_id'),

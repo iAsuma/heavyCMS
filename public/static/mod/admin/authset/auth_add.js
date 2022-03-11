@@ -36,7 +36,7 @@ layui.config({
     
     $.post($(data.elem).data('url'), {type:data.value}, function(data){
       let getTpl = $('#treeMods').html()
-      laytpl(getTpl).render(data, function(html){
+      laytpl(getTpl).render(data.data, function(html){
         $('.fathersel').html(html);
         form.render('select');
 

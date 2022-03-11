@@ -232,13 +232,13 @@ class Shop extends Base
         $id = $request->post('id');
         $info = Db::name('shop_classification')->field('id')->where(['pid' => $id])->find();
         if($info){
-           return json(['code' => -2, 'result' => '请先删除子类']);
+            return res_json(-2, '请先删除子类');
         }
         if (Db::name('shop_classification') ->where('id','=', $id) -> delete()) {  
             Hook::listen('admin_log', ['商品分类', '删除了类别']);        
             return res_json(1); 
         } else {
-            return json(['code' => -1, 'result' => '删除失败']);
+            return res_json(-1, '删除失败');
         }
 
     }
@@ -259,7 +259,7 @@ class Shop extends Base
         }
 
         $id && $res = Db::name('shop_goods')->where('id', '=', $id)->update(['is_sold' => $sold]);
-        !$res && exit(json(['code' => -1, 'result' => '失败']));
+        if(!$res) return res_json(-1, '失败');
 
         $count = Db::name('shop_goods_sku')->where(['goods_id' => $id, 'status' => 1])->count();
         if($count == 1){
@@ -267,7 +267,7 @@ class Shop extends Base
             Db::name('shop_goods_sku')->where(['goods_id' => $id])->update(['is_sold' => $sold]);
         }
 
-        return json(['code' => 1, 'result' => '成功']);
+        return res_json(1, '成功');
     }
 
 
@@ -766,9 +766,9 @@ class Shop extends Base
         }
 
         $id && $res = Db::name('shop_goods_sku')->where('id', '=', $id)->update(['is_sold' => $sold]);
-        !$res && exit(json(['code' => -1, 'result' => '失败']));
+        if(!$res) return res_json(-1, '失败');
 
-        return json(['code' => 1, 'result' => '成功']);
+        return res_json(1, '成功');
     }
 
     public function skuSet()
@@ -791,7 +791,7 @@ class Shop extends Base
         ];
 
         $res = Db::name('shop_goods_sku')->where(['id' => (int)$post['sku_id']])->update($data);
-        !$res && exit(res_json_native(-1, '系统错误'));
+        if(!$res) return res_json(-1, '系统错误');
 
         return res_json(1);
     }

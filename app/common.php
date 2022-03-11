@@ -250,27 +250,6 @@ function res_json(int $code=100, $result=""): Json
 }
 
 /**
- * 返回固定json_encode字符串信息（已弃用，用rjson_native()代替）
- * @deprecated
- * @see rjson_native()
- * */
-function res_json_native(int $code=100, $result="", $option = JSON_UNESCAPED_UNICODE): string
-{
-    $response = ['code' => $code, 'result' => $result];
-
-    //对新的rjson()方法的接口返回兼容
-    if(!is_string($result)){
-        $response['data'] = $result;
-        $response['msg'] = '';
-    }else{
-        $response['msg'] = $result;
-    }
-
-    header('Content-Type: application/json');
-    return json_encode($response, $option);
-}
-
-/**
  * @param int $code 状态码
  * @param string $msg 状态描述信息
  * @param array $data 返回数据信息

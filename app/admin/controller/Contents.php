@@ -114,7 +114,7 @@ class Contents extends Base
 	{
 		try {
 			$post = $request->post();
-			!checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
+			if(!checkFormToken($post)) return res_json('-2', '请勿重复提交');
 
 		    $data = [
 				'title' => $request->post('title'),
@@ -302,7 +302,7 @@ class Contents extends Base
 	{
 		try {
 			$post = $request->post();
-			!checkFormToken($post) && exit(res_json_native('-2', '请勿重复提交'));
+			if(!checkFormToken($post)) return res_json('-2', '请勿重复提交');
 
 			$validate = new \app\admin\validate\Articles;
             if(!$validate->scene('column')->check($request->post())){

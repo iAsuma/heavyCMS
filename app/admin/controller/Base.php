@@ -4,6 +4,7 @@ namespace app\admin\controller;
 use app\common\BaseController;
 use PHPExcel;
 use PHPExcel_IOFactory;
+use think\facade\View;
 
 /**
  * 业务基类
@@ -41,6 +42,10 @@ class Base extends BaseController
         }
 
         return $condition;
+    }
+
+    protected function error_view($msg = '未获取到数据'){
+        return View::fetch('public/error', ['icon' => '#xe6af', 'error' => $msg]);
     }
 
     /**

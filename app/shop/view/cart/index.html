@@ -97,7 +97,7 @@ new Vue({
                     }
                     cart_ids = cart_ids.slice(0, -1)
 
-                    axios.post('{:route(\'delGoodsInCart\')}', {
+                    axios.post('{:route(\'Shop/delGoodsInCart\')}', {
                         cart_ids: cart_ids
                     }).then(res => {
                         done();

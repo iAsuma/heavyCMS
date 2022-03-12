@@ -48,7 +48,7 @@ class Shop extends Base
         return table_json($data, $count);
     }
 
-    public function del(Request $request)
+    public function delGoods(Request $request)
     {
         $id = $request->post('id');
         $del = Db::name('shop_goods')->where('id', '=', $id)->update(['status' => -1]);
@@ -131,13 +131,18 @@ class Shop extends Base
     public function classEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::name('shop_classification')->where(['id' => $id])->find();
-        isset($info) && View::assign('info', $info);
+        if(empty($id)){
+            return $this->error_view();
+        }
+
+        $info = Db::name('shop_classification')->where(['id' => $id])->find();
+
+        View::assign('info', $info);
         $pidname = Db::name('shop_classification')->field('name')->where(['id' => $info['pid']])->find();
-        isset($pidname) && View::assign('pidname', $pidname);
+
+        View::assign('pidname', $pidname);
         return View::fetch();
     }
-
 
     public function editClass(Request $request)
     {   
@@ -182,8 +187,13 @@ class Shop extends Base
     public function classSecond()
     {
         $pid = (int)$this->request->get('pid');
-        $pid && $info = Db::name('shop_classification')->field('name,id')->where(['id' => $pid])->find();
-        isset($info) && View::assign('info', $info);
+        if(empty($pid)){
+            return $this->error_view();
+        }
+
+        $info = Db::name('shop_classification')->field('name,id')->where(['id' => $pid])->find();
+
+        View::assign('info', $info);
         return View::fetch();
     }
 
@@ -349,16 +359,18 @@ class Shop extends Base
     public function bannerEdit()
     {
         $id = (int)$this->request->get('id');
-        $id && $info = Db::name('shop_banner')->where(['id' => $id])->find();
-        isset($info) && View::assign('info', $info);
+        if(empty($id)){
+            return $this->error_view();
+        }
+
+        $info = Db::name('shop_banner')->where(['id' => $id])->find();
+        View::assign('info', $info);
         return View::fetch();
     }
-
 
     public function editBanner(Request $request)
     {   
         if(checkFormToken($request->post())){
-
              $validate = \util\Validate::make([
                     'title' => 'require|min:2'
                 ],[
@@ -391,16 +403,13 @@ class Shop extends Base
             } catch (\Exception $e) {
                 return res_json(-100, $e->getMessage());
             }
-
         }
 
          return res_json(-2, '请勿重复提交');
-        
     }
 
     public function bannerDel(Request $request)
     {
-        
         $id = $request->post('id');
          $data = ['status' => -1];
         if (Db::name('shop_banner') ->where('id', '=', $id) -> update($data)) { 
@@ -409,9 +418,7 @@ class Shop extends Base
         } else {
             return res_json(-1,'删除失败');
         }
-      
     }
-
 
     public function changeWeight()
     {
@@ -433,9 +440,8 @@ class Shop extends Base
         return View::fetch();
     }
 
-     public function recoList()
-    {   
-
+    public function recoList()
+    {
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;       
@@ -446,7 +452,7 @@ class Shop extends Base
         return table_json($data, $count);
     }
 
-     public function recoAdd()
+    public function recoAdd()
     {
         return View::fetch();
     }
@@ -501,8 +507,6 @@ class Shop extends Base
 
         return res_json(1);
     }
-
-
 
     public function editReco(Request $request)
     {
@@ -587,21 +591,18 @@ class Shop extends Base
     public function recogoods()
     {    
         $rid = (int)$this->request->get('rid');
-        View::assign('rid', $rid);
-
         $classifyArr = Db::name('shop_classification')->field('id,name,pid')->select();
 
         $tree = new \util\Tree($classifyArr);
         $classify = $tree->leaf();
-        
-        View::assign('classify', $classify);
 
+        View::assign('rid', $rid);
+        View::assign('classify', $classify);
         return View::fetch();
     }
 
     public function recogoodsList()
-    {   
-
+    {
         $get = $this->request->get();
         $page = $get['page'] ?? 1;
         $limit = $get['limit'] ?? 10;
@@ -642,7 +643,6 @@ class Shop extends Base
 
     public function addrecogoods(Request $request)
     {
-        
         $gid =  $data['goods_id'] = $request->post('gid');
         $rid = $data['rec_id']  = $request->post('rid');
         $data['create_time'] = date('Y-m-d H:i:s');
@@ -653,7 +653,6 @@ class Shop extends Base
         } else {
             return res_json(-1);
         }
-      
     }
 
     public function sold()
@@ -700,7 +699,6 @@ class Shop extends Base
         }else{
             return res_json(-1); 
         }
-        
     }
 
     public function goodsSku()

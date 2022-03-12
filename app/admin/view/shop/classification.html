@@ -39,7 +39,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
 
    var tableIns =  table.render({
       elem: '#classify'
-      ,url: "{:route('classList')}" //数据接口
+      ,url: "{:route('Shop/classList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -105,7 +105,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
          layer.open({
           type: 2
           ,title: '添加分类'
-          ,content: "{:route('classadd')}"
+          ,content: "{:route('Shop/classadd')}"
           ,maxmin: true
           ,area: ['35%', '60%']
           ,btn: ['确定', '取消']
@@ -139,7 +139,7 @@ tbody .layui-table-cell img{width: auto;height: 32px}
               layer.open({
                 type: 2
                 ,title: "新增二级分类"
-                ,content: "{:route('classSecond')}?pid="+obj.data.id
+                ,content: "{:route('Shop/classSecond')}?pid="+obj.data.id
                 ,maxmin: true
                 ,area: ['35%', '50%']
                 ,btn: ['确定', '取消']

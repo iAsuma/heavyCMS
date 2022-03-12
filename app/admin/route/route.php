@@ -1,7 +1,7 @@
 <?php
 use think\facade\Route;
 
-Route::group('/', function (){
+Route::group('', function (){
     Route::get('/', 'admin/index/index');
     Route::get('empty', 'admin/index/emptyAuth');
 
@@ -136,7 +136,4 @@ Route::group('/', function (){
         Route::get('notice', 'SystemSet/notice');
     });
 
-})->middleware([
-    app\admin\middleware\BackAuthLogin::class,
-    app\admin\middleware\LogAuto::class
-]);
+});

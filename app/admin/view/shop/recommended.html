@@ -8,7 +8,7 @@
             <button class="layui-btn layui-btn-asuma layuiadmin-btn-admin" id="add">添加</button>
         </div>
    
-        <table id="reco" lay-filter="reco" data-sturl="{:route('changeRecoWeight')}"></table>
+        <table id="reco" lay-filter="reco" data-sturl="{:route('Shop/changeRecoWeight')}"></table>
     </div>
   </div>
 </div>
@@ -30,7 +30,7 @@
 
    var tableIns =  table.render({
       elem: '#reco'
-      ,url: "{:route('recoList')}" //数据接口
+      ,url: "{:route('Shop/recoList')}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -57,7 +57,7 @@
          layer.open({
           type: 2
           ,title: '添加'
-          ,content: "{:route('recoadd')}"
+          ,content: "{:route('Shop/recoadd')}"
           ,maxmin: true
           ,area: ['350px', '180px']
           ,btn: ['确定', '取消']
@@ -108,7 +108,7 @@
               layer.open({
                 type: 2
                 ,title: '设置'
-                ,content: "{:route('recoDetail')}?id="+obj.data.id
+                ,content: "{:route('Shop/recoDetail')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['90%', '90%']
                 ,success: function (layero, index) {

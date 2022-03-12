@@ -60,7 +60,7 @@ function listHtml(name, data){
     return html;
 }
 function classData(id, name){
-    $.post('{:route(\'getSecondClass\')}', {id:id}, function(data){
+    $.post('{:route(\'Shop/getSecondClass\')}', {id:id}, function(data){
         var list = listHtml(name, data.result)
         $('#fenleiShipin').html(list)
     })

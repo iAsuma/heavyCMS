@@ -177,17 +177,17 @@ class Goods extends Base
 		$classify = $tree->leaf();
 
 		$where = [
-			'id' => (int)$id,
+			'id' => $id,
 			'status' => 1
 		];
 
-		!$id && exception('商品不存在');
+		if(!$id) return res_json('-1', '商品不存在');
 
 		$info = Db::name('shop_goods')->where($where)->find();
 		$info['goodsImgArr'] = explode(',', $info['goods_imgs']);
 		$info['goods_attrs'] = json_decode($info['goods_sku_attributes'], true);
 
-		$skus = Db::name('shop_goods_sku')->field('sku,price,market_price,sku_img,stocks')->where(['goods_id' => (int)$id,
+		$skus = Db::name('shop_goods_sku')->field('sku,price,market_price,sku_img,stocks')->where(['goods_id' => $id,
 			'status' => 1])->select();
 
 		foreach ($info['goods_attrs'] as $v) {

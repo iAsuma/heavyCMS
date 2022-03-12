@@ -84,7 +84,7 @@
                 } 
             }
 
-            $.post("{:route('addsold')}",{idlist:idlist,soldlist:soldlist_new,market_price:market_price,pricelist:pricelist}, function(d){
+            $.post("{:route('Shop/addsold')}",{idlist:idlist,soldlist:soldlist_new,market_price:market_price,pricelist:pricelist}, function(d){
               flag = false;
               if(d.code == 1){
                   parent.layer.msg('修改成功');

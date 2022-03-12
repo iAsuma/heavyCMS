@@ -68,7 +68,7 @@ tbody .layui-table-cell img{width: auto;height: 50px}
 
     var tableIns =  table.render({
       elem: '#goods'
-      ,url: "{:route('recogoodsList')}?rid="+"{$rid}" //数据接口
+      ,url: "{:route('Shop/recogoodsList')}?rid="+"{$rid}" //数据接口
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]

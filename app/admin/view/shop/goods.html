@@ -61,7 +61,7 @@ tbody .layui-table-cell img{width: 50px;height: 50px;object-fit: scale-down;}
 </div>
 {/block}
 {block name="footjs"}
-<script type="text/html" id="statusTpl" data-url="{:route('changeSold')}">
+<script type="text/html" id="statusTpl" data-url="{:route('Shop/changeSold')}">
   <input type="checkbox" name="is_sold" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="optstatus" {{d.is_sold == 1 ? 'checked' : ''}}>
 </script>
 
@@ -83,7 +83,7 @@ tbody .layui-table-cell img{width: 50px;height: 50px;object-fit: scale-down;}
 
    var tableIns =  table.render({
       elem: '#goods'
-      ,url: "{:route('goodsList')}"
+      ,url: "{:route('Shop/goodsList')}"
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -158,7 +158,7 @@ tbody .layui-table-cell img{width: 50px;height: 50px;object-fit: scale-down;}
               layer.open({
                 type: 2
                 ,title: '商品SKU设置'
-                ,content: "{:route('sold')}?id="+obj.data.id
+                ,content: "{:route('Shop/sold')}?id="+obj.data.id
                 ,maxmin: true
                 ,area: ['80%', '90%']
                 ,btn: ['确定', '取消']
@@ -173,8 +173,7 @@ tbody .layui-table-cell img{width: 50px;height: 50px;object-fit: scale-down;}
           break;
           case 'del':
               layer.confirm('确定删除？？', function(index){
-     
-                   $.post("{:route('Shop/del')}", {id:obj.data.id}, function(res){
+                   $.post("{:route('Shop/delGoods')}", {id:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');
                         table.reload('goods'); //重载表格

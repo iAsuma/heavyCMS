@@ -35,6 +35,7 @@ class Tree {
      * 树型数据表结果集处理
      */
     private function handler() {
+        $tmp = [];
         foreach ($this->result as $node) {
             $tmp[$node[$this->fields[1]]][] = $node;
         }

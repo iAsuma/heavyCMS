@@ -250,11 +250,11 @@ function res_json(int $code=100, $result=""): Json
 }
 
 /**
+ * json数据全局统一返回格式（推荐）
  * @param int $code 状态码
  * @param string $msg 状态描述信息
  * @param array $data 返回数据信息
  * @author lishuaiqiu
- * json数据全局统一返回格式
  */
 function rjson(int $code=100, string $message="", array $data = []): Json
 {
@@ -262,12 +262,12 @@ function rjson(int $code=100, string $message="", array $data = []): Json
 }
 
 /**
+ * 返回固定json_encode字符串信息（不推荐使用）
  * @param int $code 状态码
  * @param string $msg 状态描述信息
  * @param array $data 返回数据信息
  * @param int $option
  * @author lishuaiqiu
- * 返回固定json_encode字符串信息
  * */
 function rjson_native(int $code=100, string $message="", array $data = [], $option = JSON_UNESCAPED_UNICODE): string
 {

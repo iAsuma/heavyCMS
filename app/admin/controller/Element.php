@@ -43,7 +43,7 @@ class Element extends Base
     {
         if(checkFormToken($request->post())){
 
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'title' => 'require|min:2',
                 'image' => 'require',
             ],[
@@ -92,7 +92,7 @@ class Element extends Base
     {   
         if(checkFormToken($request->post())){
 
-             $validate = \think\Validate::make([
+             $validate = \util\Validate::make([
                     'title' => 'require|min:2'
                 ],[
                     'title.require'=> '请填写标题',

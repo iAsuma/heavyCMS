@@ -84,7 +84,7 @@ class AuthSet extends Base
         if(checkFormToken($request->post())){
             $validate = new \app\admin\validate\Register;
             if(!$validate->scene('register')->check($request->post())){
-                
+                return res_json(-1, $validate->getError());
             }
 
             Db::startTrans();
@@ -346,7 +346,7 @@ class AuthSet extends Base
                 'remark' => $post['desc']
             ];
 
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'title' => 'require|max:30',
                 'remark' => 'max:200',
             ],[
@@ -508,7 +508,7 @@ class AuthSet extends Base
                 'remark' => off_xss(trim($post['desc']))
             ];
 
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|max:50',
                 'title' => 'require|max:30',
                 'remark' => 'max:200',
@@ -626,7 +626,7 @@ class AuthSet extends Base
                 'remark' => off_xss(trim($post['desc']))
             ];
 
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'title' => 'require|max:30',
                 'remark' => 'max:200',
             ],[

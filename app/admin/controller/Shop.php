@@ -97,7 +97,7 @@ class Shop extends Base
     public function addClass(Request $request)
     {
         if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|min:2',
             ],[
                 'name.require'=> '请填写分类名称',
@@ -142,7 +142,7 @@ class Shop extends Base
     public function editClass(Request $request)
     {   
         if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|min:2',
             ],[
                 'name.require'=> '请填写分类名称',
@@ -190,7 +190,7 @@ class Shop extends Base
     public function secondClass(Request $request)
     {
         if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|min:2',
                 'image' => 'require',
             ],[
@@ -309,7 +309,7 @@ class Shop extends Base
     {
         if(checkFormToken($request->post())){
 
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'title' => 'require|min:2',
                 'image' => 'require',
             ],[
@@ -359,7 +359,7 @@ class Shop extends Base
     {   
         if(checkFormToken($request->post())){
 
-             $validate = \think\Validate::make([
+             $validate = \util\Validate::make([
                     'title' => 'require|min:2'
                 ],[
                     'title.require'=> '请填写标题',
@@ -454,7 +454,7 @@ class Shop extends Base
     public function addReco(Request $request)
     {
         if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|min:2'
             ],[
                 'name.require'=> '请填写标题',
@@ -507,7 +507,7 @@ class Shop extends Base
     public function editReco(Request $request)
     {
        if(checkFormToken($request->post())){ 
-             $validate = \think\Validate::make([
+             $validate = \util\Validate::make([
                 'name' => 'require|min:2'
             ],[
                 'name.require'=> '请填写标题',

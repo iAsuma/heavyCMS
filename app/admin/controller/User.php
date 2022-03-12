@@ -62,7 +62,7 @@ class User extends Base
     public function editUser(Request $request)
     {
         if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'name' => 'require|min:2',
                 'phone' => 'require|mobile',
                 'gender' => 'require'

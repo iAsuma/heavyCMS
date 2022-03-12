@@ -236,7 +236,7 @@ class Order extends Base
     public function recomment(Request $request)
     {
         if(checkFormToken($request->post())){
-             $validate = \think\Validate::make([
+             $validate = \util\Validate::make([
                 'recomment' => 'require|min:2',
             ],[
                 'recomment.require'=> '请填写回复内容',

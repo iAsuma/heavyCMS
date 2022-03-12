@@ -25,7 +25,7 @@ class Goods extends Base
 	public function save(Request $request)
 	{
 		if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'goods_name' => 'require|max:150',
                 'goods_attributes' => 'require',
                 'introduction' => 'max:200',
@@ -224,7 +224,7 @@ class Goods extends Base
         }
 
 		if(checkFormToken($request->post())){
-            $validate = \think\Validate::make([
+            $validate = \util\Validate::make([
                 'goods_name' => 'require|max:150',
                 'goods_attributes' => 'require',
                 'introduction' => 'max:200',

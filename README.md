@@ -1,6 +1,7 @@
 
 基于iAsuma/layui-tp51-admin升级 ，主要迁移thinkphp5.1LTS框架至6.0LTS版本
-shop模块路由尚未适配
+
+TODO:shop模块路由尚未适配
 
 iAsuma/heavyCMS（伪）纯净轻盈的后台管理系统
 ===============

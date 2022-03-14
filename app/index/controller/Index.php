@@ -13,12 +13,11 @@ class Index
     
     /**
     * 跳回上一个页面
-    * @param $default 默认跳转的url，可接受get中的default
     */
-    public function redirectLast($rd_url="defaultIndex")
+    public function redirectLast()
     {
         session('from_redirect', true);
-        return redirect()->restore($rd_url);
+        return redirect()->restore();
     }
 
     /**

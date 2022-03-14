@@ -1,10 +1,17 @@
 <?php
 namespace app\index\controller;
 
+use util\Redis;
+
 class Index
 {
     public function index()
     {
+
+        dump(Redis::set("asd", "1111333"));
+        dump(Redis::get("asd"));
+        die;
+
 //        if(!request()->isMobile()){
 //            return redirect('/admin');
 //        }

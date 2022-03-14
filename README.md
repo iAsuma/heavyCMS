@@ -24,7 +24,7 @@ iAsuma/heavyCMS（伪）纯净轻盈的后台管理系统
 ### composer安装(推荐)
 
 ```
-// todo
+composer create-project iasuma/heavycsm your-project-name
 ```
 
 

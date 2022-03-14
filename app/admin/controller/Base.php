@@ -83,7 +83,7 @@ class Base extends BaseController
         header("Content-Disposition:attachment;filename=$fileName.xls");
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
-        exit;
+        return true;
     }
 
 }

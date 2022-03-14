@@ -81,12 +81,13 @@ class AutoLogin
             }else{
                 redirect:
                 if($request->isAjax() || $request->isPost()){
-                    header('Ajax-Mark: redirect');
-                    header("Redirect-Path: ". (string)Route::buildUrl($this->redirect_url));
+                    return rjson()->header([
+                        'Ajax-Mark' => ' redirect',
+                        'Redirect-Path' => (string)Route::buildUrl($this->redirect_url)
+                    ]);
                 }else{
                     return redirect($this->redirect_url)->remember();
                 }
-                exit(); //执行跳转后进行业务隔离阻断，防止程序继续执行
             }
             
             Session::set('wapUser.id', $user['id']);

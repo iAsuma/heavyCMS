@@ -48,7 +48,6 @@ class User extends Base
         return table_json($user, $count);
     }
 
-
     public function userEdit()
     {
         $id = (int)$this->request->get('id');
@@ -57,7 +56,6 @@ class User extends Base
         
         return View::fetch();
     }
-
 
     public function editUser(Request $request)
     {
@@ -111,7 +109,6 @@ class User extends Base
 
     public function del(Request $request)
     {
-        
         $id = $request->post('uid');
         $data['status'] = -1 ;
     
@@ -187,7 +184,7 @@ class User extends Base
 
         for ($i = 0; $i < $dataNum; $i++) {
             for ($j = 0; $j < $cellNum; $j++) {
-                $objPHPExcel->getActiveSheet(0)->setCellValue($cell[$j] . ($i + 2), $data[$i][$CellName[$j][0]]);
+                $objPHPExcel->getActiveSheet()->setCellValue($cell[$j] . ($i + 2), $data[$i][$CellName[$j][0]]);
             }
         }
 
@@ -201,9 +198,6 @@ class User extends Base
         header("Content-Disposition:attachment;filename=$fileName.xls");
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
-        exit;
+        return true;
     }
-
 }
-
- ?>

@@ -16,7 +16,7 @@ Route::group('', function (){
         Route::post('goods/pictures$', 'Goods/pictures');// 商品图片显示
         Route::post('goods/pictures/list', 'Goods/pictureList');// 商品图片列表
         Route::post('goods/pictures/upload', 'Goods/uploadMainImg');// 上传图片
-        Route::post('goods/pictures/delete', 'Goods/deleteGoodsPic');// 上传商品图片
+        Route::post('goods/pictures/delete', 'Goods/deleteGoodsPic');// 删除商品图片
 
         Route::get('goods/class$', 'Shop/classification'); //商品分类页
         Route::get('goods/class/list', 'Shop/classList');//商品分类列表
@@ -60,5 +60,18 @@ Route::group('', function (){
         Route::get('reco/goods/list', 'Shop/recogoodsList'); //
         Route::post('reco/goods/add', 'Shop/addrecogoods'); //
         Route::post('reco/goods/del', 'Shop/recoGoodsDel'); //
+
+        Route::get('order/index', 'Order/index'); // 订单管理页面
+        Route::get('order/list', 'Order/orderList'); //订单列表
+        Route::get('order/detail', 'Order/detail'); //订单详情页
+        Route::get('order/delivery_index', 'Order/delivery'); //订单发货页
+        Route::post('order/deliver$', 'Order/makeDelivery'); //发货操作
+        Route::get('order/rt_index', 'Order/returnOrder'); //退款页
+        Route::get('order/rt/list', 'Order/returnOrderList'); //退款列表
+        Route::get('order/rt/back_money', 'Order/backMoney'); //退款
+        Route::get('order/track', 'Order/track'); //订单跟踪
+        Route::get('order/reviews', 'Order/reviews'); //订单评价
+        Route::post('order/recomment', 'Order/recomment'); //订单评价回复
+
     });
 });

@@ -98,7 +98,7 @@
 
     $('.export').click(function(){
         var _get = $('#searchForm').serialize()
-        var turl = "{:route('export_excel')}";
+        var turl = "{:route('User/export_excel')}";
         window.open(turl+'?'+_get);
     })
 
@@ -135,7 +135,6 @@
           break;
           case 'del':
               layer.confirm('确定删除？？', function(index){
-     
                    $.post("{:route('User/del')}", {uid:obj.data.id}, function(res){
                       if(res.code == 1){
                         layer.msg('删除成功');

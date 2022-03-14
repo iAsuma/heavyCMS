@@ -172,7 +172,7 @@ $(function() {
             var result = '';
             $.ajax({
                 type: 'POST',
-                url: '{:route("orderList")}',
+                url: '{:route("Order/orderList")}',
                 dataType: 'json',
                 data:{perpage: perpage, pageStart: pageStart, type: $('.liebiao-ul').data('mark')},
                 success: function(res) {

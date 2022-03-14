@@ -63,6 +63,7 @@ Route::group('', function (){
         Route::get('edit_index', 'User/userEdit'); //用户编辑页
         Route::post('edit', 'User/editUser'); //编辑用户
         Route::post('del', 'User/del'); //删除用户
+        Route::get('export', 'User/export_excel'); //用户导出
     });
 
     // 接入应用配置

@@ -195,7 +195,7 @@
          layer.open({
           type: 2
           ,title: '订单评价'
-          ,content: "{:route('reviews')}?id="+id+"&order_no="+order_no
+          ,content: "{:route('Order/reviews')}?id="+id+"&order_no="+order_no
           ,area: ['500px', '450px']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
@@ -213,7 +213,7 @@
          layer.open({
           type: 2
           ,title: '订单追踪'
-          ,content: "{:route('track')}?id="+id
+          ,content: "{:route('Order/track')}?id="+id
           ,maxmin: true
           ,area: ['35%', '70%']
         });

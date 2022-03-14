@@ -70,7 +70,7 @@
 
    var tableIns =  table.render({
       elem: '#order'
-      ,url: "{:route('orderList')}"
+      ,url: "{:route('Order/orderList')}"
       ,page: true //开启分页
       ,limit:10
       ,limits:[10,25,50]
@@ -160,7 +160,7 @@
                 layer.open({
                   type: 2
                   ,title: '订单发货: '+ obj.data.order_no
-                  ,content: '{:route(\'delivery\')}'
+                  ,content: '{:route(\'Order/delivery\')}'
                   ,area: ['420px', '280px']
                   ,btn: ['确定', '取消']
                   ,yes: function(index, layero){
@@ -173,7 +173,7 @@
                       var field = data.field;
                       field.order_no = obj.data.order_no
                       
-                      $.post('{:route(\'makeDelivery\')}', field, function(res){
+                      $.post('{:route(\'Order/makeDelivery\')}', field, function(res){
                         if(res.code == 1){
                           layer.msg('发货成功', {icon: 1}, function(){
                             table.reload('order');

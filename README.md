@@ -92,7 +92,7 @@ http://your-domain.com/admin
 
 ## 在线手册
 
-+ [Thinkphp5.1完全开发手册](https://www.kancloud.cn/manual/thinkphp5_1/content)
++ [ThinkPHP 6.0完全开发手册](https://www.kancloud.cn/manual/thinkphp6_0/content)
 
 + [Layui官方文档](https://www.layui.com/doc/)
 
@@ -103,7 +103,7 @@ http://your-domain.com/admin
 
 **若使用本系统涉及到layuiAdmin，请认真阅读[《layui 付费产品服务条款》](https://fly.layui.com/jie/26280/)，并自行到[layui官网](https://www.layui.com/admin/)下载源码**
 
-基于开源的Thinkphp6.0官方源码二次开发
+基于开源的ThinkPHP6.0官方源码二次开发
 
 前端组件使用开源的Layui前端UI框架
 

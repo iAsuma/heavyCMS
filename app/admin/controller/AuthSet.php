@@ -14,9 +14,17 @@ use util\Hook;
  */
 class AuthSet extends Base
 {
+    protected $_config = [];
+
+    protected function initialize()
+    {
+        parent::initialize();
+        $this->_config = config('auth.auth_config');
+    }
+
     public function admins()
     {
-        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
+        $roles = Db::name($this->_config['auth_group'])->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
         View::assign('roles', $roles);
     	return View::fetch();
     }
@@ -35,13 +43,13 @@ class AuthSet extends Base
 
         $where = $this->parseWhere($where);
 
-        $query = Db::name('admin_user')->alias('a')->fieldRaw('id,name,login_name,phone,email,FROM_UNIXTIME(create_time, "%Y-%m-%d") AS create_time,status,groupNames')->page($page, $limit)->where('status', '<>', '-1')->order('id');
+        $query = Db::name($this->_config['auth_user'])->alias('a')->fieldRaw('id,name,login_name,phone,email,FROM_UNIXTIME(create_time, "%Y-%m-%d") AS create_time,status,groupNames')->page($page, $limit)->where('status', '<>', '-1')->order('id');
 
-        $leftTable = Db::name('auth_group_access')->field([
+        $leftTable = Db::name($this->_config['auth_group_access'])->field([
             'acc.uid',
             'GROUP_CONCAT(acc.group_id)' => 'groupIds',
             'GROUP_CONCAT(g.title)' => 'groupNames'
-        ])->alias('acc')->leftjoin('auth_group g', 'acc.group_id=g.id')->where('g.status', '<>', '-1')->group('acc.uid')->buildSql();
+        ])->alias('acc')->leftjoin($this->_config['auth_group'].' g', 'acc.group_id=g.id')->where('g.status', '<>', '-1')->group('acc.uid')->buildSql();
 
         $query->leftjoin($leftTable.'b', 'a.id=b.uid');
         $query->where($where);
@@ -52,7 +60,7 @@ class AuthSet extends Base
 
         $admin = $query->select();
 
-        $countQuery = Db::name('admin_user')->alias('a')->where($where)->where('status', '<>', '-1');
+        $countQuery = Db::name($this->_config['auth_user'])->alias('a')->where($where)->where('status', '<>', '-1');
         if($get['role'] ?? ''){
             $countQuery->leftjoin($leftTable.'b', 'a.id=b.uid');
             $countQuery->whereRaw('CONCAT(",", groupIds, ",") LIKE :groupIds', ['groupIds' => '%,'.$get['role'].',%']);
@@ -66,12 +74,12 @@ class AuthSet extends Base
     {
         if($this->request->get('id')){
             $cacheKey= md5('adminUser_'.(int)$this->request->get('id'));
-            $adminInfo = Db::name('admin_user')->where('id', (int)$this->request->get('id'))->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
-            $hasRole = Db::name('auth_group_access')->where('uid', (int)$this->request->get('id'))->select();
+            $adminInfo = Db::name($this->_config['auth_user'])->where('id', (int)$this->request->get('id'))->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
+            $hasRole = Db::name($this->_config['auth_group_access'])->where('uid', (int)$this->request->get('id'))->select();
             $hasRoleId = array_column($hasRole->toArray(), 'group_id');
         }
 
-        $roles = Db::name('auth_group')->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
+        $roles = Db::name($this->_config['auth_group'])->field('id,title')->cache('allroles', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->where('status', 1)->select();
 
         View::assign('admin', $adminInfo ?? []);
         View::assign('hasrole', $hasRoleId ?? []);
@@ -106,7 +114,7 @@ class AuthSet extends Base
                     ['phone', '=', $data['phone']]
                 ]);
 
-                $loginUser = Db::name('admin_user')
+                $loginUser = Db::name($this->_config['auth_user'])
                 ->field('id,name,login_name,phone,email')
                 ->where(function($query) use($where){
                     $query->whereOr($where);
@@ -118,7 +126,7 @@ class AuthSet extends Base
                 if(in_array($data['phone'], array_column($loginUser, 'phone'))) return res_json(-3, '手机号已注册');
                 if(in_array($data['email'], array_column($loginUser, 'email'))) return res_json(-3, '邮箱已注册');
 
-                $new_id = Db::name('admin_user') -> insertGetId($data);
+                $new_id = Db::name($this->_config['auth_user']) -> insertGetId($data);
                 if(!$new_id) return res_json(-6, '添加失败');
 
                 $roleArr= explode(',', $request->post('roles'));
@@ -129,7 +137,7 @@ class AuthSet extends Base
                     ];
                 }
 
-                $result = Db::name('auth_group_access')->insertAll($access);
+                $result = Db::name($this->_config['auth_group_access'])->insertAll($access);
 
                 if(!$result){
                     Db::rollback();
@@ -183,7 +191,7 @@ class AuthSet extends Base
                     ['phone', '=', $data['phone']]
                 ]);
 
-                $loginUser = Db::name('admin_user')
+                $loginUser = Db::name($this->_config['auth_user'])
                 ->field('id,name,login_name,phone,email')
                 ->where(function($query) use($where){
                     $query->whereOr($where);
@@ -196,7 +204,7 @@ class AuthSet extends Base
                 if(in_array($data['phone'], array_column($loginUser, 'phone'))) return res_json(-3, '手机号已注册');
                 if(in_array($data['email'], array_column($loginUser, 'email'))) return res_json(-3, '邮箱已注册');
 
-                $update = Db::name('admin_user') ->where('id', $request->post('admin_id')) -> update($data);
+                $update = Db::name($this->_config['auth_user']) ->where('id', $request->post('admin_id')) -> update($data);
                 if($update === false) return res_json(-6, '修改失败');
 
                 $roleArr= explode(',', $request->post('roles'));
@@ -208,8 +216,8 @@ class AuthSet extends Base
                 }
 
                 if($request->post('admin_id') != 1){
-                    Db::name('auth_group_access')->where('uid', (int)$request->post('admin_id'))->delete();
-                    $result = Db::name('auth_group_access')->insertAll($access);
+                    Db::name($this->_config['auth_group_access'])->where('uid', (int)$request->post('admin_id'))->delete();
+                    $result = Db::name($this->_config['auth_group_access'])->insertAll($access);
 
                     $cacheKey = 'group_1_'.$request->post('admin_id');
                     Cache::rm($cacheKey); //清除用户组缓存，权限实时生效
@@ -252,7 +260,7 @@ class AuthSet extends Base
                 break;
         }
 
-        $id && $res = Db::name('admin_user')->where('id', '=', $id)->update(['status' => $status]);
+        $id && $res = Db::name($this->_config['auth_user'])->where('id', '=', $id)->update(['status' => $status]);
 
         if($status == -1){
             if(!$res) return res_json(-3, '删除失败');
@@ -285,8 +293,8 @@ class AuthSet extends Base
         $formWhere = $this->parseWhere($where);
         $cacheKey = 'role_'.md5(http_build_query($formWhere));
         
-        $count = Db::name('auth_group')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->count('id');
-        $roles = Db::name('auth_group')->where($formWhere)->order('id')->page($page, $limit)->cache($cacheKey.'_'.$page.'_'.$limit, 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->select();
+        $count = Db::name($this->_config['auth_group'])->where($formWhere)->cache($cacheKey.'_count', 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->count('id');
+        $roles = Db::name($this->_config['auth_group'])->where($formWhere)->order('id')->page($page, $limit)->cache($cacheKey.'_'.$page.'_'.$limit, 24*60*60, CacheEnum::ADMIN_ROLE_TAG)->select();
 
         return table_json($roles, $count);
     }
@@ -294,7 +302,7 @@ class AuthSet extends Base
     public function roleAdd(Request $request)
     {
         if($request->get('id')){
-            $roleInfo = Db::name('auth_group')->where('id', (int)$request->get('id'))->find();
+            $roleInfo = Db::name($this->_config['auth_group'])->where('id', (int)$request->get('id'))->find();
 
             View::assign('role', $roleInfo);
             return View::fetch('role_edit');
@@ -305,7 +313,7 @@ class AuthSet extends Base
 
     public function allrules()
     {
-        $rules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
+        $rules = Db::name($this->_config['auth_rule'])->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         $tree = new \util\Tree($rules);
         $mods = $tree->leaf();
@@ -317,7 +325,7 @@ class AuthSet extends Base
     {
         $rulesArr = explode(",", $this->request->get('rules'));
 
-        $allrules = Db::name('auth_rule')->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
+        $allrules = Db::name($this->_config['auth_rule'])->where('status', 1)->order(['sorted', 'id'])->cache('use_rules', 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         foreach ($allrules as &$v) {
             in_array($v['id'], $rulesArr) && $v['checked'] = true;
@@ -360,11 +368,11 @@ class AuthSet extends Base
             }
 
             if($post['role_id'] ?? ''){
-                $result = Db::name('auth_group') ->where('id', $post['role_id']) -> update($data);
+                $result = Db::name($this->_config['auth_group']) ->where('id', $post['role_id']) -> update($data);
                 if($result === false) return res_json(-1, '修改失败');
                 Hook::listen('admin_log', ['权限', '修改了角色组'.$data['title'].'的信息']);
             }else{
-                $result = Db::name('auth_group') -> insert($data);
+                $result = Db::name($this->_config['auth_group']) -> insert($data);
                 if(!$result) return res_json(-1, '添加失败');
                 Hook::listen('admin_log', ['权限', '添加了角色组'.$data['title']]);
             }
@@ -385,7 +393,7 @@ class AuthSet extends Base
         $pwd = $this->request->post('password');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
+        $uid && $user = Db::name($this->_config['auth_user'])->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         if(empty($user)) return res_json(-1, '用户信息获取失败，请重新登录');
         
         switch ($this->request->post('status')) {
@@ -404,7 +412,7 @@ class AuthSet extends Base
             return res_json(-2, '密码错误');
         }
 
-        $id && $res = Db::name('auth_group')->where('id', '=', $id)->update(['status' => $status]);
+        $id && $res = Db::name($this->_config['auth_group'])->where('id', '=', $id)->update(['status' => $status]);
 
         if($status == -1){
             if(!$res) return res_json(-3, '删除失败');
@@ -437,14 +445,14 @@ class AuthSet extends Base
         $formWhere = $this->parseWhere($where);
 
         $cacheKey = 'rule_'.md5(http_build_query($formWhere));
-        $count = Db::name('auth_rule')->where($formWhere)->cache($cacheKey.'_count', 24*60*60, AuthEnum::CACHE_RULE_TAG)->count('id');
+        $count = Db::name($this->_config['auth_rule'])->where($formWhere)->cache($cacheKey.'_count', 24*60*60, AuthEnum::CACHE_RULE_TAG)->count('id');
 
         if(empty($count)){
             return table_json([], 0);
         }
 
         // 查询所有规则，用以排序子父级关系，并存入缓存(tag:auth_rule)
-        $rules = Db::name('auth_rule')->where($formWhere)->order(['sorted', 'id'])->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
+        $rules = Db::name($this->_config['auth_rule'])->where($formWhere)->order(['sorted', 'id'])->cache($cacheKey, 24*60*60, AuthEnum::CACHE_RULE_TAG)->select();
 
         $mark = count($formWhere);
         if(($where[1][2] && $mark > 2) || (!$where[1][2] && $mark > 1)) {
@@ -476,7 +484,7 @@ class AuthSet extends Base
             $where['type'] = 1;
         }
 
-        $mods = Db::name('auth_rule')->field('id,title,name,pid')->where($where)->order('sorted,id')->select();
+        $mods = Db::name($this->_config['auth_rule'])->field('id,title,name,pid')->where($where)->order('sorted,id')->select();
 
         if(empty($mods)){
             return null;
@@ -524,7 +532,7 @@ class AuthSet extends Base
                 return res_json(-3, $validate->getError());
             }
 
-            $result = Db::name('auth_rule') -> insert($data);
+            $result = Db::name($this->_config['auth_rule']) -> insert($data);
             if(!$result) return res_json(-1, '添加失败');
 
             destroyFormToken($post);
@@ -542,7 +550,7 @@ class AuthSet extends Base
         $is_logged = $this->request->post('is_logged');
 
         $is_logged = $is_logged == 'true' ? 1 : 0;
-        $res = Db::name('auth_rule')->where('id', '=', $id)->update(['is_logged' => $is_logged]);
+        $res = Db::name($this->_config['auth_rule'])->where('id', '=', $id)->update(['is_logged' => $is_logged]);
         Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
         if(!$res) return res_json(-3, '切换失败');
 
@@ -554,7 +562,7 @@ class AuthSet extends Base
         $post = $this->request->post();
         if($post['is_menu'] != 1) return res_json(-1, '非菜单无法设置权重');
 
-        $post['id'] && $res = Db::name('auth_rule')->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
+        $post['id'] && $res = Db::name($this->_config['auth_rule'])->where('id', '=', (int)$post['id'])->update(['sorted' => (int)$post['newVal']]);
         if(!$res) return res_json(-3, '修改失败');
         Cache::tag(AuthEnum::CACHE_RULE_TAG)->clear(); //清除规则缓存，让列表实时生效
 
@@ -569,7 +577,7 @@ class AuthSet extends Base
         $statusMark = $this->request->post('status');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
+        $uid && $user = Db::name($this->_config['auth_user'])->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         if(empty($user)) return res_json(-1, '用户信息获取失败，请重新登录');
 
         if($statusMark == 'true'){
@@ -579,17 +587,17 @@ class AuthSet extends Base
 
             if($user['password'] != md5safe($pwd)) return res_json(-2, '密码错误');
 
-            $info = Db::name('auth_rule')->field('id,name')->where('pid' , $id)->select();
+            $info = Db::name($this->_config['auth_rule'])->field('id,name')->where('pid' , $id)->select();
             if(!empty($info)) return res_json(-2, '请先删除子权限');
         }else{
             $status = -2;
         }
 
         if($status == -1){
-            $id && $res = Db::name('auth_rule')->delete($id);
+            $id && $res = Db::name($this->_config['auth_rule'])->delete($id);
             if(!$res) return res_json(-3, '删除失败');
         }else{
-            $id && $res = Db::name('auth_rule')->where('id', '=', $id)->update(['status' => $status]);
+            $id && $res = Db::name($this->_config['auth_rule'])->where('id', '=', $id)->update(['status' => $status]);
             if(!$res) return res_json(-3, '状态切换失败');
         }
         
@@ -601,7 +609,7 @@ class AuthSet extends Base
     public function authEdit()
     {
         $id = (int)$this->request->get('rule');
-        $id && $info = Db::name('auth_rule')->where(['id' => $id])->find();
+        $id && $info = Db::name($this->_config['auth_rule'])->where(['id' => $id])->find();
 
         isset($info) && View::assign('info', $info);
         
@@ -639,7 +647,7 @@ class AuthSet extends Base
                 return res_json(-3, $validate->getError());
             }
 
-            $result = Db::name('auth_rule')->where('id', (int)$post['rule_id'])->update($data);
+            $result = Db::name($this->_config['auth_rule'])->where('id', (int)$post['rule_id'])->update($data);
             if($result === false) return res_json(-1, '修改失败');
 
             destroyFormToken($post);
@@ -692,7 +700,7 @@ class AuthSet extends Base
         $pwd = $this->request->post('password');
 
         $cacheKey= md5('adminUser_'.$uid);
-        $uid && $user = Db::name('admin_user')->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
+        $uid && $user = Db::name($this->_config['auth_user'])->where('id', '=', $uid)->cache($cacheKey, 24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
         if(empty($user)) return res_json(-1, '用户信息获取失败，请重新登录');
 
         if($user['password'] != md5safe($pwd)) return res_json(-2, '密码错误');

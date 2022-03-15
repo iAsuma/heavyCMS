@@ -9,7 +9,6 @@ use util\Hook;
  */
 class Element extends Base
 {
-	
 	public function banner()
     {
         return View::fetch();

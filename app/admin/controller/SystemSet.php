@@ -12,19 +12,19 @@ use think\Request;
  */
 class SystemSet extends Base
 {
-    protected $adminTable;
+    protected $authUserTable;
 
     protected function initialize()
     {
         parent::initialize();
-        $this->adminTable = config('auth.auth_config.auth_user');
+        $this->authUserTable = config('auth.auth_config.auth_user');
     }
 
 	public function userInfo()
 	{
 		$uid = $this->request->uid;
 		$cacheKey= md5('adminUser_'.$uid);
-		$userInfo = $uid ? Db::name($this->adminTable)->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find() : '';
+		$userInfo = $uid ? Db::name($this->authUserTable)->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find() : '';
 
 		$roles = Permissions::getGroups($uid);
 		$rolesArr = array_column($roles, 'title');
@@ -59,7 +59,7 @@ class SystemSet extends Base
                     ['phone', '=', $data['phone']]
                 ]);
 
-                $loginUser = Db::name($this->adminTable)
+                $loginUser = Db::name($this->authUserTable)
                 ->field('id,name,login_name,phone,email')
                 ->where(function($query) use($where){
                     $query->whereOr($where);
@@ -71,7 +71,7 @@ class SystemSet extends Base
                 if(in_array($data['phone'], array_column($loginUser, 'phone'))) return res_json(-3, '手机号已注册');
                 if(in_array($data['email'], array_column($loginUser, 'email'))) return res_json(-3, '邮箱已注册');
 
-                $update = Db::name($this->adminTable) ->where('id', $uid) -> update($data);
+                $update = Db::name($this->authUserTable) ->where('id', $uid) -> update($data);
                 if($update === false) return res_json(-6, '修改失败');
 
                 Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
@@ -108,11 +108,11 @@ class SystemSet extends Base
                 ];
 
                 $cacheKey= md5('adminUser_'.$uid);
-                $userInfo = Db::name($this->adminTable)->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
+                $userInfo = Db::name($this->authUserTable)->where('id', '=', $uid)->cache($cacheKey, 30*24*60*60, AuthEnum::CACHE_ADMIN_TAG)->find();
 
                 if($userInfo['password'] != md5safe($request->post('oldPassword'))) return res_json(-6, '当前密码错误');
 
-                $update = Db::name($this->adminTable) ->where('id', $uid) -> update($data);
+                $update = Db::name($this->authUserTable) ->where('id', $uid) -> update($data);
                 if($update === false) return res_json(-6, '修改失败');
 
                 Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存

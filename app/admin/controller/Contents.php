@@ -244,7 +244,7 @@ class Contents extends Base
 		$limit = $get['limit'] ?? 10;
 
 		$where = [
-			['status', '<>', '-1'],
+			['is_delete', '=', 0],
 			['name', 'LIKE', $get['name'] ?? '']
 		];
 		
@@ -271,7 +271,9 @@ class Contents extends Base
 			try {
 				$data = [
 					'name' => $request->post('name'),
-					'status' => $request->post('status') ?: -2
+					'status' => $request->post('status') ?: -2,
+                    'create_time' => time(),
+                    'create_by' => $this->uid
 				];
 
 				$result = Db::name('article_column') -> insert($data);
@@ -310,8 +312,10 @@ class Contents extends Base
             }
 
 			$data = [
-					'name' => $request->post('name'),
-					'status' => $request->post('status') ?: -2
+                'name' => $request->post('name'),
+                'status' => $request->post('status') ?: -2,
+                'update_time' => time(),
+                'update_by' => $this->uid
 			];
 
 			$result = Db::name('article_column')->where('id', (int)$post['id'])->update($data);
@@ -329,7 +333,8 @@ class Contents extends Base
 	public function columnDel(Request $request)
 	{
 		$id = $request->post('id');
-		$data['status'] = -1 ;
+		$data['is_delete'] = 1 ;
+		$data['delete_date'] = date('Y-m-d H:i:s');
 	
 		if (Db::name('article_column') ->where('id', 'IN', $id) -> update($data)) { 
 			Hook::listen('admin_log', ['栏目管理', '删除了栏目']);		
@@ -343,19 +348,25 @@ class Contents extends Base
     {
         $id = (int)$this->request->post('id');
 
-      	 switch ($this->request->post('status')) {
+        $data = [];
+        switch ($this->request->post('status')) {
             case 'true':
-                $status = 1;
+                $data['status'] = 1;
+                $data['update_time'] = time();
+                $data['update_by'] = $this->uid;
                 break;
             case 'delete':
-                $status = -1;
+                $data['is_delete'] = 1;
+                $data['delete_date'] = date('Y-m-d H:i:s');
                 break;
             default:
-                $status = -2;
+                $data['status'] = -2;
+                $data['update_time'] = time();
+                $data['update_by'] = $this->uid;
                 break;
         }
 
-        $id && $res = Db::name('article_column')->where('id', '=', $id)->update(['status' => $status]);
+        $id && $res = Db::name('article_column')->where('id', '=', $id)->update($data);
         if(!$res) return res_json(-3, '修改失败');
 
         return res_json(1);

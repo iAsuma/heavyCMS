@@ -60,7 +60,7 @@ class AuthSet extends Base
 
         $admin = $query->select();
 
-        $countQuery = Db::name($this->_config['auth_user'])->alias('a')->where($where)->where('status', '<>', '-1');
+        $countQuery = Db::name($this->_config['auth_user'])->alias('a')->where($where)->where('is_delete', '=', 0);
         if($get['role'] ?? ''){
             $countQuery->leftjoin($leftTable.'b', 'a.id=b.uid');
             $countQuery->whereRaw('CONCAT(",", groupIds, ",") LIKE :groupIds', ['groupIds' => '%,'.$get['role'].',%']);
@@ -174,7 +174,9 @@ class AuthSet extends Base
                     'login_name' => $request->post('loginname'),
                     'name' => $request->post('truename'),
                     'phone' => $request->post('phone'),
-                    'email' => $request->post('email')
+                    'email' => $request->post('email'),
+                    'update_time' => time(),
+                    'update_by' => $this->uid
                 ];
 
                 if($request->post('admin_id') != 1){
@@ -247,28 +249,35 @@ class AuthSet extends Base
     {
         $id = (int)$this->request->post('id');
         $uid = $this->request->uid;
-        
+
+        $data = [];
         switch ($this->request->post('status')) {
             case 'true':
-                $status = 1;
+                $data['status'] = 1;
+                $data['update_time'] = time();
+                $data['update_by'] = $this->uid;
+                $err_msg = '状态修改失败';
+                $log_str = '开启了管理员'.$this->request->post('name').'的账号';
                 break;
             case 'delete':
-                $status = -1;
+                $data['is_delete'] = 1;
+                $data['delete_date'] = date('Y-m-d H:i:s');
+                $err_msg = '删除失败';
+                $log_str = '删除了管理员'.$this->request->post('name');
                 break;
             default:
-                $status = -2;
+                $data['status'] = -2;
+                $data['update_time'] = time();
+                $data['update_by'] = $uid;
+                $err_msg = '状态修改失败';
+                $log_str = '冻结了管理员'.$this->request->post('name').'的账号';
                 break;
         }
 
-        $id && $res = Db::name($this->_config['auth_user'])->where('id', '=', $id)->update(['status' => $status]);
+        $id && $res = Db::name($this->_config['auth_user'])->where('id', '=', $id)->update(['status' => $data]);
 
-        if($status == -1){
-            if(!$res) return res_json(-3, '删除失败');
-            Hook::listen('admin_log', ['权限', '删除了管理员'.$this->request->post('name')]);
-        }else{
-            if(!$res) return res_json(-3, '状态切换失败');
-            Hook::listen('admin_log', ['权限', $status == -2 ? '冻结了管理员'.$this->request->post('name').'的账号' : '开启了管理员'.$this->request->post('name').'的账号']);
-        }
+        if(!$res) return res_json(-3, $err_msg);
+        Hook::listen('admin_log', ['权限', $log_str]);
         
         Cache::tag(AuthEnum::CACHE_ADMIN_TAG)->clear(); //清除用户数据缓存
         return res_json(1);

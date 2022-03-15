@@ -48,7 +48,9 @@ class BasisSet extends Base
                     'app_token' => $request->post('app_token'),
                     'mch_id' => $request->post('mch_id'),
                     'partnerkey' => $request->post('partnerkey'),
-                    'type' => $request->post('type')
+                    'type' => $request->post('type'),
+                    'create_time' => time(),
+                    'create_by' => $this->uid
                 ];
 
                 $result = Db::name('application_config') -> insert($data);
@@ -78,16 +80,18 @@ class BasisSet extends Base
         try {
             $post = $request->post();
             if(!checkFormToken($post)) return res_json('-2', '请勿重复提交');
-              $data = [
-                    'app_name' => $request->post('app_name'),
-                    'app_id' => $request->post('app_id'),
-                    'app_secret' => $request->post('app_secret'),
-                    'app_token' => $request->post('app_token'),
-                    'mch_id' => $request->post('mch_id'),
-                    'partnerkey' => $request->post('partnerkey'),
-                    'type' => $request->post('type')
-                ];
 
+            $data = [
+                'app_name' => $request->post('app_name'),
+                'app_id' => $request->post('app_id'),
+                'app_secret' => $request->post('app_secret'),
+                'app_token' => $request->post('app_token'),
+                'mch_id' => $request->post('mch_id'),
+                'partnerkey' => $request->post('partnerkey'),
+                'type' => $request->post('type'),
+                'update_time' => time(),
+                'update_by' => $this->uid
+            ];
 
             $result = Db::name('application_config')->where('id', (int)$post['id'])->update($data);
             if($result === false) return res_json(-1, '修改失败');

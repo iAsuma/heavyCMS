@@ -51,7 +51,9 @@ class SystemSet extends Base
                     'name' => $request->post('truename'),
                     'phone' => $request->post('phone'),
                     'email' => $request->post('email'),
-                    'remark' => $request->post('remark')
+                    'remark' => $request->post('remark'),
+                    'update_time' => time(),
+                    'update_by' => $this->uid
                 ];
 
                 $where = $this->parseWhere([
@@ -104,7 +106,9 @@ class SystemSet extends Base
 
             try {
                 $data = [
-                    'password' => md5safe($request->post('password'))
+                    'password' => md5safe($request->post('password')),
+                    'update_time' => time(),
+                    'update_by' => $this->uid
                 ];
 
                 $cacheKey= md5('adminUser_'.$uid);

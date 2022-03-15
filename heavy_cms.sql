@@ -1,45 +1,53 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
-Source Server Version : 50726
+Source Server         : localhost_3306
+Source Server Version : 50721
 Source Host           : localhost:3306
 Source Database       : heavy_cms
 
 Target Server Type    : MYSQL
-Target Server Version : 50726
+Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2020-04-22 15:12:59
+Date: 2022-03-15 14:26:54
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- 大多数表没有 update_time,create_time等标准字段，需要优化修改
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for admin_user
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_user`;
 CREATE TABLE `admin_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL COMMENT '用户姓名',
-  `login_name` varchar(20) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL COMMENT '登录手机号',
-  `email` varchar(50) DEFAULT NULL COMMENT '登录邮箱',
-  `password` varchar(32) DEFAULT NULL,
-  `head_img` varchar(200) DEFAULT NULL COMMENT '用户头像',
-  `status` tinyint(2) DEFAULT NULL COMMENT '状态 1 正常 0 待审核 -1 删除 -2 冻结',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
-  `create_by` int(11) DEFAULT NULL COMMENT '创建人id',
-  `remark` varchar(255) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '用户姓名',
+  `login_name` varchar(20) NOT NULL DEFAULT '' COMMENT '用户名',
+  `phone` varchar(15) NOT NULL DEFAULT '' COMMENT '手机号',
+  `email` varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱地址',
+  `password` varchar(32) NOT NULL DEFAULT '' COMMENT '密码',
+  `head_img` varchar(200) NOT NULL DEFAULT '' COMMENT '用户头像',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态 1 正常 0 待审核 -2 冻结',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `is_delete` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否删除 1：是；0：否',
+  `delete_date` datetime DEFAULT NULL COMMENT '删除日期',
+  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `create_by` int(11) NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `update_by` int(11) NOT NULL DEFAULT '0' COMMENT '更新人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='管理员用户表';
 
 -- ----------------------------
 -- Records of admin_user
 -- ----------------------------
-INSERT INTO `admin_user` VALUES ('1', '管理员', 'admin', '', '', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', '1556601911', '0', '');
-INSERT INTO `admin_user` VALUES ('2', '阿斯玛', 'asuma', '', 'sqiu_li@163.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '1', null, null, null);
-INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bbe8f6f6e653b2bc854b24379', null, '-1', '1587537661', '1', null);
+INSERT INTO `admin_user` VALUES ('1', '管理员', 'admin', '', '', 'b8c6551bbe8f6f6e653b2bc854b24379', '', '1', '', '0', null, '1556601911', '0', '0', '0');
+INSERT INTO `admin_user` VALUES ('2', '阿斯玛', 'asuma', '', 'sqiu_li@163.com', 'b8c6551bbe8f6f6e653b2bc854b24379', '', '1', '', '0', null, '0', '0', '0', '0');
+INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bbe8f6f6e653b2bc854b24379', '', '-1', '', '0', null, '1587537661', '1', '0', '0');
 
 -- ----------------------------
 -- Table structure for application_config
@@ -47,17 +55,21 @@ INSERT INTO `admin_user` VALUES ('3', '', 'test', '', 'test@123.com', 'b8c6551bb
 DROP TABLE IF EXISTS `application_config`;
 CREATE TABLE `application_config` (
   `id` tinyint(4) NOT NULL AUTO_INCREMENT,
-  `app_name` varchar(30) DEFAULT NULL COMMENT '应用名称',
-  `app_id` varchar(32) DEFAULT NULL,
-  `app_secret` varchar(64) DEFAULT NULL,
-  `app_token` varchar(64) DEFAULT NULL,
-  `type` tinyint(4) DEFAULT NULL COMMENT '应用类型 1 公众号 2 小程序',
-  `mch_id` varchar(32) DEFAULT NULL,
-  `partnerkey` varchar(64) DEFAULT NULL,
-  `cert_path` varchar(255) DEFAULT NULL,
-  `key_path` varchar(255) DEFAULT NULL,
+  `app_name` varchar(30) NOT NULL DEFAULT '' COMMENT '应用名称',
+  `app_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'APP ID',
+  `app_secret` varchar(64) NOT NULL DEFAULT '' COMMENT 'APP SECRET',
+  `app_token` varchar(64) NOT NULL DEFAULT '' COMMENT 'TOKEN',
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '应用类型 1 公众号 2 小程序',
+  `mch_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'MCH ID',
+  `partnerkey` varchar(64) NOT NULL DEFAULT '' COMMENT 'PARTNER KEY',
+  `cert_path` varchar(255) NOT NULL DEFAULT '' COMMENT '证书路径',
+  `key_path` varchar(255) NOT NULL DEFAULT '' COMMENT '证书路径',
+  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `create_by` int(11) NOT NULL DEFAULT '0' COMMENT '创建人',
+  `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `update_by` int(11) NOT NULL DEFAULT '0' COMMENT '更新人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='三方接入应用配置表';
 
 -- ----------------------------
 -- Records of application_config
@@ -68,18 +80,18 @@ CREATE TABLE `application_config` (
 -- ----------------------------
 DROP TABLE IF EXISTS `articles`;
 CREATE TABLE `articles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL COMMENT '文章标题',
-  `sub_title` varchar(500) DEFAULT NULL,
-  `content` longtext COMMENT '内容',
-  `author` varchar(20) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '文章标题',
+  `sub_title` varchar(500) CHARACTER SET utf8 DEFAULT NULL,
+  `content` longtext CHARACTER SET utf8 COMMENT '内容',
+  `author` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
   `status` tinyint(4) DEFAULT NULL COMMENT '状态 1正常 0 待审核 -1删除 -2 冻结',
   `column_id` int(11) DEFAULT NULL,
-  `create_time` int(11) DEFAULT NULL COMMENT '发布时间',
-  `cover_imgs` varchar(1000) DEFAULT NULL,
+  `cover_imgs` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
   `author_user_id` int(11) DEFAULT '0' COMMENT '投稿人ID',
+  `create_time` int(11) DEFAULT NULL COMMENT '发布时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of articles
@@ -90,11 +102,17 @@ CREATE TABLE `articles` (
 -- ----------------------------
 DROP TABLE IF EXISTS `article_column`;
 CREATE TABLE `article_column` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT NULL COMMENT '状态 1 正常 -2 关闭 -1 删除',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '姓名',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态 1 正常 -2 关闭',
+  `is_delete` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否删除 1：是；0：否',
+  `delete_date` datetime NOT NULL COMMENT '删除时间',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `create_by` int(11) NOT NULL DEFAULT '0' COMMENT '创建人',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `update_by` int(11) NOT NULL DEFAULT '0' COMMENT '更新人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章栏目/分类表';
 
 -- ----------------------------
 -- Records of article_column
@@ -228,22 +246,7 @@ CREATE TABLE `operation_log` (
   `record_time` datetime NOT NULL,
   `behavior_user` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of operation_log
--- ----------------------------
-INSERT INTO `operation_log` VALUES ('1', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:16:39', 'admin');
-INSERT INTO `operation_log` VALUES ('2', 'AuthSet/pulladmin', '权限', '添加了管理员test', '127.0.0.1', '2020-04-22 14:41:01', 'admin');
-INSERT INTO `operation_log` VALUES ('3', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:41:26', 'admin');
-INSERT INTO `operation_log` VALUES ('4', 'Login/checklogin', '登录', '登录页登录系统', '127.0.0.1', '2020-04-22 14:41:39', 'test');
-INSERT INTO `operation_log` VALUES ('5', 'AuthSet/updateadmin', '权限', '修改了管理员test的信息', '127.0.0.1', '2020-04-22 14:49:13', 'test');
-INSERT INTO `operation_log` VALUES ('6', 'AuthSet/changeadminstatus', '权限', '冻结了管理员asuma的账号', '127.0.0.1', '2020-04-22 14:54:30', 'test');
-INSERT INTO `operation_log` VALUES ('7', 'AuthSet/changeadminstatus', '权限', '开启了管理员asuma的账号', '127.0.0.1', '2020-04-22 14:54:31', 'test');
-INSERT INTO `operation_log` VALUES ('8', 'AuthSet/changerolestatus', '权限', '关闭了角色组管理员', '127.0.0.1', '2020-04-22 14:59:27', 'test');
-INSERT INTO `operation_log` VALUES ('9', 'AuthSet/changerolestatus', '权限', '开启了角色组管理员', '127.0.0.1', '2020-04-22 14:59:28', 'test');
-INSERT INTO `operation_log` VALUES ('10', 'AuthSet/addnewrole', '权限', '修改了角色组管理员的信息', '127.0.0.1', '2020-04-22 15:01:49', 'admin');
-INSERT INTO `operation_log` VALUES ('11', 'AuthSet/changeadminstatus', '权限', '删除了管理员test', '127.0.0.1', '2020-04-22 15:12:47', 'admin');
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for shop_banner
@@ -522,7 +525,6 @@ CREATE TABLE `users` (
   `nickname` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '昵称',
   `name` varchar(50) DEFAULT NULL COMMENT '姓名',
   `phone` char(11) DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   `gender` tinyint(4) DEFAULT '0' COMMENT '性别 1 男 2 女 0 未知',
   `country` varchar(255) DEFAULT NULL COMMENT '国',
   `province` varchar(255) DEFAULT NULL COMMENT '省',
@@ -530,6 +532,7 @@ CREATE TABLE `users` (
   `status` tinyint(4) DEFAULT NULL COMMENT '状态 1 正常 -1删除',
   `headimgurl` varchar(255) DEFAULT NULL,
   `wx_openid` varchar(32) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -552,3 +555,4 @@ CREATE TABLE `user_goods_collection` (
 -- ----------------------------
 -- Records of user_goods_collection
 -- ----------------------------
+SET FOREIGN_KEY_CHECKS=1;

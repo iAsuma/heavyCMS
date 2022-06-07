@@ -1,12 +1,12 @@
 
-基于iAsuma/layui-tp51-admin升级 ，主要迁移thinkphp5.1LTS框架至6.0LTS版本
+基于[iAsuma/layui-tp51-admin](https://github.com/iAsuma/layui-tp51-admin)升级 ，主要迁移thinkphp5.1LTS框架至6.0LTS版本
 
 TODO:shop模块路由尚未适配
 
 iAsuma/heavyCMS（伪）纯净轻盈的后台管理系统
 ===============
 
-想较于QingCMS比较重，但tp6.0的多应用模式是低耦合的设计，所以如果不需要相应的模块（应用），只需要删除对应的文件夹即可
+想较于QingCMS(layui-tp51-admin)比较重，但tp6.0的多应用模式是低耦合的设计，所以如果不需要相应的模块（应用），只需要删除对应的文件夹即可
 
 内置扩展：
 
